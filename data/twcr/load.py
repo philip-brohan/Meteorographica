@@ -180,7 +180,7 @@ def get_obs_1file_v2(year,month,day,hour,version):
                                  (115,116),(117,127),(128,138),(139,149),(150,160),
                                  (161,191),(192,206)],          
                        header=None,
-                       encoding="ISO-8859-1",
+                       encoding="ascii",
                        names=['UID','NCEP.Type','Variable','Longitude','Latitude',
                                'Elevation','Model.Elevation','Time.Offset',
                                'Pressure.after.bias.correction',
@@ -216,7 +216,7 @@ def get_obs_1file_v2(year,month,day,hour,version):
                                    'Name': str, 'ID': str},
                        na_values=['NA','*','***','*****','*******','**********',
                                           '-99','9999','-999','9999.99','10000.0',
-                                          '-9.99','999999999999999999999999999999',
+                                          '-9.99',
                                           '999999999999','9'],
                        comment=None)
     return(o)
