@@ -55,7 +55,11 @@ def add_grid(ax,
     gl_major.ylocator = matplotlib.ticker.FixedLocator(numpy.arange(-90,90,sep_major))
 
 # Make a dummy cube to use as a plot grid
-def make_dummy(extent,resolution,pole_latitude=90,pole_longitude=180):
+def make_dummy(ax,resolution):
+
+    extent=ax.get_extent()
+    pole_latitude=ax.projection.proj4_params['o_lat_p']
+    pole_longitude=ax.projection.proj4_params['lon_0']-180
 
     cs=iris.coord_systems.RotatedGeogCS(pole_latitude,
                                         pole_longitude)
@@ -90,15 +94,13 @@ precip_default_colour_dict = {'red'  : ((0.0, 0.0, 0.0),
 } 
 precip_default_cmap= matplotlib.colors.LinearSegmentedColormap('p_cmap',
                                                  precip_default_colour_dict)
-def plot_cmesh(ax,pe,
-               extent,resolution,pole_latitude=90,pole_longitude=180,
+def plot_cmesh(ax,pe,resolution=0.25,
                cmap=precip_default_cmap,
                zorder=4):
-    plot_cube=make_dummy(extent,resolution,pole_latitude,pole_longitude)
+
+    plot_cube=make_dummy(ax,resolution)
     cmesh_p = pe.regrid(plot_cube,iris.analysis.Linear())
     cmesh_p.data=numpy.sqrt(cmesh_p.data)
-    #lats=numpy.arange(extent[2]-2-resolution/2,extent[3]+2+resolution/2,resolution)
-    #lons=numpy.arange(extent[0]-2-resolution/2,extent[1]+2+resolution/2,resolution)
     lats = cmesh_p.coord('latitude').points
     lons = cmesh_p.coord('longitude').points
     prate_img=ax.pcolorfast(lons, lats, cmesh_p.data, cmap=cmap,
@@ -107,12 +109,12 @@ def plot_cmesh(ax,pe,
 
 # Plot a field as contours
 def plot_contour(ax,pe,
-                 extent,resolution,pole_latitude=90,pole_longitude=180,
+                 resolution=0.25,
                  levels=None,
                  colors='black',linewidths=0.5,
                  fontsize=12,
                  zorder=4,label=False):
-    plot_cube=make_dummy(extent,resolution,pole_latitude,pole_longitude)
+    plot_cube=make_dummy(ax,resolution)
     contour_p = pe.regrid(plot_cube,iris.analysis.Linear())
     lats = contour_p.coord('latitude').points
     lons = contour_p.coord('longitude').points
@@ -130,19 +132,20 @@ def plot_contour(ax,pe,
     return CS
 
 # Plot a (wind) field as vectors
-def plot_quiver(ax,ue,ve,extent,resolution,
-                projection_iris=iris.coord_systems.GeogCS(iris.fileformats.pp.EARTH_RADIUS),
-                pole_latitude=90,pole_longitude=180,
+def plot_quiver(ax,ue,ve,resolution=1,
                 color=(0,0,0,0.25),headwidth=1,
                 zorder=5):
+
+    pole_latitude=ax.projection.proj4_params['o_lat_p']
+    pole_longitude=ax.projection.proj4_params['lon_0']-180
+    projection_iris=iris.coord_systems.RotatedGeogCS(pole_latitude,
+                                                     pole_longitude)
     rw=rotate_winds(ue,ve,projection_iris)
-    plot_cube=make_dummy(extent,resolution,pole_latitude,pole_longitude)
+    plot_cube=make_dummy(ax,resolution)
     u_p = rw[0].regrid(plot_cube,iris.analysis.Linear())
     v_p = rw[1].regrid(plot_cube,iris.analysis.Linear())
     lats = u_p.coord('latitude').points
     lons = u_p.coord('longitude').points
-    #lats=numpy.arange(extent[2],extent[3],resolution*4)
-    #lons=numpy.arange(extent[0],extent[1],resolution*4)
     lons,lats = numpy.meshgrid(lons,lats)
     lons=lons.flatten()
     lats=lats.flatten()
@@ -162,7 +165,7 @@ def plot_quiver(ax,ue,ve,extent,resolution,
     return qv
 
 # Plot observations as points
-def plot_obs(ax,obs,plot_projection,
+def plot_obs(ax,obs,
              obs_projection=ccrs.PlateCarree(),
              lat_label='Latitude',lon_label='Longitude',
              radius=0.1,
@@ -171,7 +174,7 @@ def plot_obs(ax,obs,plot_projection,
              alpha=0.85,
              zorder=2.5):
 
-    rp=plot_projection.transform_points(obs_projection,
+    rp=ax.projection.transform_points(obs_projection,
                                    obs[lon_label].values,
                                    obs[lat_label].values)
     obs[lon_label]=rp[:,0]
@@ -188,7 +191,7 @@ def plot_obs(ax,obs,plot_projection,
                             zorder=zorder))
 
 # Add a label
-def plot_label(ax,label,extent,
+def plot_label(ax,label,
                color='black',
                facecolor='white',
                x_fraction=0.98,y_fraction=0.02,
@@ -197,6 +200,7 @@ def plot_label(ax,label,extent,
                fontsize=12,
                zorder=5.5):
 
+    extent=ax.get_extent()
     ax.text(extent[0]*(1-x_fraction)+extent[1]*x_fraction,
             extent[2]*(1-y_fraction)+extent[3]*y_fraction,
             label,
