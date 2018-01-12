@@ -26,6 +26,9 @@ import pandas
 # Eliminate incomprehensible warning message
 iris.FUTURE.netcdf_promote='True'
 
+# Need to add coordinate system metadata so they work with cartopy
+coord_s=iris.coord_systems.GeogCS(iris.fileformats.pp.EARTH_RADIUS)
+
 def get_data_dir(version):
     """Return the root directory containing 20CR netCDF files"""
     g="%s/20CR/version_%s/" % (os.environ['SCRATCH'],version)
@@ -118,6 +121,12 @@ def get_slice_at_hour_at_timestep(variable,year,month,day,hour,version,
     # This isn't the right error to catch
     except iris.exceptions.ConstraintMismatchError:
        print("Data not available")
+
+    # Enhance the names and metadata for iris/cartopy
+    hslice.coord('latitude').coord_system=coord_s
+    hslice.coord('longitude').coord_system=coord_s
+    if type=='ensemble':
+        hslice.dim_coords[0].rename('member') # Remove spaces in name
     return hslice
 
 def get_slice_at_hour(variable,year,month,day,hour,version,
