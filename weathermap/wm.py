@@ -37,7 +37,7 @@ import cartopy.crs as ccrs
 # Add a lat lon grid to an axes
 def add_grid(ax,
              linestyle='-',
-             linewidth_minor=0.2,linewidth_major=1,
+             linewidth_minor=0.2,linewidth_major=0.5,
              color=(0,0.50,0,0.3),zorder=0,
              sep_major=2,sep_minor=0.5):
 
@@ -45,14 +45,18 @@ def add_grid(ax,
                           linewidth=linewidth_minor,
                           color=color,
                           zorder=zorder)
-    gl_minor.xlocator = matplotlib.ticker.FixedLocator(numpy.arange(-180,180,sep_minor))
-    gl_minor.ylocator = matplotlib.ticker.FixedLocator(numpy.arange(-90,90,sep_minor))
+    gl_minor.xlocator = matplotlib.ticker.FixedLocator(
+                       numpy.arange(-180,180,sep_minor))
+    gl_minor.ylocator = matplotlib.ticker.FixedLocator(
+                         numpy.arange(-90,90,sep_minor))
     gl_major=ax.gridlines(linestyle=linestyle,
                           linewidth=linewidth_major,
                           color=color,
                           zorder=zorder)
-    gl_major.xlocator = matplotlib.ticker.FixedLocator(numpy.arange(-180,180,sep_major))
-    gl_major.ylocator = matplotlib.ticker.FixedLocator(numpy.arange(-90,90,sep_major))
+    gl_major.xlocator = matplotlib.ticker.FixedLocator(
+                       numpy.arange(-180,180,sep_major))
+    gl_major.ylocator = matplotlib.ticker.FixedLocator(
+                         numpy.arange(-90,90,sep_major))
 
 # Make a dummy cube to use as a plot grid
 def make_dummy(ax,resolution):
@@ -184,7 +188,7 @@ def plot_obs(ax,obs,
     for ob in obs.itertuples():
         ax.add_patch(Circle((getattr(ob, lon_label),
                              getattr(ob, lat_label)),
-                            radius=0.1,
+                            radius=radius,
                             facecolor='yellow',
                             edgecolor='black',
                             alpha=alpha,
