@@ -189,8 +189,8 @@ def plot_obs(ax,obs,
         ax.add_patch(Circle((getattr(ob, lon_label),
                              getattr(ob, lat_label)),
                             radius=radius,
-                            facecolor='yellow',
-                            edgecolor='black',
+                            facecolor=facecolor,
+                            edgecolor=edgecolor,
                             alpha=alpha,
                             zorder=zorder))
 
