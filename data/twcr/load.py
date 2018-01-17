@@ -72,10 +72,10 @@ def is_in_file(variable,version,hour):
     """Is the variable available for this time?
        Or will it have to be interpolated?"""
     if(version[0]=='4' and hour%3==0):
-        return 'True'
+        return True
     if hour%6==0:
-        return 'True'
-    return 'False'
+        return True
+    return False
 
 def get_previous_field_time(variable,year,month,day,hour,version):
     """Get the latest time, before the given time,
@@ -120,7 +120,8 @@ def get_slice_at_hour_at_timestep(variable,year,month,day,hour,version,
                                   time_constraint)
     # This isn't the right error to catch
     except iris.exceptions.ConstraintMismatchError:
-       print("Data not available")
+       raise StandardError("Data not available for %04d-%02d-%02d:%02d" % (year,
+                               month,day,hour))
 
     # Enhance the names and metadata for iris/cartopy
     hslice.coord('latitude').coord_system=coord_s
@@ -150,8 +151,6 @@ def get_slice_at_hour(variable,year,month,day,hour,version,
                               next_step['month'],
                               next_step['day'],
                               next_step['hour'])
-    weight=((dt_current-dt_previous).total_seconds()
-            /(dt_next-dt_previous).total_seconds())
     s_previous=get_slice_at_hour_at_timestep(variable,
                                              previous_step['year'],
                                              previous_step['month'],
@@ -164,7 +163,8 @@ def get_slice_at_hour(variable,year,month,day,hour,version,
                                          next_step['day'],
                                          next_step['hour'],
                                          version,type)
-    s_next.data=s_next.data*weight+s_previous.data*(1-weight)
+    s_next=iris.cube.CubeList((s_previous,s_next)).merge_cube()
+    s_next=s_next.interpolate([('time',dt_current)],iris.analysis.Linear())
     return s_next
 
 def get_obs_1file(year,month,day,hour,version):
