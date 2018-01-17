@@ -92,8 +92,8 @@ def get_next_field_time(variable,year,month,day,hour,version):
         dr = {'year':year,'month':month,'day':day,'hour':int(hour/3)*3+3}
     if dr['hour']>=24:
         d_next= ( datetime.date(dr['year'],dr['month'],dr['day']) 
-                 + datetime.timedelta(1) )
-        dr = {'year':d1.year,'month':d1.month,'day':d1.day,
+                 + datetime.timedelta(days=1) )
+        dr = {'year':d_next.year,'month':d_next.month,'day':d_next.day,
               'hour':dr['hour']-24}
     return dr
 
