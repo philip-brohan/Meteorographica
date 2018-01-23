@@ -181,13 +181,13 @@ def plot_obs(ax,obs,
     rp=ax.projection.transform_points(obs_projection,
                                    obs[lon_label].values,
                                    obs[lat_label].values)
-    obs[lon_label]=rp[:,0]
-    obs[lat_label]=rp[:,1]
+    new_longitude=rp[:,0]
+    new_latitude=rp[:,1]
 
     # Plot each ob as a circle
-    for ob in obs.itertuples():
-        ax.add_patch(Circle((getattr(ob, lon_label),
-                             getattr(ob, lat_label)),
+    for i in range(0,len(new_longitude)):
+        ax.add_patch(Circle((new_longitude[i],
+                             new_latitude[i]),
                             radius=radius,
                             facecolor=facecolor,
                             edgecolor=edgecolor,
