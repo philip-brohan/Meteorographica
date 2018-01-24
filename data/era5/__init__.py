@@ -11,8 +11,11 @@
 # GNU Lesser General Public License for more details.
 #
 """
-A package for handling data from the 20th Century Reanalysis.
+A package for handling data from the CERA-20C reanalysis.
 
 """
 
 from utils import *
+from fetch import *
+#from load import *
+

@@ -23,25 +23,25 @@ import subprocess
 from calendar import monthrange
 from ecmwfapi import ECMWFDataServer
 
-from . import get_data_file_name
+from . import hourly_get_file_name
 from . import translate_for_file_names
 from . import monolevel_analysis
 from . import monolevel_forecast
 
-def fetch_data_for_month(variable,year,month,
-                                  stream='oper'):
+def fetch_data_for_month(variable,year,month,stream='enda'):
     if variable in monolevel_analysis:
         return fetch_analysis_data_for_month(variable,year,
-                                             month,stream)
+                                             month)
     if variable in monolevel_forecast:
         return fetch_forecast_data_for_month(variable,year,
-                                             month,stream)
+                                             month)
     raise StandardError("Unsupported variable %s" % variable)
 
 def fetch_analysis_data_for_month(variable,year,month,
-                                  stream='oper'):
+                                  stream='enda'):
         
-    local_file=get_data_file_name(variable,year,month,stream)
+    local_file=hourly_get_file_name(variable,year,month,
+                                    stream=stream)
     if os.path.isfile(local_file):
         # Got this data already
         return
@@ -49,101 +49,62 @@ def fetch_analysis_data_for_month(variable,year,month,
     if not os.path.exists(os.path.dirname(local_file)):
         os.makedirs(os.path.dirname(local_file))
 
+    grid='0.5/0.5'
+    if stream=='oper':
+        grid='0.25/0.25'
     server = ECMWFDataServer()
-    grid='0.25/0.25'
-    if stream=='enda':
-        grid='0.5/0.5'
     server.retrieve({
         'dataset'   : 'era5',
         'stream'    : stream,
         'type'      : 'an',
         'levtype'   : 'sfc',
         'param'     : translate_for_file_names(variable),
-        'time'      : '0/to/23/by/1',
         'grid'      : grid,
+        'time'      : '0/to/23/by/1',
         'date'      : "%04d-%02d-%02d/to/%04d-%02d-%02d" %
                        (year,month,1,
                         year,month,
-                        monthrange(year,month))
+                        monthrange(year,month)[1]),
         'format'    : 'netcdf',
         'target'    : local_file
     })
 
 def fetch_forecast_data_for_month(variable,year,month,
-                                  stream='oper'):
+                                  stream='enda'):
         
     # Need two sets of forecast data - from the runs at 6 and 18
-    for start_hour in [6,18]:
+    for start_hour in (6,18):
 
-        local_file=get_data_file_name(variable,year,month,stream,
-                                      start_hour=start_hour)
+        local_file=hourly_get_file_name(variable,year,month,
+                                    fc_init=start_hour,stream=stream)
         if os.path.isfile(local_file):
             # Got this data already
             return
-            
+
         if not os.path.exists(os.path.dirname(local_file)):
             os.makedirs(os.path.dirname(local_file))
 
+        grid='0.5/0.5'
+        if stream=='oper':
+            grid='0.25/0.25'
         server = ECMWFDataServer()
-        grid='0.25/0.25'
-        if stream=='enda':
-            grid='0.5/0.5'
         server.retrieve({
             'dataset'   : 'era5',
-            'stream'    : stream,
+            'stream'    :  stream,
             'type'      : 'fc',
-            'step'      : '0/to/18/by/1',
             'levtype'   : 'sfc',
             'param'     : translate_for_file_names(variable),
-            'time'      : start_hour,
             'grid'      : grid,
+            'time'      : "%02d" % start_hour,
+            'step'      : '0/to/18/by/1',
+            'grid'      : '1.25/1.25',
+            'number'    : '0/1/2/3/4/5/6/7/8/9',
             'date'      : "%04d-%02d-%02d/to/%04d-%02d-%02d" %
                            (year,month,1,
                             year,month,
-                            calendar.monthrange(year,month))
+                            monthrange(year,month)[1]),
             'format'    : 'netcdf',
             'target'    : local_file
         })
 
-
-def fetch_data_for_month(variable,year,month,
-                         version,type='ensemble',source=None):
-    """Version 3 specific - for version 2 use fetch_data_for_year."""
-    
-    if(version[0]!='4' and month is not None):
-        raise StandardError("Use 'fetch_data_for_year' for version 2")
-    if(month is None):
-        month=1   # Arbitrary, v2 data is by year, so any month would do
-    # Day and hour also set arbtrarily to 1 and 6
-    local_file=get_data_file_name(variable,year,month,1,6,version,type)
-
-    if ((variable != 'observations') and os.path.isfile(local_file)): 
-        # Got this data already
-        return
-
-    if not os.path.exists(os.path.dirname(local_file)):
-        os.makedirs(os.path.dirname(local_file))
-
-    remote_file=get_remote_file_name(variable,year,month,version,type,source)
-
-    if(variable=='observations'):
-        # Multiple files - use rsync
-        local_file=os.path.dirname(local_file)
-        cmd="rsync -Lr %s/ %s" % (remote_file,local_file)
-        #print(cmd)
-        scp_retvalue=subprocess.call(cmd,shell=True) # Why need shell=True?
-        if scp_retvalue==3:
-            raise StandardError("Remote data not available")
-        if scp_retvalue!=0:
-            raise StandardError("Failed to retrieve data")
-        
-    else:
-        # Single file - use scp
-        cmd="scp %s %s" % (remote_file,local_file)
-        #print(cmd)
-        scp_retvalue=subprocess.call(cmd,shell=True)
-        if scp_retvalue==6:
-            raise StandardError("Remote data not available")
-        if scp_retvalue!=0:
-            raise StandardError("Failed to retrieve data")
 
