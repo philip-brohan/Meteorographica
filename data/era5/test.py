@@ -11,13 +11,13 @@
 # GNU Lesser General Public License for more details.
 #
 """
-Test cases for Meteorographica.data.cera20c.
+Test cases for Meteorographica.data.era5.
 
 """
 
 import os
 import unittest
-from Meteorographica.data import cera20c
+from Meteorographica.data import era5
  
 class TestUM(unittest.TestCase):
  
@@ -25,26 +25,26 @@ class TestUM(unittest.TestCase):
         pass
  
     def test_translate_for_variable_names(self):
-        self.assertEqual(cera20c.translate_for_variable_names('prmsl'),
-                         'mslp')
-        self.assertEqual(cera20c.translate_for_variable_names('prate'),
+        self.assertEqual(era5.translate_for_variable_names('prmsl'),
+                         'msl')
+        self.assertEqual(era5.translate_for_variable_names('prate'),
                          'tp')
-        self.assertEqual(cera20c.translate_for_variable_names('uwnd.10m'),
+        self.assertEqual(era5.translate_for_variable_names('uwnd.10m'),
                          'u10')
         with self.assertRaises(StandardError) as cm:
-            cera20c.translate_for_variable_names('mslp')
+            era5.translate_for_variable_names('mslp')
         self.assertIn('Unsupported variable mslp',
                       cm.exception)
 
     def test_translate_for_file_names(self):
-        self.assertEqual(cera20c.translate_for_file_names('prmsl'),
-                         'mslp')
-        self.assertEqual(cera20c.translate_for_file_names('prate'),
+        self.assertEqual(era5.translate_for_file_names('prmsl'),
+                         'msl')
+        self.assertEqual(era5.translate_for_file_names('prate'),
                          'tp')
-        self.assertEqual(cera20c.translate_for_file_names('uwnd.10m'),
+        self.assertEqual(era5.translate_for_file_names('uwnd.10m'),
                          '10u')
         with self.assertRaises(StandardError) as cm:
-            cera20c.translate_for_file_names('mslp')
+            era5.translate_for_file_names('mslp')
         self.assertIn('Unsupported variable mslp',
                       cm.exception)
 
@@ -52,7 +52,7 @@ class TestUM(unittest.TestCase):
         scratch=os.getenv('SCRATCH')
         del os.environ['SCRATCH']
         with self.assertRaises(StandardError) as cm:
-            cera20c.get_data_dir()
+            era5.get_data_dir()
         self.assertIn('SCRATCH environment variable is undefined',
                       cm.exception)
         os.environ['SCRATCH']=scratch

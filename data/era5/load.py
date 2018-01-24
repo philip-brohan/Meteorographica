@@ -12,7 +12,7 @@
 #
 """
 The functions in this module provide the main way to load
-CERA-20C data.
+ERA5 data.
 """
 
 import os
@@ -33,22 +33,33 @@ iris.FUTURE.netcdf_promote='True'
 # Need to add coordinate system metadata so they work with cartopy
 coord_s=iris.coord_systems.GeogCS(iris.fileformats.pp.EARTH_RADIUS)
 
-def is_in_file(variable,year,month,day,hour):
+def is_in_file(variable,year,month,day,hour,stream='enda'):
     """Is the variable available for this time?
        Or will it have to be interpolated?"""
-    if hour%3==0 :
-        return True 
+    if stream=='enda' and hour%3==0:
+        return True
+    if stream=='oper' and hour%1==0:
+        return True
     return False
 
-def get_previous_field_time(variable,year,month,day,hour):
+def get_previous_field_time(variable,year,month,day,hour,stream='enda'):
     """Get the latest time, before the given time,
                      for which there is saved data"""
-    return {'year':year,'month':month,'day':day,'hour':int(hour/3)*3}
+    if stream=='enda':
+        return {'year':year,'month':month,'day':day,'hour':int(hour/3)*3}
+    if stream=='oper':
+        return {'year':year,'month':month,'day':day,'hour':int(hour)}
+    raise StandardError("Unknown stream %s" % stream)
 
-def get_next_field_time(variable,year,month,day,hour):
+def get_next_field_time(variable,year,month,day,hour,stream='enda'):
     """Get the earliest time, after the given time,
-                     for which there is saved data"""
-    dr = {'year':year,'month':month,'day':day,'hour':int(hour/3)*3+3}
+                     for which there is saved data"""  
+    if stream=='enda':
+       dr = {'year':year,'month':month,'day':day,'hour':int(hour/3)*3+3}
+    elif stream=='oper':
+       dr = {'year':year,'month':month,'day':day,'hour':int(hour)+1}
+    else:
+       raise StandardError("Unknown stream %s" % stream) 
     if dr['hour']>=24:
         d_next= ( datetime.date(dr['year'],dr['month'],dr['day']) 
                  + datetime.timedelta(days=1) )
@@ -57,13 +68,13 @@ def get_next_field_time(variable,year,month,day,hour):
     return dr
 
 def get_slice_at_hour_at_timestep(variable,year,month,day,hour,
-                                  type='ensemble',fc_init=None):
+                                  stream='enda',fc_init=None):
     """Get the cube with the data, given that the specified time
        matches a data timestep."""
-    if not is_in_file(variable,year,month,day,hour):
+    if not is_in_file(variable,year,month,day,hour,stream=stream):
         raise ValueError("Invalid hour - data not in file")
     file_name=hourly_get_file_name(variable,year,month,day,hour,
-                                   type=type,fc_init=fc_init)
+                                   stream=stream,fc_init=fc_init)
     if type == 'normal' or type == 'standard.deviation':
         year=1981
         if month==2 and day==29:
@@ -84,23 +95,23 @@ def get_slice_at_hour_at_timestep(variable,year,month,day,hour,
     # Enhance the names and metadata for iris/cartopy
     hslice.coord('latitude').coord_system=coord_s
     hslice.coord('longitude').coord_system=coord_s
-    if type=='ensemble':
+    if stream=='enda':
         hslice.dim_coords[0].rename('member') # Consistency with 20CR
     return hslice
 
 def get_slice_at_hour(variable,year,month,day,hour,
-                      type='ensemble',fc_init=None):
+                      stream='enda',fc_init=None):
     """Get the cube with the data, interpolating between timesteps
        if necessary."""
-    if is_in_file(variable,year,month,day,hour):
+    if is_in_file(variable,year,month,day,hour,stream=stream):
         return(get_slice_at_hour_at_timestep(variable,year,
                                              month,day,
-                                             hour,type=type,
+                                             hour,stream=stream,
                                              fc_init=fc_init))
     previous_step=get_previous_field_time(variable,year,month,
-                                          day,hour)
+                                          day,hour,stream=stream)
     next_step=get_next_field_time(variable,year,month,
-                                  day,hour)
+                                  day,hour,stream=stream)
     dt_current=datetime.datetime(year,month,day,int(hour),int((hour%1)*60))
     dt_previous=datetime.datetime(previous_step['year'],
                                   previous_step['month'],
@@ -115,14 +126,14 @@ def get_slice_at_hour(variable,year,month,day,hour,
                                              previous_step['month'],
                                              previous_step['day'],
                                              previous_step['hour'],
-                                             type=type,
+                                             stream=stream,
                                              fc_init=fc_init)
     s_next=get_slice_at_hour_at_timestep(variable,
                                          next_step['year'],
                                          next_step['month'],
                                          next_step['day'],
                                          next_step['hour'],
-                                         type=type,
+                                         stream=stream,
                                          fc_init=fc_init)
  
     s_next=iris.cube.CubeList((s_previous,s_next)).merge_cube()
