@@ -11,12 +11,9 @@
 # GNU Lesser General Public License for more details.
 #
 """
-A package for handling data from the 20th Century Reanalysis.
+A package for handling data from the 20th Century Reanalysis V3.
 
 """
 
-import version_2
-import version_3
-from utils import *
 from load import *
 from fetch import *
