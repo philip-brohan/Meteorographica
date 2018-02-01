@@ -34,6 +34,13 @@ from iris.analysis.cartography import rotate_winds
 import cartopy
 import cartopy.crs as ccrs
 
+# Convert an rgb tuple colour string to its hex representation
+#  some functions expecting a sequence of colours misinterpret
+#  the tuple version.
+def rgb_to_hex(rgb):
+    rgb = [255*x for x in rgb]
+    return '#' + ''.join(['{:02X}'.format(int(round(x))) for x in rgb])
+
 # Add a lat lon grid to an axes
 def add_grid(ax,
              linestyle='-',
