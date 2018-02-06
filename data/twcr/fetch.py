@@ -32,7 +32,7 @@ def fetch_data_for_month(variable,year,month,version,
                               type=type,
                               version=version)
 
-def fetch_data_for_year(variable,year,month,version,
+def fetch_data_for_year(variable,year,version,
                                      type='ensemble'):
     vn=get_version_from_ensda(version)
     if vn==2:
@@ -40,9 +40,5 @@ def fetch_data_for_year(variable,year,month,version,
                               variable,year,
                               type=type,
                               version=version)
-
     if vn==3:
-        return version_3.fetch_data_for_month(
-                              variable,year,month,
-                              type=type,
-                              version=version)
+        raise StandardError('Use "fetch_data_for_month" for V3.')
