@@ -23,10 +23,10 @@ from sklearn.utils import check_random_state
 #  from (0,0) - we'll sample from these many times.
 # Uses a fixed seed, so should get same set of points every time
 random_state = check_random_state(12) # Arbitrary argument
-sample_cache_x=numpy.array(random_state.uniform(-2,2,2000))
-sample_cache_y=numpy.array(random_state.uniform(-2,2,2000))
+sample_cache_x=numpy.array(random_state.uniform(-3,3,10000))
+sample_cache_y=numpy.array(random_state.uniform(-3,3,10000))
 sample_mag=sample_cache_x**2+sample_cache_y**2
-sample_selected=numpy.logical_and(sample_mag>1,sample_mag<4)
+sample_selected=numpy.logical_and(sample_mag>1,sample_mag<6)
 sample_cache_x=sample_cache_x[sample_selected]
 sample_cache_y=sample_cache_y[sample_selected]
 
