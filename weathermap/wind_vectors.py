@@ -16,7 +16,6 @@ Functions for assigning, updating, and plotting wind vectors.
 """
 
 import numpy
-import pandas
 import math
 from sklearn.utils import check_random_state
 
@@ -34,13 +33,14 @@ sample_cache_y=sample_cache_y[sample_selected]
 # Allocate wind vector seed points evenly over a given lat,lon
 #  region. Uses Bridson's algorithm, modified to allow a set
 #  of initial points be supplied.
-sub allocate_vector_points(initial_points=None,
+def allocate_vector_points(initial_points=None,
                            lat_range=(-90,90),
                            lon_range=(-180,180),
                            scale=5.0,
                            random_state=None,
                            max_points=10000):
 
+    random_state=check_random_state(random_state)
     cellsize=scale/math.sqrt(2)
     x_n_cells=int(math.ceil((lon_range[1]-lon_range[0])/cellsize))
     y_n_cells=int(math.ceil((lat_range[1]-lat_range[0])/cellsize))
@@ -73,47 +73,88 @@ sub allocate_vector_points(initial_points=None,
         close_idx[1]=close_idx[1][in_p]
         return(close_idx)
 
-    # Store the allocated points in a dataframe
-    allocated=pandas.DataFrame({'Latitude': numpy.zeros([max_points],float),
-                                'Longitude':numpy.zeros([max_points],float),
-                                'Age':      numpy.zeros([max_points],int)})
+    # Try and find a new point close to a seed point
+    def find_new(x,y):
+        sub_s=random_state.randint(len(sample_cache_x),size=100)
+        for samp in sub_s:
+            if (x+sample_cache_x[samp]*scale<lon_range[0] or
+                x+sample_cache_x[samp]*scale>lon_range[1] or
+                y+sample_cache_y[samp]*scale<lat_range[0] or
+                y+sample_cache_y[samp]*scale>lat_range[1]): continue
+            gc=grid_coords(x+sample_cache_x[samp]*scale,
+                           y+sample_cache_y[samp]*scale)
+            if(occupied[gc[0],gc[1]]==0): return (x+sample_cache_x[samp]*scale,
+                                                  y+sample_cache_y[samp]*scale)
+        return None
+        
+    # Store the allocated points in a dictionary
+    allocated={'Latitude': numpy.zeros([max_points],float),
+               'Longitude':numpy.zeros([max_points],float),
+               'Age':      numpy.zeros([max_points],int)}
     n_allocated=0 # Nothing in it yet
-    # Store the culled points in a dataframe
-    culled=pandas.DataFrame({'Latitude': numpy.zeros([max_points],float),
-                                'Longitude':numpy.zeros([max_points],float),
-                                'Age':      numpy.zeros([max_points],int)})
-    n_allocated=0 # Nothing in it yet
-    active=numpy.zeros([max_points]
+    # Store the culled points similarly
+    culled={'Latitude': numpy.zeros([max_points],float),
+            'Longitude':numpy.zeros([max_points],float),
+            'Age':      numpy.zeros([max_points],int)}
+    n_culled=0 # Nothing in it yet
+    active=numpy.zeros([max_points])
 
     # Grid marking occupied cells
     occupied=numpy.zeros([x_n_cells,y_n_cells]) # 0=free cell
 
     # Insert the initial points, rejecting any that overlap
-    if initial_points not None:
-        for(init_i in range(0,len(initial_points)):
-            if initial_points.Latitude[init_i] < lat_range[0] or\
-               initial_points.Latitude[init_i] > lat_range[1]: continue
-            if initial_points.Longitude[init_i] < lon_range[0] or\
-               initial_points.Longitude[init_i] > lon_range[1]: continue
-            cdrs=grid_coords(initial_points.Longitude[init_i],
-                             initial_points.Latitude[init_i])
+    if initial_points is not None:
+        for init_i in range(0,len(initial_points['Age'])):
+            if initial_points['Latitude'][init_i] < lat_range[0] or\
+               initial_points['Latitude'][init_i] > lat_range[1]: continue
+            if initial_points['Longitude'][init_i] < lon_range[0] or\
+               initial_points['Longitude'][init_i] > lon_range[1]: continue
+            cdrs=grid_coords(initial_points['Longitude'][init_i],
+                             initial_points['Latitude'][init_i])
             if occupied[cdrs[0],cdrs[1]]!=0: continue  # reject
             # Add it to the newly allocated list
-            allocated.Latitude[n_allocated]=initial_points.Latitude[init_i]
-            allocated.Longitude[n_allocated]=initial_points.Longitude[init_i]
-            allocated.Age[n_allocated]=initial_points.Age[init_i]+1
+            allocated['Latitude'][n_allocated]=initial_points['Latitude'][init_i]
+            allocated['Longitude'][n_allocated]=initial_points['Longitude'][init_i]
+            allocated['Age'][n_allocated]=initial_points['Age'][init_i]+1
             # Mark the region around it as occupied
-            tc=too_close(initial_points.Longitude[init_i],
-                         initial_points.Latitude[init_i])
+            tc=too_close(initial_points['Longitude'][init_i],
+                         initial_points['Latitude'][init_i])
             occupied[tc[0],tc[1]]=1
             active[n_allocated]=1 # Seed new points from this one
             n_allocated +=1
             if n_allocated>max_points:
                 raise StandardError("Insufficient wind points")
 
-    # Fill in remaining space with Bridson's method
     # Add a seed point if there were no initial points
     if n_allocated==0:
         seed_x=lon_range[0]*.9+lon_range[1]*.1
         seed_y=lat_range[0]*.9+lat_range[1]*.1
-      
+        allocated['Longitude'][n_allocated]=seed_x
+        allocated['Latitude'][n_allocated]=seed_y
+        allocated['Age'][n_allocated]=0
+        tc=too_close(seed_x,seed_y)
+        occupied[tc[0],tc[1]]=1
+        active[n_allocated]=1 # Seed new points from this one
+        n_allocated +=1
+
+    # Fill in remaining space with Bridson's method
+    while len(numpy.where(active==1)[0])>0:
+        current=min(numpy.where(active==1)[0])
+        new_point=find_new(allocated['Longitude'][current],
+                           allocated['Latitude'][current])
+        if new_point is None:
+            active[current]=0
+            continue
+        allocated['Longitude'][n_allocated]=new_point[0]
+        allocated['Latitude'][n_allocated]=new_point[1]
+        allocated['Age'][n_allocated]=0
+        tc=too_close(new_point[0],new_point[1])
+        occupied[tc[0],tc[1]]=1
+        active[n_allocated]=1
+        n_allocated +=1
+        if n_allocated>max_points:
+            raise StandardError("Insufficient wind points")
+
+    return {'Longitude': allocated['Longitude'][0:n_allocated],
+            'Latitude':  allocated['Latitude'][0:n_allocated],
+            'Age':       allocated['Age'][0:n_allocated]}
