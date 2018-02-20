@@ -16,5 +16,5 @@ Make weathermaps using Matplotlib, Iris, & cartopy
 """
 
 from utils import *
-from wm import *
 from wind_vectors import *
+from wm import *

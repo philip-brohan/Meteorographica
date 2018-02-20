@@ -34,6 +34,8 @@ from iris.analysis.cartography import rotate_winds
 import cartopy
 import cartopy.crs as ccrs
 
+from . import allocate_vector_points
+
 # Convert an rgb tuple colour string to its hex representation
 #  some functions expecting a sequence of colours misinterpret
 #  the tuple version.
@@ -143,8 +145,10 @@ def plot_contour(ax,pe,
     return CS
 
 # Plot a (wind) field as vectors
-def plot_quiver(ax,ue,ve,resolution=1,
+def plot_quiver(ax,ue,ve,points=None,
+                scale=None,resolution=1,
                 color=(0,0,0,0.25),headwidth=1,
+                random_state=None,max_points=10000,
                 zorder=5):
 
     pole_latitude=ax.projection.proj4_params['o_lat_p']
@@ -155,11 +159,18 @@ def plot_quiver(ax,ue,ve,resolution=1,
     plot_cube=make_dummy(ax,resolution)
     u_p = rw[0].regrid(plot_cube,iris.analysis.Linear())
     v_p = rw[1].regrid(plot_cube,iris.analysis.Linear())
-    lats = u_p.coord('latitude').points
-    lons = u_p.coord('longitude').points
-    lons,lats = numpy.meshgrid(lons,lats)
-    lons=lons.flatten()
-    lats=lats.flatten()
+    if points is None:
+        if scale is None: scale=resolution
+        points=allocate_vector_points(initial_points=None,
+                                      lat_range=(min(u_p.coord('latitude').points),
+                                                 max(u_p.coord('latitude').points)),
+                                      lon_range=(min(u_p.coord('longitude').points),
+                                                 max(u_p.coord('longitude').points)),
+                                      scale=scale,
+                                      random_state=random_state,
+                                      max_points=max_points)
+    lats = points['Latitude']
+    lons = points['Longitude']
     u_interpolator = iris.analysis.Linear().interpolator(u_p, 
                                     ['latitude', 'longitude'])
     v_interpolator = iris.analysis.Linear().interpolator(v_p, 
