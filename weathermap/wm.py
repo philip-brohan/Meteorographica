@@ -47,7 +47,7 @@ def rgb_to_hex(rgb):
 def add_grid(ax,
              linestyle='-',
              linewidth_minor=0.2,linewidth_major=0.5,
-             color=(0,0.50,0,0.3),zorder=0,
+             color=(0,0.30,0,0.3),zorder=0,
              sep_major=2,sep_minor=0.5):
 
     gl_minor=ax.gridlines(linestyle=linestyle,
@@ -55,17 +55,17 @@ def add_grid(ax,
                           color=color,
                           zorder=zorder)
     gl_minor.xlocator = matplotlib.ticker.FixedLocator(
-                       numpy.arange(-180,180,sep_minor))
+                       numpy.arange(-180,180+sep_minor,sep_minor))
     gl_minor.ylocator = matplotlib.ticker.FixedLocator(
-                         numpy.arange(-90,90,sep_minor))
+                         numpy.arange(-85,58+sep_minor,sep_minor))
     gl_major=ax.gridlines(linestyle=linestyle,
                           linewidth=linewidth_major,
                           color=color,
                           zorder=zorder)
     gl_major.xlocator = matplotlib.ticker.FixedLocator(
-                       numpy.arange(-180,180,sep_major))
+                       numpy.arange(-180,180+sep_major,sep_major))
     gl_major.ylocator = matplotlib.ticker.FixedLocator(
-                         numpy.arange(-90,90,sep_major))
+                         numpy.arange(-85,85+sep_major,sep_major))
 
 # Make a dummy cube to use as a plot grid
 def make_dummy(ax,resolution):
@@ -73,9 +73,11 @@ def make_dummy(ax,resolution):
     extent=ax.get_extent()
     pole_latitude=ax.projection.proj4_params['o_lat_p']
     pole_longitude=ax.projection.proj4_params['lon_0']-180
+    npg_longitude=ax.projection.proj4_params['o_lon_p']
 
     cs=iris.coord_systems.RotatedGeogCS(pole_latitude,
-                                        pole_longitude)
+                                        pole_longitude,
+                                        npg_longitude)
     lat_values=numpy.arange(extent[2]-2,extent[3]+2,resolution)
     latitude = iris.coords.DimCoord(lat_values,
                                     standard_name='latitude',
