@@ -109,6 +109,17 @@ precip_default_colour_dict = {'red'  : ((0.0, 0.0, 0.0),
 } 
 precip_default_cmap= matplotlib.colors.LinearSegmentedColormap('p_cmap',
                                                  precip_default_colour_dict)
+temperature_default_colour_dict = {'red'  : ((0.0, 0.0, 0.0), 
+                                             (1.0, 1.0, 1.0)), 
+                                   'green': ((0.0, 0.0, 0.0), 
+                                             (1.0, 0.0, 0.0)), 
+                                   'blue' : ((0.0, 1.0, 1.0), 
+                                             (1.0, 0.0, 0.0)), 
+                                   'alpha': ((0.0, 0.4, 0.4),
+                                             (1.0, 0.4, 0.4)) 
+} 
+temperature_default_cmap= matplotlib.colors.LinearSegmentedColormap('p_cmap',
+                                                 temperature_default_colour_dict)
 def plot_cmesh(ax,pe,resolution=0.25,
                cmap=precip_default_cmap,
                zorder=4):
@@ -185,8 +196,53 @@ def plot_quiver(ax,ue,ve,points=None,
     qv=ax.quiver(lons,lats,u_i,v_i,
                             headwidth=headwidth,
                             color=color,
+                            scale=1000,
                             zorder=5)
     return qv
+
+# Plot a wind field as vectors coloured by temperature
+def plot_wind_and_temperature(ax,ue,ve,t2,points=None,
+                              scale=None,resolution=1,
+                              color=(0,0,0,0.25),headwidth=1,
+                              random_state=None,max_points=10000,
+                              zorder=5):
+    pole_latitude=ax.projection.proj4_params['o_lat_p']
+    pole_longitude=ax.projection.proj4_params['lon_0']-180
+    projection_iris=iris.coord_systems.RotatedGeogCS(pole_latitude,
+                                                     pole_longitude)
+    plot_cube=make_dummy(ax,resolution)
+    t_p = t2.regrid(plot_cube,iris.analysis.Linear())
+    if points is None:
+        if scale is None: scale=resolution
+        points=allocate_vector_points(initial_points=None,
+                                      lat_range=(min(t_p.coord('latitude').points),
+                                                 max(t_p.coord('latitude').points)),
+                                      lon_range=(min(t_p.coord('longitude').points),
+                                                 max(t_p.coord('longitude').points)),
+                                      scale=scale,
+                                      random_state=random_state,
+                                      max_points=max_points)
+    lats_a = points['Latitude']
+    lons_a = points['Longitude']
+    t_p.data=(t_p.data-253)/50
+    t_p.data=numpy.where(t_p.data >= 1, 1, t_p.data)
+    t_p.data=numpy.where(t_p.data < 0,  0, t_p.data)
+    t_interpolator = iris.analysis.Linear().interpolator(t_p, 
+                                    ['latitude', 'longitude'])
+    t_i=numpy.zeros(lons_a.size)
+    for i in range(lons_a.size):
+        t_i[i]=t_interpolator([lats_a[i],lons_a[i]]).data
+    for t in range(0,10,1):
+        colour=(t/10.0+0.05,0,0.95-t/10.0,0.5)
+        pts_i=numpy.where((t_i>=t/10.0) & (t_i<=t/10.0+0.1))
+        if len(pts_i[0])==0: continue
+        pts={'Latitude':lats_a[pts_i],
+             'Longitude':lons_a[pts_i]}
+        plot_quiver(ax,ue,ve,points=pts,scale=scale,resolution=resolution,
+                    color=colour,headwidth=headwidth,
+                    random_state=random_state,
+                    max_points=max_points,
+                    zorder=zorder)
 
 # Plot observations as points
 def plot_obs(ax,obs,
