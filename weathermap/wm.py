@@ -196,7 +196,7 @@ def plot_quiver(ax,ue,ve,points=None,
     qv=ax.quiver(lons,lats,u_i,v_i,
                             headwidth=headwidth,
                             color=color,
-                            scale=1000,
+                            scale=2000,
                             zorder=5)
     return qv
 
@@ -233,7 +233,7 @@ def plot_wind_and_temperature(ax,ue,ve,t2,points=None,
     for i in range(lons_a.size):
         t_i[i]=t_interpolator([lats_a[i],lons_a[i]]).data
     for t in range(0,10,1):
-        colour=(t/10.0+0.05,0,0.95-t/10.0,0.5)
+        colour=(t/10.0+0.05,0,0.95-t/10.0,0.75)
         pts_i=numpy.where((t_i>=t/10.0) & (t_i<=t/10.0+0.1))
         if len(pts_i[0])==0: continue
         pts={'Latitude':lats_a[pts_i],
