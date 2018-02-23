@@ -1,0 +1,385 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Meteorographica.data.mopd.get &#8212; Meteorographica 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="top" title="Meteorographica 0.0.1 documentation" href="../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">Meteorographica 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for Meteorographica.data.mopd.get</h1><div class="highlight"><pre>
+<span></span><span class="c1"># (C) British Crown Copyright 2017, Met Office</span>
+<span class="c1">#</span>
+<span class="c1"># This code is free software: you can redistribute it and/or modify it under</span>
+<span class="c1"># the terms of the GNU Lesser General Public License as published by the</span>
+<span class="c1"># Free Software Foundation, either version 3 of the License, or</span>
+<span class="c1"># (at your option) any later version.</span>
+<span class="c1">#</span>
+<span class="c1"># This code is distributed in the hope that it will be useful,</span>
+<span class="c1"># but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="c1"># MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="c1"># GNU Lesser General Public License for more details.</span>
+<span class="c1">#</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">The functions in this module access Met Office public data from the</span>
+<span class="sd"> informatics lab store on AWS. Uses $SCRATCH as a file cache.</span>
+
+<span class="sd">See http://data.informaticslab.co.uk/.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">iris</span>
+<span class="kn">import</span> <span class="nn">iris.time</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
+<span class="c1"># Eliminate incomprehensible warning message</span>
+<span class="n">iris</span><span class="o">.</span><span class="n">FUTURE</span><span class="o">.</span><span class="n">netcdf_promote</span><span class="o">=</span><span class="s1">&#39;True&#39;</span>
+
+<span class="c1"># Map 20CR names to file variable names</span>
+<span class="n">Names</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;mogreps-g&#39;</span><span class="p">:</span> <span class="p">{</span>
+                     <span class="s1">&#39;prmsl&#39;</span>    <span class="p">:</span> <span class="s1">&#39;air_pressure_at_sea_level&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;air.2m&#39;</span>   <span class="p">:</span> <span class="s1">&#39;air_temperature_0&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;prate&#39;</span>    <span class="p">:</span> <span class="s1">&#39;stratiform_rainfall_rate&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;uwnd.10m&#39;</span> <span class="p">:</span> <span class="s1">&#39;x_wind_0&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;vwnd.10m&#39;</span> <span class="p">:</span> <span class="s1">&#39;y_wind_0&#39;</span>
+                    <span class="p">},</span>
+       <span class="s1">&#39;mogreps-uk&#39;</span><span class="p">:</span> <span class="p">{</span>
+                     <span class="s1">&#39;prmsl&#39;</span>    <span class="p">:</span> <span class="s1">&#39;air_pressure_at_sea_level&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;air.2m&#39;</span>   <span class="p">:</span> <span class="s1">&#39;air_temperature_1&#39;</span><span class="p">,</span>
+                     <span class="c1"># No precip variable - use sum of rain and snow</span>
+                     <span class="s1">&#39;rain&#39;</span>     <span class="p">:</span> <span class="s1">&#39;stratiform_rainfall_rate&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;snow&#39;</span>     <span class="p">:</span> <span class="s1">&#39;stratiform_snowfall_rate&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;uwnd.10m&#39;</span> <span class="p">:</span> <span class="s1">&#39;x_wind_0&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;vwnd.10m&#39;</span> <span class="p">:</span> <span class="s1">&#39;y_wind_0&#39;</span>
+                    <span class="p">}</span>
+<span class="p">}</span>
+
+<div class="viewcode-block" id="load"><a class="viewcode-back" href="../../../../source/Meteorographica.data.mopd.html#Meteorographica.data.mopd.get.load">[docs]</a><span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">,</span> <span class="n">variable</span><span class="p">,</span> 
+         <span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span>
+         <span class="n">realization</span><span class="p">,</span> <span class="n">forecast_period</span><span class="p">,</span>
+         <span class="n">auto_fetch</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Load a field from the InformaticsLab MOGREPS data</span>
+
+<span class="sd">       year, month, day, hour is the validity time of the field</span>
+
+<span class="sd">       &#39;hour&#39; and &#39;forecast_period are real variables, not</span>
+<span class="sd">       integers - will interpolate as necessary.</span>
+
+<span class="sd">       &#39;variable&#39; uses the 20CR naming scheme: &#39;air.2m&#39;, &#39;prmsl&#39;,</span>
+<span class="sd">          &#39;prate&#39;, &#39;uwnd.10m&#39;, ...</span>
+
+<span class="sd">       If &#39;auto_fetch&#39; is True, fetch files from AWS as needed, if False,</span>
+<span class="sd">        throw an exception if they are not already on local disc&quot;&quot;&quot;</span></div>
+
+<div class="viewcode-block" id="datetime_to_float"><a class="viewcode-back" href="../../../../source/Meteorographica.data.mopd.html#Meteorographica.data.mopd.get.datetime_to_float">[docs]</a><span class="k">def</span> <span class="nf">datetime_to_float</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">,</span><span class="n">dt</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;I&#39;m having trouble with iris&#39;s date-selection methods.</span>
+<span class="sd">       So take advantage of the fact that all the MOGREPS nc files</span>
+<span class="sd">       have time stored as &#39;hours since 1970-01-01&#39; and do</span>
+<span class="sd">       my own conversion.&quot;&quot;&quot;</span>
+    <span class="n">epoch</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcfromtimestamp</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">(</span><span class="n">dt</span> <span class="o">-</span> <span class="n">epoch</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span><span class="o">/</span><span class="mi">3600</span>
+    <span class="c1"># That should be &#39;hours since epoch&#39;</span>
+    <span class="k">return</span> <span class="n">result</span></div>
+
+<div class="viewcode-block" id="load_simple"><a class="viewcode-back" href="../../../../source/Meteorographica.data.mopd.html#Meteorographica.data.mopd.get.load_simple">[docs]</a><span class="k">def</span> <span class="nf">load_simple</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">,</span> <span class="n">variable</span><span class="p">,</span> 
+                      <span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span>
+                      <span class="n">realization</span><span class="p">,</span> <span class="n">forecast_period</span><span class="p">,</span>
+                      <span class="n">auto_fetch</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Load a field in the simple case where no interpolation</span>
+<span class="sd">        is necessary - where the data at the given validity time and</span>
+<span class="sd">        forecast period is on disc.&quot;&quot;&quot;</span>
+    <span class="n">ihour</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">hour</span><span class="p">)</span>
+    <span class="n">iminute</span><span class="o">=</span><span class="nb">int</span><span class="p">((</span><span class="n">hour</span><span class="o">%</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">60</span><span class="p">)</span>
+    <span class="n">vdate</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span><span class="n">day</span><span class="p">,</span><span class="n">ihour</span><span class="p">,</span><span class="n">iminute</span><span class="p">)</span>
+    <span class="n">fdate</span><span class="o">=</span><span class="n">get_forecast_date_from_validity_date</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">,</span><span class="n">vdate</span><span class="p">,</span><span class="n">forecast_period</span><span class="p">)</span>
+    <span class="c1"># Get the file with the data in</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">is_file_for</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">,</span><span class="n">fdate</span><span class="o">.</span><span class="n">year</span><span class="p">,</span><span class="n">fdate</span><span class="o">.</span><span class="n">month</span><span class="p">,</span><span class="n">fdate</span><span class="o">.</span><span class="n">day</span><span class="p">,</span>
+                       <span class="n">fdate</span><span class="o">.</span><span class="n">hour</span><span class="p">,</span><span class="n">realization</span><span class="p">,</span><span class="n">forecast_period</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">StandardError</span><span class="p">(</span><span class="s2">&quot;Bad date for load_simple, data not on disc&quot;</span><span class="p">)</span>
+    <span class="n">file_name</span><span class="o">=</span><span class="n">make_local_file_name</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">,</span> <span class="n">fdate</span><span class="o">.</span><span class="n">year</span><span class="p">,</span> <span class="n">fdate</span><span class="o">.</span><span class="n">month</span><span class="p">,</span> 
+                                   <span class="n">fdate</span><span class="o">.</span><span class="n">day</span><span class="p">,</span> <span class="n">fdate</span><span class="o">.</span><span class="n">hour</span><span class="p">,</span>
+                                   <span class="n">realization</span><span class="p">,</span> <span class="n">forecast_period</span><span class="p">)</span>
+    <span class="c1"># Check file containing data on disc</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">file_name</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">auto_fetch</span><span class="p">:</span>
+            <span class="n">fetch_data</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">,</span><span class="n">fdate</span><span class="o">.</span><span class="n">year</span><span class="p">,</span><span class="n">fdate</span><span class="o">.</span><span class="n">month</span><span class="p">,</span><span class="n">fdate</span><span class="o">.</span><span class="n">day</span><span class="p">,</span>
+                       <span class="n">fdate</span><span class="o">.</span><span class="n">hour</span><span class="p">,</span><span class="n">realization</span><span class="p">,</span><span class="n">forecast_period</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">StandardError</span><span class="p">(</span><span class="s2">&quot;No Data for </span><span class="si">%s</span><span class="s2">, realisation </span><span class="si">%d</span><span class="s2">, forecast </span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span>
+                            <span class="p">(</span><span class="n">vdate</span><span class="p">,</span> <span class="n">realization</span><span class="p">,</span> <span class="n">forecast_period</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; on disc.&#39;</span><span class="p">)</span>
+    <span class="c1"># Get the field from the file - want one within 2 minutes</span>
+    <span class="n">hslice</span><span class="o">=</span><span class="n">load_specific</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">,</span><span class="n">variable</span><span class="p">,</span><span class="n">file_name</span><span class="p">,</span>
+                         <span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span><span class="n">day</span><span class="p">,</span><span class="n">ihour</span><span class="p">,</span><span class="n">iminute</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">hslice</span></div>
+     
+<div class="viewcode-block" id="convert_variable_name"><a class="viewcode-back" href="../../../../source/Meteorographica.data.mopd.html#Meteorographica.data.mopd.get.convert_variable_name">[docs]</a><span class="k">def</span> <span class="nf">convert_variable_name</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">,</span><span class="n">variable</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get variable name in the data files from 20CR name.&quot;&quot;&quot;</span>
+    <span class="n">dataset_name</span><span class="o">=</span><span class="n">validate_dataset_name</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">)</span>
+    <span class="n">variable</span><span class="o">=</span><span class="n">variable</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">variable</span> <span class="ow">in</span> <span class="n">Names</span><span class="p">[</span><span class="n">dataset_name</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">Names</span><span class="p">[</span><span class="n">dataset_name</span><span class="p">][</span><span class="n">variable</span><span class="p">]</span>
+    <span class="k">raise</span> <span class="n">StandardError</span><span class="p">(</span><span class="s2">&quot;No variable </span><span class="si">%s</span><span class="s2">, in dataset </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span>
+                            <span class="p">(</span><span class="n">variable</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="get_forecast_date_from_validity_date"><a class="viewcode-back" href="../../../../source/Meteorographica.data.mopd.html#Meteorographica.data.mopd.get.get_forecast_date_from_validity_date">[docs]</a><span class="k">def</span> <span class="nf">get_forecast_date_from_validity_date</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">,</span><span class="n">vdate</span><span class="p">,</span><span class="n">forecast_period</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;vdate is a datetime, forecast_period is in hours&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">forecast_period</span><span class="o">%</span><span class="mi">1</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">forecast_period</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">forecast_period</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span>
+    <span class="n">fdate</span><span class="o">=</span><span class="n">vdate</span><span class="o">-</span><span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="n">forecast_period</span><span class="p">)</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">dataset_name</span><span class="o">==</span><span class="s1">&#39;mogreps-g&#39;</span><span class="p">):</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">forecast_period</span> <span class="o">&lt;</span> <span class="mi">3</span> <span class="ow">or</span> <span class="n">forecast_period</span> <span class="o">&gt;</span> <span class="mi">174</span><span class="p">):</span>
+           <span class="k">raise</span> <span class="n">StandardError</span><span class="p">(</span><span class="s2">&quot;Forecast_period outside mogreps-g range of 3-174&quot;</span><span class="p">)</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">fdate</span><span class="o">.</span><span class="n">hour</span><span class="o">%</span><span class="mi">3</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">):</span>
+           <span class="n">fdate</span><span class="o">=</span><span class="n">fdate</span><span class="o">-</span><span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="n">fdate</span><span class="o">.</span><span class="n">hour</span><span class="o">%</span><span class="mi">3</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">fdate</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">dataset_name</span><span class="o">==</span><span class="s1">&#39;mogreps-uk&#39;</span><span class="p">):</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">forecast_period</span> <span class="o">&lt;</span> <span class="mi">3</span> <span class="ow">or</span> <span class="n">forecast_period</span> <span class="o">&gt;</span> <span class="mi">6</span><span class="p">):</span>
+           <span class="k">raise</span> <span class="n">StandardError</span><span class="p">(</span><span class="s2">&quot;Forecast_period outside mogreps-uk range of 3-36&quot;</span><span class="p">)</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">fdate</span><span class="o">.</span><span class="n">hour</span><span class="o">%</span><span class="mi">3</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">):</span>
+           <span class="n">fdate</span><span class="o">=</span><span class="n">fdate</span><span class="o">+</span><span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="n">fdate</span><span class="o">.</span><span class="n">hour</span><span class="o">%</span><span class="mi">3</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">fdate</span>
+    <span class="k">raise</span> <span class="n">StandardError</span><span class="p">(</span><span class="s2">&quot;Unsupported dataset </span><span class="si">%s</span><span class="s2">. &quot;</span> <span class="o">%</span> <span class="n">dataset_name</span> <span class="o">+</span>
+                        <span class="s2">&quot;Must be &#39;mogreps-g or mogreps-uk&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="is_single_field"><a class="viewcode-back" href="../../../../source/Meteorographica.data.mopd.html#Meteorographica.data.mopd.get.is_single_field">[docs]</a><span class="k">def</span> <span class="nf">is_single_field</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">,</span> <span class="n">variable</span><span class="p">,</span> 
+                    <span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span>
+                    <span class="n">realization</span><span class="p">,</span> <span class="n">forecast_period</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;True if data requested is in one file - false if interpolation</span>
+<span class="sd">       from multiple fields needed.&quot;&quot;&quot;</span>
+    <span class="n">dataset_name</span><span class="o">=</span><span class="n">validate_dataset_name</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">)</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">validated_name</span> <span class="o">==</span> <span class="s1">&#39;mogreps-g&#39;</span><span class="p">):</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">hour</span><span class="o">%</span><span class="mi">1</span><span class="o">==</span><span class="mi">0</span> <span class="ow">and</span> <span class="n">forecast_period</span><span class="o">%</span><span class="mi">1</span><span class="o">==</span><span class="mi">0</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">validated_name</span> <span class="o">==</span> <span class="s1">&#39;mogreps-uk&#39;</span><span class="p">):</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">hour</span><span class="o">%</span><span class="mi">1</span><span class="o">==</span><span class="mi">0</span> <span class="ow">and</span> <span class="n">forecast_period</span><span class="o">%</span><span class="mi">1</span><span class="o">==</span><span class="mi">0</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">raise</span> <span class="n">StandardError</span><span class="p">(</span><span class="s2">&quot;Unsupported dataset </span><span class="si">%s</span><span class="s2">. &quot;</span> <span class="o">%</span> <span class="n">dataset_name</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="validate_dataset_name"><a class="viewcode-back" href="../../../../source/Meteorographica.data.mopd.html#Meteorographica.data.mopd.get.validate_dataset_name">[docs]</a><span class="k">def</span> <span class="nf">validate_dataset_name</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">):</span>
+    <span class="n">validated_name</span> <span class="o">=</span> <span class="n">dataset_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">validated_name</span> <span class="o">!=</span> <span class="s1">&#39;mogreps-g&#39;</span> <span class="ow">and</span>
+       <span class="n">validated_name</span> <span class="o">!=</span> <span class="s1">&#39;mogreps-uk&#39;</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">StandardError</span><span class="p">(</span><span class="s2">&quot;Unsupported dataset </span><span class="si">%s</span><span class="s2">. &quot;</span> <span class="o">%</span> <span class="n">dataset_name</span> <span class="o">+</span>
+                            <span class="s2">&quot;Must be &#39;mogreps-g or mogreps-uk&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">validated_name</span></div>
+
+<div class="viewcode-block" id="is_file_for"><a class="viewcode-back" href="../../../../source/Meteorographica.data.mopd.html#Meteorographica.data.mopd.get.is_file_for">[docs]</a><span class="k">def</span> <span class="nf">is_file_for</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span> <span class="n">realization</span><span class="p">,</span> <span class="n">forecast_period</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Is there a dump file for this set of data?&quot;&quot;&quot;</span>
+    <span class="n">dataset_name</span> <span class="o">=</span> <span class="n">validate_dataset_name</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">dataset_name</span> <span class="o">==</span> <span class="s1">&#39;mogreps-g&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">hour</span><span class="o">%</span><span class="mi">6</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">hour</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">hour</span> <span class="o">&gt;</span> <span class="mi">18</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">realization</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">realization</span> <span class="o">&gt;</span> <span class="mi">11</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">forecast_period</span><span class="o">%</span><span class="mi">3</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">forecast_period</span> <span class="o">&lt;</span> <span class="mi">3</span> <span class="ow">or</span>
+                                      <span class="n">forecast_period</span> <span class="o">&gt;</span> <span class="mi">174</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">if</span> <span class="n">dataset_name</span> <span class="o">==</span> <span class="s1">&#39;mogreps-uk&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">hour</span><span class="o">%</span><span class="mi">6</span> <span class="o">!=</span> <span class="mi">3</span> <span class="ow">or</span> <span class="n">hour</span> <span class="o">&lt;</span> <span class="mi">3</span> <span class="ow">or</span> <span class="n">hour</span> <span class="o">&gt;</span> <span class="mi">21</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">realization</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">realization</span> <span class="o">&gt;</span> <span class="mi">22</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">forecast_period</span><span class="o">%</span><span class="mi">3</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">forecast_period</span> <span class="o">&lt;</span> <span class="mi">3</span> <span class="ow">or</span> 
+                                      <span class="n">forecast_period</span> <span class="o">&gt;</span> <span class="mi">36</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">raise</span> <span class="n">StandardError</span><span class="p">(</span><span class="s2">&quot;Unsupported dataset </span><span class="si">%s</span><span class="s2">. &quot;</span> <span class="o">%</span> <span class="n">dataset_name</span> <span class="o">+</span>
+                        <span class="s2">&quot;Must be mogreps-g or mogreps-uk&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="make_local_file_name"><a class="viewcode-back" href="../../../../source/Meteorographica.data.mopd.html#Meteorographica.data.mopd.get.make_local_file_name">[docs]</a><span class="k">def</span> <span class="nf">make_local_file_name</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span> <span class="n">realization</span><span class="p">,</span> <span class="n">forecast_period</span><span class="p">):</span>
+    <span class="n">dataset_name</span> <span class="o">=</span> <span class="n">validate_dataset_name</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">)</span>
+    <span class="n">template_string</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">/</span><span class="si">{}</span><span class="s2">/</span><span class="si">{:04d}</span><span class="s2">/</span><span class="si">{:02d}</span><span class="s2">/</span><span class="si">{:02d}</span><span class="s2">/</span><span class="si">{:02d}</span><span class="s2">/&quot;</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;SCRATCH&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">StandardError</span><span class="p">(</span><span class="s2">&quot;SCRATCH environment variable is not defined&quot;</span><span class="p">)</span>
+    <span class="n">file_name</span> <span class="o">=</span> <span class="n">template_string</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;SCRATCH&#39;</span><span class="p">],</span><span class="n">dataset_name</span><span class="p">,</span>
+                                       <span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hour</span><span class="p">)</span>
+    <span class="n">template_string</span> <span class="o">=</span> <span class="s2">&quot;prods_op_</span><span class="si">{}</span><span class="s2">_</span><span class="si">{:04d}{:02d}{:02d}</span><span class="s2">_</span><span class="si">{:02d}</span><span class="s2">_</span><span class="si">{:02d}</span><span class="s2">_</span><span class="si">{:03d}</span><span class="s2">.nc&quot;</span>
+    <span class="n">file_name</span> <span class="o">=</span> <span class="n">file_name</span> <span class="o">+</span> <span class="n">template_string</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">,</span> 
+                                                   <span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span>
+                                                   <span class="n">realization</span><span class="p">,</span> <span class="n">forecast_period</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">file_name</span></div>
+
+<div class="viewcode-block" id="make_remote_url"><a class="viewcode-back" href="../../../../source/Meteorographica.data.mopd.html#Meteorographica.data.mopd.get.make_remote_url">[docs]</a><span class="k">def</span> <span class="nf">make_remote_url</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span> <span class="n">realization</span><span class="p">,</span> <span class="n">forecast_period</span><span class="p">):</span>
+    <span class="n">dataset_name</span> <span class="o">=</span> <span class="n">validate_dataset_name</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">)</span>
+    <span class="n">template_string</span> <span class="o">=</span> <span class="s2">&quot;prods_op_</span><span class="si">{}</span><span class="s2">_</span><span class="si">{:02d}{:02d}{:02d}</span><span class="s2">_</span><span class="si">{:02d}</span><span class="s2">_</span><span class="si">{:02d}</span><span class="s2">_</span><span class="si">{:03d}</span><span class="s2">.nc&quot;</span>
+    <span class="n">file_name</span> <span class="o">=</span> <span class="n">template_string</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span>
+                                       <span class="n">realization</span><span class="p">,</span> <span class="n">forecast_period</span><span class="p">)</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://s3.eu-west-2.amazonaws.com/&quot;</span> <span class="o">+</span> <span class="n">dataset_name</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">file_name</span>
+    <span class="k">return</span> <span class="n">url</span></div>
+
+<div class="viewcode-block" id="fetch_data"><a class="viewcode-back" href="../../../../source/Meteorographica.data.mopd.html#Meteorographica.data.mopd.get.fetch_data">[docs]</a><span class="k">def</span> <span class="nf">fetch_data</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span> <span class="n">realization</span><span class="p">,</span> <span class="n">forecast_period</span><span class="p">):</span>
+    <span class="n">dataset_name</span> <span class="o">=</span> <span class="n">validate_dataset_name</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">is_file_for</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span>
+                       <span class="n">realization</span><span class="p">,</span> <span class="n">forecast_period</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">StandardError</span><span class="p">(</span><span class="s2">&quot;No data file at hour </span><span class="si">%d</span><span class="s2">, realisation </span><span class="si">%d</span><span class="s2">, forecast </span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span>
+                            <span class="p">(</span><span class="n">hour</span><span class="p">,</span> <span class="n">realization</span><span class="p">,</span> <span class="n">forecast_period</span><span class="p">))</span>
+    <span class="n">local_file_name</span> <span class="o">=</span> <span class="n">make_local_file_name</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span>
+                                           <span class="n">realization</span><span class="p">,</span> <span class="n">forecast_period</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">local_file_name</span><span class="p">):</span>
+        <span class="k">return</span><span class="p">(</span><span class="s1">&#39;Already fetched&#39;</span><span class="p">)</span> <span class="c1"># Already fetched</span>
+    <span class="n">local_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">local_file_name</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">local_dir</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">local_dir</span><span class="p">)</span>
+    <span class="n">remote_url</span> <span class="o">=</span> <span class="n">make_remote_url</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span>
+                                  <span class="n">realization</span><span class="p">,</span> <span class="n">forecast_period</span><span class="p">)</span>
+    <span class="c1"># urllib.urlretrieve corrupted the file for some reason</span>
+    <span class="c1"># so use wget - I like the progress bar anyway.</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">&quot;wget -P </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">local_file_name</span><span class="p">),</span>
+                                 <span class="n">remote_url</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="load_specific"><a class="viewcode-back" href="../../../../source/Meteorographica.data.mopd.html#Meteorographica.data.mopd.get.load_specific">[docs]</a><span class="k">def</span> <span class="nf">load_specific</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">,</span> <span class="n">variable</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> 
+                  <span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span> <span class="n">minute</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Because of the irregular structure of the netCDF files,</span>
+<span class="sd">       and the peculiarity of iris, loading is fiddly and requires </span>
+<span class="sd">       variable-specific code.&quot;&quot;&quot;</span>
+    <span class="n">vdate</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span><span class="n">day</span><span class="p">,</span><span class="n">hour</span><span class="p">,</span><span class="n">minute</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">dataset_name</span> <span class="o">==</span> <span class="s1">&#39;mogreps-g&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">variable</span><span class="o">==</span><span class="s1">&#39;prmsl&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">&#39;03.nc&#39;</span><span class="p">,</span><span class="n">file_name</span><span class="p">)</span><span class="o">!=</span><span class="kc">None</span><span class="p">:</span> <span class="c1"># 3-hour data includes multiple times</span>
+                <span class="n">time_constraint</span><span class="o">=</span><span class="n">iris</span><span class="o">.</span><span class="n">Constraint</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">datetime_to_float</span><span class="p">(</span><span class="s1">&#39;mogreps-g&#39;</span><span class="p">,</span><span class="n">vdate</span><span class="p">))</span>
+                <span class="n">variable_constraint</span><span class="o">=</span><span class="n">iris</span><span class="o">.</span><span class="n">Constraint</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;air_pressure_at_sea_level&#39;</span><span class="p">)</span>
+                <span class="n">hslice</span><span class="o">=</span><span class="n">iris</span><span class="o">.</span><span class="n">load_cube</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span>
+                              <span class="n">time_constraint</span> <span class="o">&amp;</span> <span class="n">variable_constraint</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">hslice</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">variable_constraint</span><span class="o">=</span><span class="n">iris</span><span class="o">.</span><span class="n">Constraint</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;air_pressure_at_sea_level&#39;</span><span class="p">)</span>
+                <span class="n">hslice</span><span class="o">=</span><span class="n">iris</span><span class="o">.</span><span class="n">load_cube</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span><span class="n">variable_constraint</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">hslice</span>    
+        <span class="k">if</span> <span class="n">variable</span><span class="o">==</span><span class="s1">&#39;air.2m&#39;</span><span class="p">:</span>
+            <span class="n">variable_constraint</span><span class="o">=</span><span class="n">iris</span><span class="o">.</span><span class="n">Constraint</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;air_temperature&#39;</span><span class="p">)</span>
+            <span class="n">hslice</span><span class="o">=</span><span class="n">iris</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span><span class="n">variable_constraint</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">hslice</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">variable</span><span class="o">==</span><span class="s1">&#39;uwnd.10m&#39;</span><span class="p">:</span>
+            <span class="n">variable_constraint</span><span class="o">=</span><span class="n">iris</span><span class="o">.</span><span class="n">Constraint</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;x_wind&#39;</span><span class="p">)</span>
+            <span class="n">hslice</span><span class="o">=</span><span class="n">iris</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span><span class="n">variable_constraint</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">hslice</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">variable</span><span class="o">==</span><span class="s1">&#39;vwnd.10m&#39;</span><span class="p">:</span>
+            <span class="n">variable_constraint</span><span class="o">=</span><span class="n">iris</span><span class="o">.</span><span class="n">Constraint</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;y_wind&#39;</span><span class="p">)</span>
+            <span class="n">hslice</span><span class="o">=</span><span class="n">iris</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span><span class="n">variable_constraint</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">hslice</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">variable</span><span class="o">==</span><span class="s1">&#39;prate&#39;</span><span class="p">:</span>
+            <span class="n">variable_constraint</span><span class="o">=</span><span class="n">iris</span><span class="o">.</span><span class="n">Constraint</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;stratiform_rainfall_amount&#39;</span><span class="p">)</span>
+            <span class="n">h1</span><span class="o">=</span><span class="n">iris</span><span class="o">.</span><span class="n">load_cube</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span><span class="n">variable_constraint</span><span class="p">)</span>
+            <span class="n">variable_constraint</span><span class="o">=</span><span class="n">iris</span><span class="o">.</span><span class="n">Constraint</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;stratiform_snowfall_amount&#39;</span><span class="p">)</span>
+            <span class="n">h2</span><span class="o">=</span><span class="n">iris</span><span class="o">.</span><span class="n">load_cube</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span><span class="n">variable_constraint</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">iris</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">maths</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">h1</span><span class="p">,</span><span class="n">h2</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">StandardError</span><span class="p">(</span><span class="s2">&quot;Unsupported variable </span><span class="si">%s</span><span class="s2">. &quot;</span> <span class="o">%</span> <span class="n">variable</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">dataset_name</span> <span class="o">==</span> <span class="s1">&#39;mogreps-uk&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">variable</span><span class="o">==</span><span class="s1">&#39;prmsl&#39;</span><span class="p">:</span>
+            <span class="n">time_constraint</span><span class="o">=</span><span class="n">iris</span><span class="o">.</span><span class="n">Constraint</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">datetime_to_float</span><span class="p">(</span><span class="s1">&#39;mogreps-uk&#39;</span><span class="p">,</span><span class="n">vdate</span><span class="p">))</span>
+            <span class="n">variable_constraint</span><span class="o">=</span><span class="n">iris</span><span class="o">.</span><span class="n">Constraint</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;air_pressure_at_sea_level&#39;</span><span class="p">)</span>
+            <span class="n">hslice</span><span class="o">=</span><span class="n">iris</span><span class="o">.</span><span class="n">load_cube</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span>
+                          <span class="n">time_constraint</span> <span class="o">&amp;</span> <span class="n">variable_constraint</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">hslice</span>
+        <span class="k">if</span> <span class="n">variable</span><span class="o">==</span><span class="s1">&#39;air.2m&#39;</span><span class="p">:</span>
+            <span class="n">time_constraint</span><span class="o">=</span><span class="n">iris</span><span class="o">.</span><span class="n">Constraint</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">datetime_to_float</span><span class="p">(</span><span class="s1">&#39;mogreps-uk&#39;</span><span class="p">,</span><span class="n">vdate</span><span class="p">))</span>
+            <span class="n">variable_constraint</span><span class="o">=</span><span class="n">iris</span><span class="o">.</span><span class="n">Constraint</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;air_temperature&#39;</span><span class="p">)</span>
+            <span class="n">hslice</span><span class="o">=</span><span class="n">iris</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span>
+                                  <span class="n">time_constraint</span> <span class="o">&amp;</span> <span class="n">variable_constraint</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">hslice</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">variable</span><span class="o">==</span><span class="s1">&#39;uwnd.10m&#39;</span><span class="p">:</span>
+            <span class="n">time_constraint</span><span class="o">=</span><span class="n">iris</span><span class="o">.</span><span class="n">Constraint</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">datetime_to_float</span><span class="p">(</span><span class="s1">&#39;mogreps-uk&#39;</span><span class="p">,</span><span class="n">vdate</span><span class="p">))</span>
+            <span class="n">variable_constraint</span><span class="o">=</span><span class="n">iris</span><span class="o">.</span><span class="n">Constraint</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;x_wind&#39;</span><span class="p">)</span>
+            <span class="n">hslice</span><span class="o">=</span><span class="n">iris</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span>
+                                  <span class="n">time_constraint</span> <span class="o">&amp;</span> <span class="n">variable_constraint</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">hslice</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">variable</span><span class="o">==</span><span class="s1">&#39;vwnd.10m&#39;</span><span class="p">:</span>
+            <span class="n">time_constraint</span><span class="o">=</span><span class="n">iris</span><span class="o">.</span><span class="n">Constraint</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">datetime_to_float</span><span class="p">(</span><span class="s1">&#39;mogreps-uk&#39;</span><span class="p">,</span><span class="n">vdate</span><span class="p">))</span>
+            <span class="n">variable_constraint</span><span class="o">=</span><span class="n">iris</span><span class="o">.</span><span class="n">Constraint</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;y_wind&#39;</span><span class="p">)</span>
+            <span class="n">hslice</span><span class="o">=</span><span class="n">iris</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span>
+                                  <span class="n">time_constraint</span> <span class="o">&amp;</span> <span class="n">variable_constraint</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">hslice</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">variable</span><span class="o">==</span><span class="s1">&#39;prate&#39;</span><span class="p">:</span>
+            <span class="n">time_constraint</span><span class="o">=</span><span class="n">iris</span><span class="o">.</span><span class="n">Constraint</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">datetime_to_float</span><span class="p">(</span><span class="s1">&#39;mogreps-uk&#39;</span><span class="p">,</span><span class="n">vdate</span><span class="p">))</span>
+            <span class="n">variable_constraint</span><span class="o">=</span><span class="n">iris</span><span class="o">.</span><span class="n">Constraint</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;stratiform_rainfall_rate&#39;</span><span class="p">)</span>
+            <span class="n">h1</span><span class="o">=</span><span class="n">iris</span><span class="o">.</span><span class="n">load_cube</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span><span class="n">time_constraint</span> <span class="o">&amp;</span> <span class="n">variable_constraint</span><span class="p">)</span>
+            <span class="n">variable_constraint</span><span class="o">=</span><span class="n">iris</span><span class="o">.</span><span class="n">Constraint</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;stratiform_snowfall_rate&#39;</span><span class="p">)</span>
+            <span class="n">h2</span><span class="o">=</span><span class="n">iris</span><span class="o">.</span><span class="n">load_cube</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span><span class="n">time_constraint</span> <span class="o">&amp;</span> <span class="n">variable_constraint</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">iris</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">maths</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">h1</span><span class="p">,</span><span class="n">h2</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">StandardError</span><span class="p">(</span><span class="s2">&quot;Unsupported variable </span><span class="si">%s</span><span class="s2">. &quot;</span> <span class="o">%</span> <span class="n">variable</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="n">StandardError</span><span class="p">(</span><span class="s2">&quot;Unsupported dataset </span><span class="si">%s</span><span class="s2">. &quot;</span> <span class="o">%</span> <span class="n">dataset_name</span> <span class="o">+</span>
+                        <span class="s2">&quot;Must be mogreps-g or mogreps-uk&quot;</span><span class="p">)</span></div>
+    
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">Meteorographica 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    </div>
+  </body>
+</html>

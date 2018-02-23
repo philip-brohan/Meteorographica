@@ -1,0 +1,249 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Meteorographica.weathermap.wind_vectors &#8212; Meteorographica 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="top" title="Meteorographica 0.0.1 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Meteorographica 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for Meteorographica.weathermap.wind_vectors</h1><div class="highlight"><pre>
+<span></span><span class="c1"># (C) British Crown Copyright 2017, Met Office</span>
+<span class="c1">#</span>
+<span class="c1"># This code is free software: you can redistribute it and/or modify it under</span>
+<span class="c1"># the terms of the GNU Lesser General Public License as published by the</span>
+<span class="c1"># Free Software Foundation, either version 3 of the License, or</span>
+<span class="c1"># (at your option) any later version.</span>
+<span class="c1">#</span>
+<span class="c1"># This code is distributed in the hope that it will be useful,</span>
+<span class="c1"># but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="c1"># MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="c1"># GNU Lesser General Public License for more details.</span>
+<span class="c1">#</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Functions for assigning, updating, and plotting wind vectors.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">from</span> <span class="nn">sklearn.utils</span> <span class="k">import</span> <span class="n">check_random_state</span>
+
+<span class="c1"># Generate a set of random points at distance between 1 and 2</span>
+<span class="c1">#  from (0,0) - we&#39;ll sample from these many times.</span>
+<span class="c1"># Uses a fixed seed, so should get same set of points every time</span>
+<span class="n">random_state</span> <span class="o">=</span> <span class="n">check_random_state</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span> <span class="c1"># Arbitrary argument</span>
+<span class="n">sample_cache_x</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">random_state</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">10000</span><span class="p">))</span>
+<span class="n">sample_cache_y</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">random_state</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">10000</span><span class="p">))</span>
+<span class="n">sample_mag</span><span class="o">=</span><span class="n">sample_cache_x</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="n">sample_cache_y</span><span class="o">**</span><span class="mi">2</span>
+<span class="n">sample_selected</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">sample_mag</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">,</span><span class="n">sample_mag</span><span class="o">&lt;</span><span class="mi">6</span><span class="p">)</span>
+<span class="n">sample_cache_x</span><span class="o">=</span><span class="n">sample_cache_x</span><span class="p">[</span><span class="n">sample_selected</span><span class="p">]</span>
+<span class="n">sample_cache_y</span><span class="o">=</span><span class="n">sample_cache_y</span><span class="p">[</span><span class="n">sample_selected</span><span class="p">]</span>
+
+<span class="c1"># Allocate wind vector seed points evenly over a given lat,lon</span>
+<span class="c1">#  region. Uses Bridson&#39;s algorithm, modified to allow a set</span>
+<span class="c1">#  of initial points be supplied.</span>
+<div class="viewcode-block" id="allocate_vector_points"><a class="viewcode-back" href="../../../source/Meteorographica.weathermap.html#Meteorographica.weathermap.wind_vectors.allocate_vector_points">[docs]</a><span class="k">def</span> <span class="nf">allocate_vector_points</span><span class="p">(</span><span class="n">initial_points</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                           <span class="n">lat_range</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">90</span><span class="p">,</span><span class="mi">90</span><span class="p">),</span>
+                           <span class="n">lon_range</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">180</span><span class="p">,</span><span class="mi">180</span><span class="p">),</span>
+                           <span class="n">scale</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span>
+                           <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                           <span class="n">max_points</span><span class="o">=</span><span class="mi">10000</span><span class="p">):</span>
+
+    <span class="n">random_state</span><span class="o">=</span><span class="n">check_random_state</span><span class="p">(</span><span class="n">random_state</span><span class="p">)</span>
+    <span class="n">cellsize</span><span class="o">=</span><span class="n">scale</span><span class="o">/</span><span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">x_n_cells</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">((</span><span class="n">lon_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">lon_range</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="n">cellsize</span><span class="p">))</span>
+    <span class="n">y_n_cells</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">((</span><span class="n">lat_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">lat_range</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="n">cellsize</span><span class="p">))</span>
+
+    <span class="c1"># Point lon &amp; lat to grid indices</span>
+    <span class="k">def</span> <span class="nf">grid_coords</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">((</span><span class="n">x</span><span class="o">-</span><span class="n">lon_range</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="n">cellsize</span><span class="p">)),</span> 
+                <span class="nb">int</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">((</span><span class="n">y</span><span class="o">-</span><span class="n">lat_range</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="n">cellsize</span><span class="p">)))</span>
+
+    <span class="c1"># Block of cells too close to a point</span>
+    <span class="k">def</span> <span class="nf">too_close</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">):</span>
+        <span class="n">centre_cell</span><span class="o">=</span><span class="n">grid_coords</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+        <span class="c1"># 5x5 block around the centre cell</span>
+        <span class="n">close_idx</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">centre_cell</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span>
+                                              <span class="n">centre_cell</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="mi">3</span><span class="p">),</span>
+                                 <span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">centre_cell</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span>
+                                              <span class="n">centre_cell</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mi">3</span><span class="p">))</span>
+        <span class="c1"># remove the corners</span>
+        <span class="n">corners</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">24</span><span class="p">))</span>
+        <span class="n">close_idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">close_idx</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">corners</span><span class="p">)</span>
+        <span class="n">close_idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">close_idx</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">corners</span><span class="p">)</span>
+        <span class="c1"># remove any points outside the grid range</span>
+        <span class="n">in_p</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">close_idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">&gt;=</span><span class="mi">0</span><span class="p">,</span>
+                               <span class="n">close_idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">&lt;</span><span class="n">x_n_cells</span><span class="p">)</span>
+        <span class="n">close_idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="n">close_idx</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">in_p</span><span class="p">]</span>
+        <span class="n">close_idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="n">close_idx</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">in_p</span><span class="p">]</span>
+        <span class="n">in_p</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">close_idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">&gt;=</span><span class="mi">0</span><span class="p">,</span>
+                               <span class="n">close_idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">&lt;</span><span class="n">y_n_cells</span><span class="p">)</span>
+        <span class="n">close_idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="n">close_idx</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">in_p</span><span class="p">]</span>
+        <span class="n">close_idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="n">close_idx</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">in_p</span><span class="p">]</span>
+        <span class="k">return</span><span class="p">(</span><span class="n">close_idx</span><span class="p">)</span>
+
+    <span class="c1"># Try and find a new point close to a seed point</span>
+    <span class="k">def</span> <span class="nf">find_new</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">):</span>
+        <span class="n">sub_s</span><span class="o">=</span><span class="n">random_state</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sample_cache_x</span><span class="p">),</span><span class="n">size</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">samp</span> <span class="ow">in</span> <span class="n">sub_s</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="n">sample_cache_x</span><span class="p">[</span><span class="n">samp</span><span class="p">]</span><span class="o">*</span><span class="n">scale</span><span class="o">&lt;</span><span class="n">lon_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">or</span>
+                <span class="n">x</span><span class="o">+</span><span class="n">sample_cache_x</span><span class="p">[</span><span class="n">samp</span><span class="p">]</span><span class="o">*</span><span class="n">scale</span><span class="o">&gt;</span><span class="n">lon_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">or</span>
+                <span class="n">y</span><span class="o">+</span><span class="n">sample_cache_y</span><span class="p">[</span><span class="n">samp</span><span class="p">]</span><span class="o">*</span><span class="n">scale</span><span class="o">&lt;</span><span class="n">lat_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">or</span>
+                <span class="n">y</span><span class="o">+</span><span class="n">sample_cache_y</span><span class="p">[</span><span class="n">samp</span><span class="p">]</span><span class="o">*</span><span class="n">scale</span><span class="o">&gt;</span><span class="n">lat_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span> <span class="k">continue</span>
+            <span class="n">gc</span><span class="o">=</span><span class="n">grid_coords</span><span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="n">sample_cache_x</span><span class="p">[</span><span class="n">samp</span><span class="p">]</span><span class="o">*</span><span class="n">scale</span><span class="p">,</span>
+                           <span class="n">y</span><span class="o">+</span><span class="n">sample_cache_y</span><span class="p">[</span><span class="n">samp</span><span class="p">]</span><span class="o">*</span><span class="n">scale</span><span class="p">)</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">occupied</span><span class="p">[</span><span class="n">gc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">gc</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span><span class="o">==</span><span class="mi">0</span><span class="p">):</span> <span class="k">return</span> <span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="n">sample_cache_x</span><span class="p">[</span><span class="n">samp</span><span class="p">]</span><span class="o">*</span><span class="n">scale</span><span class="p">,</span>
+                                                  <span class="n">y</span><span class="o">+</span><span class="n">sample_cache_y</span><span class="p">[</span><span class="n">samp</span><span class="p">]</span><span class="o">*</span><span class="n">scale</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+        
+    <span class="c1"># Store the allocated points in a dictionary</span>
+    <span class="n">allocated</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;Latitude&#39;</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">max_points</span><span class="p">],</span><span class="nb">float</span><span class="p">),</span>
+               <span class="s1">&#39;Longitude&#39;</span><span class="p">:</span><span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">max_points</span><span class="p">],</span><span class="nb">float</span><span class="p">),</span>
+               <span class="s1">&#39;Age&#39;</span><span class="p">:</span>      <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">max_points</span><span class="p">],</span><span class="nb">int</span><span class="p">)}</span>
+    <span class="n">n_allocated</span><span class="o">=</span><span class="mi">0</span> <span class="c1"># Nothing in it yet</span>
+    <span class="c1"># Store the culled points similarly</span>
+    <span class="n">culled</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;Latitude&#39;</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">max_points</span><span class="p">],</span><span class="nb">float</span><span class="p">),</span>
+            <span class="s1">&#39;Longitude&#39;</span><span class="p">:</span><span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">max_points</span><span class="p">],</span><span class="nb">float</span><span class="p">),</span>
+            <span class="s1">&#39;Age&#39;</span><span class="p">:</span>      <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">max_points</span><span class="p">],</span><span class="nb">int</span><span class="p">)}</span>
+    <span class="n">n_culled</span><span class="o">=</span><span class="mi">0</span> <span class="c1"># Nothing in it yet</span>
+    <span class="n">active</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">max_points</span><span class="p">])</span>
+
+    <span class="c1"># Grid marking occupied cells</span>
+    <span class="n">occupied</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">x_n_cells</span><span class="p">,</span><span class="n">y_n_cells</span><span class="p">])</span> <span class="c1"># 0=free cell</span>
+
+    <span class="c1"># Insert the initial points, rejecting any that overlap</span>
+    <span class="k">if</span> <span class="n">initial_points</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">init_i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">initial_points</span><span class="p">[</span><span class="s1">&#39;Age&#39;</span><span class="p">])):</span>
+            <span class="k">if</span> <span class="n">initial_points</span><span class="p">[</span><span class="s1">&#39;Latitude&#39;</span><span class="p">][</span><span class="n">init_i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">lat_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">or</span>\
+               <span class="n">initial_points</span><span class="p">[</span><span class="s1">&#39;Latitude&#39;</span><span class="p">][</span><span class="n">init_i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">lat_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">initial_points</span><span class="p">[</span><span class="s1">&#39;Longitude&#39;</span><span class="p">][</span><span class="n">init_i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">lon_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">or</span>\
+               <span class="n">initial_points</span><span class="p">[</span><span class="s1">&#39;Longitude&#39;</span><span class="p">][</span><span class="n">init_i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">lon_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="k">continue</span>
+            <span class="n">cdrs</span><span class="o">=</span><span class="n">grid_coords</span><span class="p">(</span><span class="n">initial_points</span><span class="p">[</span><span class="s1">&#39;Longitude&#39;</span><span class="p">][</span><span class="n">init_i</span><span class="p">],</span>
+                             <span class="n">initial_points</span><span class="p">[</span><span class="s1">&#39;Latitude&#39;</span><span class="p">][</span><span class="n">init_i</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">occupied</span><span class="p">[</span><span class="n">cdrs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">cdrs</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span><span class="o">!=</span><span class="mi">0</span><span class="p">:</span> <span class="k">continue</span>  <span class="c1"># reject</span>
+            <span class="c1"># Add it to the newly allocated list</span>
+            <span class="n">allocated</span><span class="p">[</span><span class="s1">&#39;Latitude&#39;</span><span class="p">][</span><span class="n">n_allocated</span><span class="p">]</span><span class="o">=</span><span class="n">initial_points</span><span class="p">[</span><span class="s1">&#39;Latitude&#39;</span><span class="p">][</span><span class="n">init_i</span><span class="p">]</span>
+            <span class="n">allocated</span><span class="p">[</span><span class="s1">&#39;Longitude&#39;</span><span class="p">][</span><span class="n">n_allocated</span><span class="p">]</span><span class="o">=</span><span class="n">initial_points</span><span class="p">[</span><span class="s1">&#39;Longitude&#39;</span><span class="p">][</span><span class="n">init_i</span><span class="p">]</span>
+            <span class="n">allocated</span><span class="p">[</span><span class="s1">&#39;Age&#39;</span><span class="p">][</span><span class="n">n_allocated</span><span class="p">]</span><span class="o">=</span><span class="n">initial_points</span><span class="p">[</span><span class="s1">&#39;Age&#39;</span><span class="p">][</span><span class="n">init_i</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span>
+            <span class="c1"># Mark the region around it as occupied</span>
+            <span class="n">tc</span><span class="o">=</span><span class="n">too_close</span><span class="p">(</span><span class="n">initial_points</span><span class="p">[</span><span class="s1">&#39;Longitude&#39;</span><span class="p">][</span><span class="n">init_i</span><span class="p">],</span>
+                         <span class="n">initial_points</span><span class="p">[</span><span class="s1">&#39;Latitude&#39;</span><span class="p">][</span><span class="n">init_i</span><span class="p">])</span>
+            <span class="n">occupied</span><span class="p">[</span><span class="n">tc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">tc</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span><span class="o">=</span><span class="mi">1</span>
+            <span class="n">active</span><span class="p">[</span><span class="n">n_allocated</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span> <span class="c1"># Seed new points from this one</span>
+            <span class="n">n_allocated</span> <span class="o">+=</span><span class="mi">1</span>
+            <span class="k">if</span> <span class="n">n_allocated</span><span class="o">&gt;</span><span class="n">max_points</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">StandardError</span><span class="p">(</span><span class="s2">&quot;Insufficient wind points&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Add a seed point if there were no initial points</span>
+    <span class="k">if</span> <span class="n">n_allocated</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+        <span class="n">seed_x</span><span class="o">=</span><span class="n">lon_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*.</span><span class="mi">9</span><span class="o">+</span><span class="n">lon_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*.</span><span class="mi">1</span>
+        <span class="n">seed_y</span><span class="o">=</span><span class="n">lat_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*.</span><span class="mi">9</span><span class="o">+</span><span class="n">lat_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*.</span><span class="mi">1</span>
+        <span class="n">allocated</span><span class="p">[</span><span class="s1">&#39;Longitude&#39;</span><span class="p">][</span><span class="n">n_allocated</span><span class="p">]</span><span class="o">=</span><span class="n">seed_x</span>
+        <span class="n">allocated</span><span class="p">[</span><span class="s1">&#39;Latitude&#39;</span><span class="p">][</span><span class="n">n_allocated</span><span class="p">]</span><span class="o">=</span><span class="n">seed_y</span>
+        <span class="n">allocated</span><span class="p">[</span><span class="s1">&#39;Age&#39;</span><span class="p">][</span><span class="n">n_allocated</span><span class="p">]</span><span class="o">=</span><span class="mi">0</span>
+        <span class="n">tc</span><span class="o">=</span><span class="n">too_close</span><span class="p">(</span><span class="n">seed_x</span><span class="p">,</span><span class="n">seed_y</span><span class="p">)</span>
+        <span class="n">occupied</span><span class="p">[</span><span class="n">tc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">tc</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span><span class="o">=</span><span class="mi">1</span>
+        <span class="n">active</span><span class="p">[</span><span class="n">n_allocated</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span> <span class="c1"># Seed new points from this one</span>
+        <span class="n">n_allocated</span> <span class="o">+=</span><span class="mi">1</span>
+
+    <span class="c1"># Fill in remaining space with Bridson&#39;s method</span>
+    <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">active</span><span class="o">==</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+        <span class="n">current</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">active</span><span class="o">==</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">new_point</span><span class="o">=</span><span class="n">find_new</span><span class="p">(</span><span class="n">allocated</span><span class="p">[</span><span class="s1">&#39;Longitude&#39;</span><span class="p">][</span><span class="n">current</span><span class="p">],</span>
+                           <span class="n">allocated</span><span class="p">[</span><span class="s1">&#39;Latitude&#39;</span><span class="p">][</span><span class="n">current</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">new_point</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">active</span><span class="p">[</span><span class="n">current</span><span class="p">]</span><span class="o">=</span><span class="mi">0</span>
+            <span class="k">continue</span>
+        <span class="n">allocated</span><span class="p">[</span><span class="s1">&#39;Longitude&#39;</span><span class="p">][</span><span class="n">n_allocated</span><span class="p">]</span><span class="o">=</span><span class="n">new_point</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">allocated</span><span class="p">[</span><span class="s1">&#39;Latitude&#39;</span><span class="p">][</span><span class="n">n_allocated</span><span class="p">]</span><span class="o">=</span><span class="n">new_point</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">allocated</span><span class="p">[</span><span class="s1">&#39;Age&#39;</span><span class="p">][</span><span class="n">n_allocated</span><span class="p">]</span><span class="o">=</span><span class="mi">0</span>
+        <span class="n">tc</span><span class="o">=</span><span class="n">too_close</span><span class="p">(</span><span class="n">new_point</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">new_point</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">occupied</span><span class="p">[</span><span class="n">tc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">tc</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span><span class="o">=</span><span class="mi">1</span>
+        <span class="n">active</span><span class="p">[</span><span class="n">n_allocated</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span>
+        <span class="n">n_allocated</span> <span class="o">+=</span><span class="mi">1</span>
+        <span class="k">if</span> <span class="n">n_allocated</span><span class="o">&gt;</span><span class="n">max_points</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">StandardError</span><span class="p">(</span><span class="s2">&quot;Insufficient wind points&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;Longitude&#39;</span><span class="p">:</span> <span class="n">allocated</span><span class="p">[</span><span class="s1">&#39;Longitude&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="n">n_allocated</span><span class="p">],</span>
+            <span class="s1">&#39;Latitude&#39;</span><span class="p">:</span>  <span class="n">allocated</span><span class="p">[</span><span class="s1">&#39;Latitude&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="n">n_allocated</span><span class="p">],</span>
+            <span class="s1">&#39;Age&#39;</span><span class="p">:</span>       <span class="n">allocated</span><span class="p">[</span><span class="s1">&#39;Age&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="n">n_allocated</span><span class="p">]}</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Meteorographica 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    </div>
+  </body>
+</html>
