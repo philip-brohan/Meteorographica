@@ -1,33 +1,30 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Meteorographica.data.mopd package &#8212; Meteorographica 0.0.1 documentation</title>
-    
+    <title>Meteorographica.data.mopd package &#8212; Meteorographica: a personal library for weather data</title>
     <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
         VERSION:     '0.0.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
-    <link rel="top" title="Meteorographica 0.0.1 documentation" href="../index.html" /> 
+    <link rel="search" title="Search" href="../search.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -37,11 +34,14 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">Meteorographica 0.0.1 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">Meteorographica</a> &#187;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/UK.GS1987.png" alt="Logo"/>
+            </a></p>
   <h3><a href="../index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Meteorographica.data.mopd package</a><ul>
@@ -56,7 +56,7 @@
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../_sources/source/Meteorographica.data.mopd.txt"
+      <li><a href="../_sources/source/Meteorographica.data.mopd.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -99,9 +99,9 @@
 <dl class="function">
 <dt id="Meteorographica.data.mopd.get.datetime_to_float">
 <code class="descclassname">Meteorographica.data.mopd.get.</code><code class="descname">datetime_to_float</code><span class="sig-paren">(</span><em>dataset_name</em>, <em>dt</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Meteorographica/data/mopd/get.html#datetime_to_float"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Meteorographica.data.mopd.get.datetime_to_float" title="Permalink to this definition">¶</a></dt>
-<dd><p>I&#8217;m having trouble with iris&#8217;s date-selection methods.
+<dd><p>I’m having trouble with iris’s date-selection methods.
 So take advantage of the fact that all the MOGREPS nc files
-have time stored as &#8216;hours since 1970-01-01&#8217; and do
+have time stored as ‘hours since 1970-01-01’ and do
 my own conversion.</p>
 </dd></dl>
 
@@ -134,12 +134,12 @@ from multiple fields needed.</p>
 <code class="descclassname">Meteorographica.data.mopd.get.</code><code class="descname">load</code><span class="sig-paren">(</span><em>dataset_name</em>, <em>variable</em>, <em>year</em>, <em>month</em>, <em>day</em>, <em>hour</em>, <em>realization</em>, <em>forecast_period</em>, <em>auto_fetch=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Meteorographica/data/mopd/get.html#load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Meteorographica.data.mopd.get.load" title="Permalink to this definition">¶</a></dt>
 <dd><p>Load a field from the InformaticsLab MOGREPS data</p>
 <p>year, month, day, hour is the validity time of the field</p>
-<p>&#8216;hour&#8217; and &#8216;forecast_period are real variables, not
+<p>‘hour’ and ‘forecast_period are real variables, not
 integers - will interpolate as necessary.</p>
 <dl class="docutils">
-<dt>&#8216;variable&#8217; uses the 20CR naming scheme: &#8216;air.2m&#8217;, &#8216;prmsl&#8217;,</dt>
-<dd>&#8216;prate&#8217;, &#8216;uwnd.10m&#8217;, ...</dd>
-<dt>If &#8216;auto_fetch&#8217; is True, fetch files from AWS as needed, if False,</dt>
+<dt>‘variable’ uses the 20CR naming scheme: ‘air.2m’, ‘prmsl’,</dt>
+<dd>‘prate’, ‘uwnd.10m’, …</dd>
+<dt>If ‘auto_fetch’ is True, fetch files from AWS as needed, if False,</dt>
 <dd>throw an exception if they are not already on local disc</dd>
 </dl>
 </dd></dl>
@@ -220,7 +220,7 @@ variable-specific code.</p>
 <div class="section" id="module-Meteorographica.data.mopd">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-Meteorographica.data.mopd" title="Permalink to this headline">¶</a></h2>
 <p>A package for handling data from the MET Office public datasets (AWS).
-(Currently that&#8217;s MOGREPS-UK and MOGREPS-G).</p>
+(Currently that’s MOGREPS-UK and MOGREPS-G).</p>
 <p>Downloads data to a local filesystem ($SCRATCH) and supports access by
 20CR variable name.</p>
 <p>See <a class="reference external" href="http://data.informaticslab.co.uk/">http://data.informaticslab.co.uk/</a>.</p>
@@ -242,7 +242,7 @@ variable-specific code.</p>
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">Meteorographica 0.0.1 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">Meteorographica</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

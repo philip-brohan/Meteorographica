@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Meteorographica.data.era5.load &#8212; Meteorographica 0.0.1 documentation</title>
+    <title>Meteorographica.data.era5.load &#8212; Meteorographica: a personal library for weather data</title>
     <link rel="stylesheet" href="../../../../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -34,12 +34,15 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">Meteorographica 0.0.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">Meteorographica</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../../index.html">
+              <img class="logo" src="../../../../_static/UK.GS1987.png" alt="Logo"/>
+            </a></p>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../../../../search.html" method="get">
@@ -71,10 +74,9 @@
 <span class="c1"># MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
 <span class="c1"># GNU Lesser General Public License for more details.</span>
 <span class="c1">#</span>
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">The functions in this module provide the main way to load</span>
-<span class="sd">ERA5 data.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># The functions in this module provide the main way to load</span>
+<span class="c1"># ERA5 data.</span>
 
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">os.path</span>
@@ -83,10 +85,10 @@
 <span class="kn">import</span> <span class="nn">datetime</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">hourly_get_file_name</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">translate_for_file_names</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">monolevel_analysis</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">monolevel_forecast</span>
+<span class="kn">from</span> <span class="nn">utils</span> <span class="k">import</span> <span class="n">_hourly_get_file_name</span>
+<span class="kn">from</span> <span class="nn">utils</span> <span class="k">import</span> <span class="n">_translate_for_file_names</span>
+<span class="kn">from</span> <span class="nn">utils</span> <span class="k">import</span> <span class="n">monolevel_analysis</span>
+<span class="kn">from</span> <span class="nn">utils</span> <span class="k">import</span> <span class="n">monolevel_forecast</span>
 
 <span class="c1"># Eliminate incomprehensible warning message</span>
 <span class="n">iris</span><span class="o">.</span><span class="n">FUTURE</span><span class="o">.</span><span class="n">netcdf_promote</span><span class="o">=</span><span class="s1">&#39;True&#39;</span>
@@ -94,25 +96,25 @@
 <span class="c1"># Need to add coordinate system metadata so they work with cartopy</span>
 <span class="n">coord_s</span><span class="o">=</span><span class="n">iris</span><span class="o">.</span><span class="n">coord_systems</span><span class="o">.</span><span class="n">GeogCS</span><span class="p">(</span><span class="n">iris</span><span class="o">.</span><span class="n">fileformats</span><span class="o">.</span><span class="n">pp</span><span class="o">.</span><span class="n">EARTH_RADIUS</span><span class="p">)</span>
 
-<div class="viewcode-block" id="is_in_file"><a class="viewcode-back" href="../../../../source/Meteorographica.data.era5.html#Meteorographica.data.era5.load.is_in_file">[docs]</a><span class="k">def</span> <span class="nf">is_in_file</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span><span class="n">day</span><span class="p">,</span><span class="n">hour</span><span class="p">,</span><span class="n">stream</span><span class="o">=</span><span class="s1">&#39;enda&#39;</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_is_in_file</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span><span class="n">day</span><span class="p">,</span><span class="n">hour</span><span class="p">,</span><span class="n">stream</span><span class="o">=</span><span class="s1">&#39;enda&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Is the variable available for this time?</span>
 <span class="sd">       Or will it have to be interpolated?&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">stream</span><span class="o">==</span><span class="s1">&#39;enda&#39;</span> <span class="ow">and</span> <span class="n">hour</span><span class="o">%</span><span class="mi">3</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">True</span>
     <span class="k">if</span> <span class="n">stream</span><span class="o">==</span><span class="s1">&#39;oper&#39;</span> <span class="ow">and</span> <span class="n">hour</span><span class="o">%</span><span class="mi">1</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">True</span>
-    <span class="k">return</span> <span class="kc">False</span></div>
+    <span class="k">return</span> <span class="kc">False</span>
 
-<div class="viewcode-block" id="get_previous_field_time"><a class="viewcode-back" href="../../../../source/Meteorographica.data.era5.html#Meteorographica.data.era5.load.get_previous_field_time">[docs]</a><span class="k">def</span> <span class="nf">get_previous_field_time</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span><span class="n">day</span><span class="p">,</span><span class="n">hour</span><span class="p">,</span><span class="n">stream</span><span class="o">=</span><span class="s1">&#39;enda&#39;</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_get_previous_field_time</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span><span class="n">day</span><span class="p">,</span><span class="n">hour</span><span class="p">,</span><span class="n">stream</span><span class="o">=</span><span class="s1">&#39;enda&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Get the latest time, before the given time,</span>
 <span class="sd">                     for which there is saved data&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">stream</span><span class="o">==</span><span class="s1">&#39;enda&#39;</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;year&#39;</span><span class="p">:</span><span class="n">year</span><span class="p">,</span><span class="s1">&#39;month&#39;</span><span class="p">:</span><span class="n">month</span><span class="p">,</span><span class="s1">&#39;day&#39;</span><span class="p">:</span><span class="n">day</span><span class="p">,</span><span class="s1">&#39;hour&#39;</span><span class="p">:</span><span class="nb">int</span><span class="p">(</span><span class="n">hour</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span><span class="o">*</span><span class="mi">3</span><span class="p">}</span>
     <span class="k">if</span> <span class="n">stream</span><span class="o">==</span><span class="s1">&#39;oper&#39;</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;year&#39;</span><span class="p">:</span><span class="n">year</span><span class="p">,</span><span class="s1">&#39;month&#39;</span><span class="p">:</span><span class="n">month</span><span class="p">,</span><span class="s1">&#39;day&#39;</span><span class="p">:</span><span class="n">day</span><span class="p">,</span><span class="s1">&#39;hour&#39;</span><span class="p">:</span><span class="nb">int</span><span class="p">(</span><span class="n">hour</span><span class="p">)}</span>
-    <span class="k">raise</span> <span class="n">StandardError</span><span class="p">(</span><span class="s2">&quot;Unknown stream </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">stream</span><span class="p">)</span></div>
+    <span class="k">raise</span> <span class="n">StandardError</span><span class="p">(</span><span class="s2">&quot;Unknown stream </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">stream</span><span class="p">)</span>
 
-<div class="viewcode-block" id="get_next_field_time"><a class="viewcode-back" href="../../../../source/Meteorographica.data.era5.html#Meteorographica.data.era5.load.get_next_field_time">[docs]</a><span class="k">def</span> <span class="nf">get_next_field_time</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span><span class="n">day</span><span class="p">,</span><span class="n">hour</span><span class="p">,</span><span class="n">stream</span><span class="o">=</span><span class="s1">&#39;enda&#39;</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_get_next_field_time</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span><span class="n">day</span><span class="p">,</span><span class="n">hour</span><span class="p">,</span><span class="n">stream</span><span class="o">=</span><span class="s1">&#39;enda&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Get the earliest time, after the given time,</span>
 <span class="sd">                     for which there is saved data&quot;&quot;&quot;</span>  
     <span class="k">if</span> <span class="n">stream</span><span class="o">==</span><span class="s1">&#39;enda&#39;</span><span class="p">:</span>
@@ -126,20 +128,20 @@
                  <span class="o">+</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="p">)</span>
         <span class="n">dr</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;year&#39;</span><span class="p">:</span><span class="n">d_next</span><span class="o">.</span><span class="n">year</span><span class="p">,</span><span class="s1">&#39;month&#39;</span><span class="p">:</span><span class="n">d_next</span><span class="o">.</span><span class="n">month</span><span class="p">,</span><span class="s1">&#39;day&#39;</span><span class="p">:</span><span class="n">d_next</span><span class="o">.</span><span class="n">day</span><span class="p">,</span>
               <span class="s1">&#39;hour&#39;</span><span class="p">:</span><span class="n">dr</span><span class="p">[</span><span class="s1">&#39;hour&#39;</span><span class="p">]</span><span class="o">-</span><span class="mi">24</span><span class="p">}</span>
-    <span class="k">return</span> <span class="n">dr</span></div>
+    <span class="k">return</span> <span class="n">dr</span>
 
-<div class="viewcode-block" id="get_slice_at_hour_at_timestep"><a class="viewcode-back" href="../../../../source/Meteorographica.data.era5.html#Meteorographica.data.era5.load.get_slice_at_hour_at_timestep">[docs]</a><span class="k">def</span> <span class="nf">get_slice_at_hour_at_timestep</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span><span class="n">day</span><span class="p">,</span><span class="n">hour</span><span class="p">,</span>
-                                  <span class="n">stream</span><span class="o">=</span><span class="s1">&#39;enda&#39;</span><span class="p">,</span><span class="n">fc_init</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_get_slice_at_hour_at_timestep</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span><span class="n">day</span><span class="p">,</span><span class="n">hour</span><span class="p">,</span>
+                                   <span class="n">stream</span><span class="o">=</span><span class="s1">&#39;enda&#39;</span><span class="p">,</span><span class="n">fc_init</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Get the cube with the data, given that the specified time</span>
 <span class="sd">       matches a data timestep.&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">is_in_file</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span><span class="n">day</span><span class="p">,</span><span class="n">hour</span><span class="p">,</span><span class="n">stream</span><span class="o">=</span><span class="n">stream</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">_is_in_file</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span><span class="n">day</span><span class="p">,</span><span class="n">hour</span><span class="p">,</span><span class="n">stream</span><span class="o">=</span><span class="n">stream</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid hour - data not in file&quot;</span><span class="p">)</span>
-    <span class="n">file_name</span><span class="o">=</span><span class="n">hourly_get_file_name</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span><span class="n">day</span><span class="p">,</span><span class="n">hour</span><span class="p">,</span>
+    <span class="n">file_name</span><span class="o">=</span><span class="n">_hourly_get_file_name</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span><span class="n">day</span><span class="p">,</span><span class="n">hour</span><span class="p">,</span>
                                    <span class="n">stream</span><span class="o">=</span><span class="n">stream</span><span class="p">,</span><span class="n">fc_init</span><span class="o">=</span><span class="n">fc_init</span><span class="p">)</span>
-    <span class="k">if</span> <span class="nb">type</span> <span class="o">==</span> <span class="s1">&#39;normal&#39;</span> <span class="ow">or</span> <span class="nb">type</span> <span class="o">==</span> <span class="s1">&#39;standard.deviation&#39;</span><span class="p">:</span>
-        <span class="n">year</span><span class="o">=</span><span class="mi">1981</span>
-        <span class="k">if</span> <span class="n">month</span><span class="o">==</span><span class="mi">2</span> <span class="ow">and</span> <span class="n">day</span><span class="o">==</span><span class="mi">29</span><span class="p">:</span>
-            <span class="n">day</span><span class="o">=</span><span class="mi">28</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">file_name</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">StandardError</span><span class="p">((</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> for </span><span class="si">%04d</span><span class="s2">/</span><span class="si">%02d</span><span class="s2"> not available&quot;</span><span class="o">+</span>
+                             <span class="s2">&quot; might need era5.fetch&quot;</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span><span class="n">variable</span><span class="p">,</span>
+                                                             <span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">))</span>
     <span class="n">time_constraint</span><span class="o">=</span><span class="n">iris</span><span class="o">.</span><span class="n">Constraint</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">iris</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">PartialDateTime</span><span class="p">(</span>
                                    <span class="n">year</span><span class="o">=</span><span class="n">year</span><span class="p">,</span>
                                    <span class="n">month</span><span class="o">=</span><span class="n">month</span><span class="p">,</span>
@@ -158,21 +160,43 @@
     <span class="n">hslice</span><span class="o">.</span><span class="n">coord</span><span class="p">(</span><span class="s1">&#39;longitude&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">coord_system</span><span class="o">=</span><span class="n">coord_s</span>
     <span class="k">if</span> <span class="n">stream</span><span class="o">==</span><span class="s1">&#39;enda&#39;</span><span class="p">:</span>
         <span class="n">hslice</span><span class="o">.</span><span class="n">dim_coords</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s1">&#39;member&#39;</span><span class="p">)</span> <span class="c1"># Consistency with 20CR</span>
-    <span class="k">return</span> <span class="n">hslice</span></div>
+    <span class="k">return</span> <span class="n">hslice</span>
 
-<div class="viewcode-block" id="get_slice_at_hour"><a class="viewcode-back" href="../../../../source/Meteorographica.data.era5.html#Meteorographica.data.era5.load.get_slice_at_hour">[docs]</a><span class="k">def</span> <span class="nf">get_slice_at_hour</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span><span class="n">day</span><span class="p">,</span><span class="n">hour</span><span class="p">,</span>
+<div class="viewcode-block" id="load"><a class="viewcode-back" href="../../../../datasources/era5.html#Meteorographica.data.era5.load">[docs]</a><span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span><span class="n">day</span><span class="p">,</span><span class="n">hour</span><span class="p">,</span>
                       <span class="n">stream</span><span class="o">=</span><span class="s1">&#39;enda&#39;</span><span class="p">,</span><span class="n">fc_init</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Get the cube with the data, interpolating between timesteps</span>
-<span class="sd">       if necessary.&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">is_in_file</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span><span class="n">day</span><span class="p">,</span><span class="n">hour</span><span class="p">,</span><span class="n">stream</span><span class="o">=</span><span class="n">stream</span><span class="p">):</span>
-        <span class="k">return</span><span class="p">(</span><span class="n">get_slice_at_hour_at_timestep</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span>
-                                             <span class="n">month</span><span class="p">,</span><span class="n">day</span><span class="p">,</span>
-                                             <span class="n">hour</span><span class="p">,</span><span class="n">stream</span><span class="o">=</span><span class="n">stream</span><span class="p">,</span>
-                                             <span class="n">fc_init</span><span class="o">=</span><span class="n">fc_init</span><span class="p">))</span>
-    <span class="n">previous_step</span><span class="o">=</span><span class="n">get_previous_field_time</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span>
-                                          <span class="n">day</span><span class="p">,</span><span class="n">hour</span><span class="p">,</span><span class="n">stream</span><span class="o">=</span><span class="n">stream</span><span class="p">)</span>
-    <span class="n">next_step</span><span class="o">=</span><span class="n">get_next_field_time</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span>
-                                  <span class="n">day</span><span class="p">,</span><span class="n">hour</span><span class="p">,</span><span class="n">stream</span><span class="o">=</span><span class="n">stream</span><span class="p">)</span>
+    <span class="sd">&quot;&quot;&quot;Load requested data from disc, interpolating if necessary.</span>
+
+<span class="sd">     Data must be available in directory $SCRATCH/ERA5, previously retrieved by :func:`era5.fetch`.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        variable (str): Variable to fetch (e.g. &#39;prmsl&#39;)</span>
+<span class="sd">        year (int): Year to get data for.</span>
+<span class="sd">        month (int): Month to get data for (1-12).</span>
+<span class="sd">        day (int): Day to get data for (1-31).</span>
+<span class="sd">        hour (float): Hour to get data for (0-23.99). Note that this isn&#39;t an integer, for minutes and seconds, use fractions of an hour.</span>
+<span class="sd">        fc_init (int): If not None; 6 or 18. See below.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`iris.cube.Cube`: Global field of variable at</span>
+<span class="sd">                                 time.</span>
+
+<span class="sd">    Note that ERA5 data is only output every 3 hours (enda) or hour (oper), so if hour%3!=0, the result may be linearly interpolated in time. If you want data after 21:00 on the last day of a month, you will need to fetch the next month&#39;s data too, as it will be used in the interpolation.</span>
+
+<span class="sd">    Precipitation data in ERA5 is a forecast field: twice a day (at 06:00 and 18:00) forecast data is calculated for the next 18 hours. So at 21:00, for example, there are 2 sets of precipitation available: a 3-hour forecast starting at 18 that day, and a 15-hour forecast starting at 06:00, and there is a discontinuity between the two fields. This function will always load the shortest lead-time forecast available unless fc_init is set (to 6 or 18) in which case it will load the forecast starting at the hour specified. You will only need this if you are making videos, or otherwise need time-continuous forecast fields, in which case you will need to be clever in smoothing over the discontinuity. For analysis fields (everything except prate), this issue does not arise and fc_init is ignored.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        StandardError: Data not on disc - see :func:`fetch`</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">_is_in_file</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span><span class="n">day</span><span class="p">,</span><span class="n">hour</span><span class="p">,</span><span class="n">stream</span><span class="o">=</span><span class="n">stream</span><span class="p">):</span>
+        <span class="k">return</span><span class="p">(</span><span class="n">_get_slice_at_hour_at_timestep</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span>
+                                              <span class="n">month</span><span class="p">,</span><span class="n">day</span><span class="p">,</span>
+                                              <span class="n">hour</span><span class="p">,</span><span class="n">stream</span><span class="o">=</span><span class="n">stream</span><span class="p">,</span>
+                                              <span class="n">fc_init</span><span class="o">=</span><span class="n">fc_init</span><span class="p">))</span>
+    <span class="n">previous_step</span><span class="o">=</span><span class="n">_get_previous_field_time</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span>
+                                           <span class="n">day</span><span class="p">,</span><span class="n">hour</span><span class="p">,</span><span class="n">stream</span><span class="o">=</span><span class="n">stream</span><span class="p">)</span>
+    <span class="n">next_step</span><span class="o">=</span><span class="n">_get_next_field_time</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span>
+                                   <span class="n">day</span><span class="p">,</span><span class="n">hour</span><span class="p">,</span><span class="n">stream</span><span class="o">=</span><span class="n">stream</span><span class="p">)</span>
     <span class="n">dt_current</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span><span class="n">day</span><span class="p">,</span><span class="nb">int</span><span class="p">(</span><span class="n">hour</span><span class="p">),</span><span class="nb">int</span><span class="p">((</span><span class="n">hour</span><span class="o">%</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">60</span><span class="p">))</span>
     <span class="n">dt_previous</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="n">previous_step</span><span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">],</span>
                                   <span class="n">previous_step</span><span class="p">[</span><span class="s1">&#39;month&#39;</span><span class="p">],</span>
@@ -182,20 +206,20 @@
                               <span class="n">next_step</span><span class="p">[</span><span class="s1">&#39;month&#39;</span><span class="p">],</span>
                               <span class="n">next_step</span><span class="p">[</span><span class="s1">&#39;day&#39;</span><span class="p">],</span>
                               <span class="n">next_step</span><span class="p">[</span><span class="s1">&#39;hour&#39;</span><span class="p">])</span>
-    <span class="n">s_previous</span><span class="o">=</span><span class="n">get_slice_at_hour_at_timestep</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span>
-                                             <span class="n">previous_step</span><span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">],</span>
-                                             <span class="n">previous_step</span><span class="p">[</span><span class="s1">&#39;month&#39;</span><span class="p">],</span>
-                                             <span class="n">previous_step</span><span class="p">[</span><span class="s1">&#39;day&#39;</span><span class="p">],</span>
-                                             <span class="n">previous_step</span><span class="p">[</span><span class="s1">&#39;hour&#39;</span><span class="p">],</span>
-                                             <span class="n">stream</span><span class="o">=</span><span class="n">stream</span><span class="p">,</span>
-                                             <span class="n">fc_init</span><span class="o">=</span><span class="n">fc_init</span><span class="p">)</span>
-    <span class="n">s_next</span><span class="o">=</span><span class="n">get_slice_at_hour_at_timestep</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span>
-                                         <span class="n">next_step</span><span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">],</span>
-                                         <span class="n">next_step</span><span class="p">[</span><span class="s1">&#39;month&#39;</span><span class="p">],</span>
-                                         <span class="n">next_step</span><span class="p">[</span><span class="s1">&#39;day&#39;</span><span class="p">],</span>
-                                         <span class="n">next_step</span><span class="p">[</span><span class="s1">&#39;hour&#39;</span><span class="p">],</span>
-                                         <span class="n">stream</span><span class="o">=</span><span class="n">stream</span><span class="p">,</span>
-                                         <span class="n">fc_init</span><span class="o">=</span><span class="n">fc_init</span><span class="p">)</span>
+    <span class="n">s_previous</span><span class="o">=</span><span class="n">_get_slice_at_hour_at_timestep</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span>
+                                              <span class="n">previous_step</span><span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">],</span>
+                                              <span class="n">previous_step</span><span class="p">[</span><span class="s1">&#39;month&#39;</span><span class="p">],</span>
+                                              <span class="n">previous_step</span><span class="p">[</span><span class="s1">&#39;day&#39;</span><span class="p">],</span>
+                                              <span class="n">previous_step</span><span class="p">[</span><span class="s1">&#39;hour&#39;</span><span class="p">],</span>
+                                              <span class="n">stream</span><span class="o">=</span><span class="n">stream</span><span class="p">,</span>
+                                              <span class="n">fc_init</span><span class="o">=</span><span class="n">fc_init</span><span class="p">)</span>
+    <span class="n">s_next</span><span class="o">=</span><span class="n">_get_slice_at_hour_at_timestep</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span>
+                                          <span class="n">next_step</span><span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">],</span>
+                                          <span class="n">next_step</span><span class="p">[</span><span class="s1">&#39;month&#39;</span><span class="p">],</span>
+                                          <span class="n">next_step</span><span class="p">[</span><span class="s1">&#39;day&#39;</span><span class="p">],</span>
+                                          <span class="n">next_step</span><span class="p">[</span><span class="s1">&#39;hour&#39;</span><span class="p">],</span>
+                                          <span class="n">stream</span><span class="o">=</span><span class="n">stream</span><span class="p">,</span>
+                                          <span class="n">fc_init</span><span class="o">=</span><span class="n">fc_init</span><span class="p">)</span>
  
     <span class="n">s_next</span><span class="o">=</span><span class="n">iris</span><span class="o">.</span><span class="n">cube</span><span class="o">.</span><span class="n">CubeList</span><span class="p">((</span><span class="n">s_previous</span><span class="p">,</span><span class="n">s_next</span><span class="p">))</span><span class="o">.</span><span class="n">merge_cube</span><span class="p">()</span>
     <span class="n">s_next</span><span class="o">=</span><span class="n">s_next</span><span class="o">.</span><span class="n">interpolate</span><span class="p">([(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span><span class="n">dt_current</span><span class="p">)],</span><span class="n">iris</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">Linear</span><span class="p">())</span>
@@ -217,7 +241,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">Meteorographica 0.0.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">Meteorographica</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>

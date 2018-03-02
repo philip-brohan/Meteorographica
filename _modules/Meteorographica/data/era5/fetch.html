@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Meteorographica.data.era5.fetch &#8212; Meteorographica 0.0.1 documentation</title>
+    <title>Meteorographica.data.era5.fetch &#8212; Meteorographica: a personal library for weather data</title>
     <link rel="stylesheet" href="../../../../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -34,12 +34,15 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">Meteorographica 0.0.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">Meteorographica</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../../index.html">
+              <img class="logo" src="../../../../_static/UK.GS1987.png" alt="Logo"/>
+            </a></p>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../../../../search.html" method="get">
@@ -71,38 +74,51 @@
 <span class="c1"># MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
 <span class="c1"># GNU Lesser General Public License for more details.</span>
 <span class="c1">#</span>
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">The functions in this module fetch ERA5 data from ECMWF and</span>
-<span class="sd">store it on $SCRATCH.</span>
 
-<span class="sd">Uses the ECMWF Public data API:</span>
-<span class="sd">  https://software.ecmwf.int/wiki/display/WEBAPI/ECMWF+Web+API+Home</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="c1">#The functions in this module fetch ERA5 data from ECMWF and</span>
+<span class="c1"># store it in $SCRATCH.</span>
+
 
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">from</span> <span class="nn">calendar</span> <span class="k">import</span> <span class="n">monthrange</span>
 <span class="kn">from</span> <span class="nn">ecmwfapi</span> <span class="k">import</span> <span class="n">ECMWFDataServer</span>
 
-<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">hourly_get_file_name</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">translate_for_file_names</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">monolevel_analysis</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">monolevel_forecast</span>
+<span class="kn">from</span> <span class="nn">utils</span> <span class="k">import</span> <span class="n">_hourly_get_file_name</span>
+<span class="kn">from</span> <span class="nn">utils</span> <span class="k">import</span> <span class="n">_translate_for_file_names</span>
+<span class="kn">from</span> <span class="nn">utils</span> <span class="k">import</span> <span class="n">monolevel_analysis</span>
+<span class="kn">from</span> <span class="nn">utils</span> <span class="k">import</span> <span class="n">monolevel_forecast</span>
 
-<div class="viewcode-block" id="fetch_data_for_month"><a class="viewcode-back" href="../../../../source/Meteorographica.data.era5.html#Meteorographica.data.era5.fetch.fetch_data_for_month">[docs]</a><span class="k">def</span> <span class="nf">fetch_data_for_month</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span><span class="n">stream</span><span class="o">=</span><span class="s1">&#39;enda&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="fetch"><a class="viewcode-back" href="../../../../datasources/era5.html#Meteorographica.data.era5.fetch">[docs]</a><span class="k">def</span> <span class="nf">fetch</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span><span class="n">stream</span><span class="o">=</span><span class="s1">&#39;enda&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get all data for one variable, for one month, from ECMWF&#39;s archive.</span>
+
+<span class="sd">    Data wil be stored locally in directory $SCRATCH/ERA5, to be retrieved by :func:`era5.load`. If the local file that would be produced already exists, this function does nothing.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        variable (str): Variable to fetch (e.g. &#39;prmsl&#39;)</span>
+<span class="sd">        year (int): Year to get data for.</span>
+<span class="sd">        month (int): Month to get data for (1-12).</span>
+<span class="sd">        stream (str): Analysis stream to use, can be &#39;enda&#39; - ensemble DA, or &#39;oper&#39; - high res single member.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        StandardError: If Variable is not a supported value.</span>
+<span class="sd"> </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">variable</span> <span class="ow">in</span> <span class="n">monolevel_analysis</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">fetch_analysis_data_for_month</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span>
-                                             <span class="n">month</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">_fetch_analysis_data_for_month</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span>
+                                              <span class="n">month</span><span class="p">,</span>
+                                              <span class="n">stream</span><span class="o">=</span><span class="n">stream</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">variable</span> <span class="ow">in</span> <span class="n">monolevel_forecast</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">fetch_forecast_data_for_month</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span>
-                                             <span class="n">month</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">_fetch_forecast_data_for_month</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span>
+                                              <span class="n">month</span><span class="p">,</span>
+                                              <span class="n">stream</span><span class="o">=</span><span class="n">stream</span><span class="p">)</span>
     <span class="k">raise</span> <span class="n">StandardError</span><span class="p">(</span><span class="s2">&quot;Unsupported variable </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">variable</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="fetch_analysis_data_for_month"><a class="viewcode-back" href="../../../../source/Meteorographica.data.era5.html#Meteorographica.data.era5.fetch.fetch_analysis_data_for_month">[docs]</a><span class="k">def</span> <span class="nf">fetch_analysis_data_for_month</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span>
-                                  <span class="n">stream</span><span class="o">=</span><span class="s1">&#39;enda&#39;</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_fetch_analysis_data_for_month</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span>
+                                   <span class="n">stream</span><span class="o">=</span><span class="s1">&#39;enda&#39;</span><span class="p">):</span>
         
-    <span class="n">local_file</span><span class="o">=</span><span class="n">hourly_get_file_name</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span>
-                                    <span class="n">stream</span><span class="o">=</span><span class="n">stream</span><span class="p">)</span>
+    <span class="n">local_file</span><span class="o">=</span><span class="n">_hourly_get_file_name</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span>
+                                     <span class="n">stream</span><span class="o">=</span><span class="n">stream</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">local_file</span><span class="p">):</span>
         <span class="c1"># Got this data already</span>
         <span class="k">return</span>
@@ -119,7 +135,7 @@
         <span class="s1">&#39;stream&#39;</span>    <span class="p">:</span> <span class="n">stream</span><span class="p">,</span>
         <span class="s1">&#39;type&#39;</span>      <span class="p">:</span> <span class="s1">&#39;an&#39;</span><span class="p">,</span>
         <span class="s1">&#39;levtype&#39;</span>   <span class="p">:</span> <span class="s1">&#39;sfc&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;param&#39;</span>     <span class="p">:</span> <span class="n">translate_for_file_names</span><span class="p">(</span><span class="n">variable</span><span class="p">),</span>
+        <span class="s1">&#39;param&#39;</span>     <span class="p">:</span> <span class="n">_translate_for_file_names</span><span class="p">(</span><span class="n">variable</span><span class="p">),</span>
         <span class="s1">&#39;grid&#39;</span>      <span class="p">:</span> <span class="n">grid</span><span class="p">,</span>
         <span class="s1">&#39;time&#39;</span>      <span class="p">:</span> <span class="s1">&#39;0/to/23/by/1&#39;</span><span class="p">,</span>
         <span class="s1">&#39;date&#39;</span>      <span class="p">:</span> <span class="s2">&quot;</span><span class="si">%04d</span><span class="s2">-</span><span class="si">%02d</span><span class="s2">-</span><span class="si">%02d</span><span class="s2">/to/</span><span class="si">%04d</span><span class="s2">-</span><span class="si">%02d</span><span class="s2">-</span><span class="si">%02d</span><span class="s2">&quot;</span> <span class="o">%</span>
@@ -128,15 +144,15 @@
                         <span class="n">monthrange</span><span class="p">(</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">)[</span><span class="mi">1</span><span class="p">]),</span>
         <span class="s1">&#39;format&#39;</span>    <span class="p">:</span> <span class="s1">&#39;netcdf&#39;</span><span class="p">,</span>
         <span class="s1">&#39;target&#39;</span>    <span class="p">:</span> <span class="n">local_file</span>
-    <span class="p">})</span></div>
+    <span class="p">})</span>
 
-<div class="viewcode-block" id="fetch_forecast_data_for_month"><a class="viewcode-back" href="../../../../source/Meteorographica.data.era5.html#Meteorographica.data.era5.fetch.fetch_forecast_data_for_month">[docs]</a><span class="k">def</span> <span class="nf">fetch_forecast_data_for_month</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span>
-                                  <span class="n">stream</span><span class="o">=</span><span class="s1">&#39;enda&#39;</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_fetch_forecast_data_for_month</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span>
+                                   <span class="n">stream</span><span class="o">=</span><span class="s1">&#39;enda&#39;</span><span class="p">):</span>
         
     <span class="c1"># Need two sets of forecast data - from the runs at 6 and 18</span>
     <span class="k">for</span> <span class="n">start_hour</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">18</span><span class="p">):</span>
 
-        <span class="n">local_file</span><span class="o">=</span><span class="n">hourly_get_file_name</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span>
+        <span class="n">local_file</span><span class="o">=</span><span class="n">_hourly_get_file_name</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span>
                                     <span class="n">fc_init</span><span class="o">=</span><span class="n">start_hour</span><span class="p">,</span><span class="n">stream</span><span class="o">=</span><span class="n">stream</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">local_file</span><span class="p">):</span>
             <span class="c1"># Got this data already</span>
@@ -154,7 +170,7 @@
             <span class="s1">&#39;stream&#39;</span>    <span class="p">:</span>  <span class="n">stream</span><span class="p">,</span>
             <span class="s1">&#39;type&#39;</span>      <span class="p">:</span> <span class="s1">&#39;fc&#39;</span><span class="p">,</span>
             <span class="s1">&#39;levtype&#39;</span>   <span class="p">:</span> <span class="s1">&#39;sfc&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;param&#39;</span>     <span class="p">:</span> <span class="n">translate_for_file_names</span><span class="p">(</span><span class="n">variable</span><span class="p">),</span>
+            <span class="s1">&#39;param&#39;</span>     <span class="p">:</span> <span class="n">_translate_for_file_names</span><span class="p">(</span><span class="n">variable</span><span class="p">),</span>
             <span class="s1">&#39;grid&#39;</span>      <span class="p">:</span> <span class="n">grid</span><span class="p">,</span>
             <span class="s1">&#39;time&#39;</span>      <span class="p">:</span> <span class="s2">&quot;</span><span class="si">%02d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">start_hour</span><span class="p">,</span>
             <span class="s1">&#39;step&#39;</span>      <span class="p">:</span> <span class="s1">&#39;0/to/18/by/1&#39;</span><span class="p">,</span>
@@ -166,7 +182,7 @@
                             <span class="n">monthrange</span><span class="p">(</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">)[</span><span class="mi">1</span><span class="p">]),</span>
             <span class="s1">&#39;format&#39;</span>    <span class="p">:</span> <span class="s1">&#39;netcdf&#39;</span><span class="p">,</span>
             <span class="s1">&#39;target&#39;</span>    <span class="p">:</span> <span class="n">local_file</span>
-        <span class="p">})</span></div>
+        <span class="p">})</span>
 
 
 </pre></div>
@@ -185,7 +201,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">Meteorographica 0.0.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">Meteorographica</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>

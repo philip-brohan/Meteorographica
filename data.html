@@ -1,23 +1,21 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Data &#8212; Meteorographica 0.0.1 documentation</title>
-    
+    <title>Meteorographica: Data &#8212; Meteorographica: a personal library for weather data</title>
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
         VERSION:     '0.0.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
@@ -25,10 +23,10 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="Meteorographica 0.0.1 documentation" href="index.html" />
-    <link rel="prev" title="Introduction" href="intro.html" /> 
+    <link rel="next" title="CERA20C" href="datasources/cera20c.html" />
+    <link rel="prev" title="Meteorographica: a personal library for weather data" href="index.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -39,20 +37,29 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="intro.html" title="Introduction"
+          <a href="datasources/cera20c.html" title="CERA20C"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Meteorographica: a personal library for weather data"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">Meteorographica 0.0.1 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">Meteorographica</a> &#187;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/UK.GS1987.png" alt="Logo"/>
+            </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="intro.html"
-                        title="previous chapter">Introduction</a></p>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Meteorographica: a personal library for weather data</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="datasources/cera20c.html"
+                        title="next chapter">CERA20C</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="_sources/data.txt"
+      <li><a href="_sources/data.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -74,13 +81,31 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="data">
-<h1>Data<a class="headerlink" href="#data" title="Permalink to this headline">¶</a></h1>
-<p>The first step in any analysis is to get the data. Useful weather data is available from many sources and the format and structure of the data is different in each case. But in each case we need to be able to do two things:</p>
-<ul class="simple">
-<li>Fetch the data from a remote repository to local disc.</li>
-<li>Load the data into memory - as an iris cube for gridded data, or a pandas dataframe for point (observation) data.</li>
+  <div class="section" id="meteorographica-data">
+<h1>Meteorographica: Data<a class="headerlink" href="#meteorographica-data" title="Permalink to this headline">¶</a></h1>
+<p>Suppose you wanted global near-surface air temperatures for 3:30pm (UTC) on March 1st 1903. One possible source is the <a class="reference external" href="https://www.esrl.noaa.gov/psd/data/20thC_Rean/">Twentieth Century Reanalysis (20CR)</a> and it would be good to have a function something like:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">at</span><span class="o">=</span><span class="n">get_data</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="s1">&#39;20CR&#39;</span><span class="p">,</span><span class="n">variable</span><span class="o">=</span><span class="s1">&#39;2m air temperature&#39;</span><span class="p">,</span><span class="n">year</span><span class="o">=</span><span class="mi">1903</span><span class="p">,</span>
+                <span class="n">month</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">day</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">hour</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span><span class="n">minute</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>That would query the archive containing all the 20CR output and return an <a class="reference external" href="http://scitools.org.uk/iris/docs/latest/iris/iris/cube.html#iris.cube.Cube" title="(in Iris v2.0)"><code class="xref py py-class docutils literal"><span class="pre">iris.cube.Cube</span></code></a> or with the selected temperatures. The Meteorographica.data modules aim to provide essentially this functionality.</p>
+<p>Unfortunately it’s not quite as easy as that. The first problem is that retrieving data from remote archives is pretty slow - the data is generally on tape, and quite possibly also on the far side of the world. So it’s best to break the problem into two haves: first fetching a large block of data from the archive and storing it on local disc, then getting data from that local file.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># Fetch all the 2m temperatures for 1903 and store them locally</span>
+<span class="c1">#  This function may take a long time to run.</span>
+<span class="n">fetch_data</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="s1">&#39;20CR&#39;</span><span class="p">,</span><span class="n">variable</span><span class="o">=</span><span class="s1">&#39;2m air temperature&#39;</span><span class="p">,</span><span class="n">year</span><span class="o">=</span><span class="mi">1903</span><span class="p">)</span>
+<span class="c1"># Now we can get data for any time in 1903 - fast - from the local store</span>
+<span class="n">at</span><span class="o">=</span><span class="n">get_data</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="s1">&#39;20CR&#39;</span><span class="p">,</span><span class="n">variable</span><span class="o">=</span><span class="s1">&#39;2m air temperature&#39;</span><span class="p">,</span><span class="n">year</span><span class="o">=</span><span class="mi">1903</span><span class="p">,</span>
+                <span class="n">month</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">day</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">hour</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span><span class="n">minute</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This means some local disc space is needed to store data - Meteorographica requires the environment variable ‘SCRATCH’ to be set with the name of a suitable directory.</p>
+<p>A second problem is that we want data from many different sources, and they can be <em>very</em> different. So each source is supported by a separate, independent module. In each case there is a fetch function and a load function, and they are designed to be similar, but each has its own quirks. The advantage of this approach is that adding a new datasource can be done without any impact on the existing ones.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="datasources/cera20c.html">CERA20C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasources/era5.html">ERA5</a></li>
 </ul>
+</div>
 </div>
 
 
@@ -99,9 +124,12 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="intro.html" title="Introduction"
+          <a href="datasources/cera20c.html" title="CERA20C"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Meteorographica: a personal library for weather data"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">Meteorographica 0.0.1 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">Meteorographica</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
