@@ -19,7 +19,6 @@
 import os
 import sys
 sys.path.insert(0, os.path.abspath('..'))
-sys.path.insert(0, os.path.abspath('../weathermap'))
 
 # -- General configuration ------------------------------------------------
 
@@ -35,6 +34,7 @@ extensions = [
     'sphinx.ext.intersphinx',
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
+    'sphinx.ext.napoleon'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -139,16 +139,16 @@ html_theme = 'sphinxdoc'
 # The name for this set of Sphinx documents.
 # "<project> v<release> documentation" by default.
 #
-# html_title = u'Meteorographica: a personal library for weather data'
+html_title = u'Meteorographica: a personal library for weather data'
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
 #
-# html_short_title = u'Meteorographica'
+html_short_title = u'Meteorographica'
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
 #
-# html_logo = None
+html_logo = 'logo/UK.GS1987.png'
 
 # The name of an image file (relative to this directory) to use as a favicon of
 # the docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
@@ -345,4 +345,12 @@ texinfo_documents = [
 
 
 # Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {'https://docs.python.org/': None}
+intersphinx_mapping = {
+ 	'python': ('https://docs.python.org/2', None),
+	'numpy': ('http://docs.scipy.org/doc/numpy/', None),
+	'scipy': ('http://docs.scipy.org/doc/scipy/reference/', None),
+	'pandas': ('http://pandas-docs.github.io/pandas-docs-travis/', None),
+        'iris': ('http://scitools.org.uk/iris/docs/latest/', None),
+        'cartopy': ('http://scitools.org.uk/cartopy/docs/latest/', None),
+        'matplotlib': ('https://matplotlib.org/', None)
+}

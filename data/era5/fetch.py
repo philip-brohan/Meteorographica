@@ -10,38 +10,51 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Lesser General Public License for more details.
 #
-"""
-The functions in this module fetch ERA5 data from ECMWF and
-store it on $SCRATCH.
 
-Uses the ECMWF Public data API:
-  https://software.ecmwf.int/wiki/display/WEBAPI/ECMWF+Web+API+Home
-"""
+#The functions in this module fetch ERA5 data from ECMWF and
+# store it in $SCRATCH.
+
 
 import os
 import subprocess
 from calendar import monthrange
 from ecmwfapi import ECMWFDataServer
 
-from . import hourly_get_file_name
-from . import translate_for_file_names
-from . import monolevel_analysis
-from . import monolevel_forecast
+from utils import _hourly_get_file_name
+from utils import _translate_for_file_names
+from utils import monolevel_analysis
+from utils import monolevel_forecast
 
-def fetch_data_for_month(variable,year,month,stream='enda'):
+def fetch(variable,year,month,stream='enda'):
+    """Get all data for one variable, for one month, from ECMWF's archive.
+
+    Data wil be stored locally in directory $SCRATCH/ERA5, to be retrieved by :func:`era5.load`. If the local file that would be produced already exists, this function does nothing.
+
+    Args:
+        variable (str): Variable to fetch (e.g. 'prmsl').
+        year (int): Year to get data for.
+        month (int): Month to get data for (1-12).
+        stream (str): Analysis stream to use, can be 'enda' - ensemble DA, or 'oper' - high res single member.
+
+    Raises:
+        StandardError: If variable is not a supported value.
+ 
+    """
     if variable in monolevel_analysis:
-        return fetch_analysis_data_for_month(variable,year,
-                                             month)
+        return _fetch_analysis_data_for_month(variable,year,
+                                              month,
+                                              stream=stream)
     if variable in monolevel_forecast:
-        return fetch_forecast_data_for_month(variable,year,
-                                             month)
+        return _fetch_forecast_data_for_month(variable,year,
+                                              month,
+                                              stream=stream)
     raise StandardError("Unsupported variable %s" % variable)
 
-def fetch_analysis_data_for_month(variable,year,month,
-                                  stream='enda'):
+def _fetch_analysis_data_for_month(variable,year,month,
+                                   stream='enda'):
         
-    local_file=hourly_get_file_name(variable,year,month,
-                                    stream=stream)
+    local_file=_hourly_get_file_name(variable,year,month,
+                                     stream=stream)
     if os.path.isfile(local_file):
         # Got this data already
         return
@@ -58,7 +71,7 @@ def fetch_analysis_data_for_month(variable,year,month,
         'stream'    : stream,
         'type'      : 'an',
         'levtype'   : 'sfc',
-        'param'     : translate_for_file_names(variable),
+        'param'     : _translate_for_file_names(variable),
         'grid'      : grid,
         'time'      : '0/to/23/by/1',
         'date'      : "%04d-%02d-%02d/to/%04d-%02d-%02d" %
@@ -69,13 +82,13 @@ def fetch_analysis_data_for_month(variable,year,month,
         'target'    : local_file
     })
 
-def fetch_forecast_data_for_month(variable,year,month,
-                                  stream='enda'):
+def _fetch_forecast_data_for_month(variable,year,month,
+                                   stream='enda'):
         
     # Need two sets of forecast data - from the runs at 6 and 18
     for start_hour in (6,18):
 
-        local_file=hourly_get_file_name(variable,year,month,
+        local_file=_hourly_get_file_name(variable,year,month,
                                     fc_init=start_hour,stream=stream)
         if os.path.isfile(local_file):
             # Got this data already
@@ -93,7 +106,7 @@ def fetch_forecast_data_for_month(variable,year,month,
             'stream'    :  stream,
             'type'      : 'fc',
             'levtype'   : 'sfc',
-            'param'     : translate_for_file_names(variable),
+            'param'     : _translate_for_file_names(variable),
             'grid'      : grid,
             'time'      : "%02d" % start_hour,
             'step'      : '0/to/18/by/1',

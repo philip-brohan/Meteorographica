@@ -10,10 +10,8 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Lesser General Public License for more details.
 #
-"""
-Utility functions for file and variable name mapping for ERA5.
 
-"""
+# Utility functions for file and variable name mapping for ERA5.
 
 import os
 import datetime
@@ -23,7 +21,7 @@ monolevel_analysis=('prmsl','air.2m','uwnd.10m','vwnd.10m','icec','sst')
 monolevel_forecast=('prate')
 
 # ERA5 uses different variable names from 20CR
-def translate_for_variable_names(variable):
+def _translate_for_variable_names(variable):
 
     if(variable=='prmsl'):
         return 'msl'
@@ -41,8 +39,8 @@ def translate_for_variable_names(variable):
         return 'tp'
     raise StandardError("Unsupported variable %s" % variable)
 
-# CERA20C uses different file names from 20CR
-def translate_for_file_names(variable):
+# ERA5 uses different file names from 20CR
+def _translate_for_file_names(variable):
 
     if(variable=='prmsl'):
         return 'msl'
@@ -61,7 +59,7 @@ def translate_for_file_names(variable):
     raise StandardError("Unsupported variable %s" % variable)
 
 # Directory to keep downloaded data in
-def get_data_dir():
+def _get_data_dir():
     scratch=os.getenv('SCRATCH')
     if scratch is None:
         raise StandardError("SCRATCH environment variable is undefined")
@@ -71,9 +69,9 @@ def get_data_dir():
     raise StandardError("Scratch directory %s does not exist" % scratch)
 
 # File name for data for a given variable and month
-def hourly_get_file_name(variable,year,month,
+def _hourly_get_file_name(variable,year,month,
                          day=15,hour=12,
-                         fc_init=None,type='ensemble',
+                         fc_init=None,
                          stream='enda'):
     base_dir=get_data_dir()
     if type=='normal':

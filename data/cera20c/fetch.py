@@ -10,34 +10,45 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Lesser General Public License for more details.
 #
-"""
-The functions in this module fetch CERA 20C data from ECMWF and
-store it on $SCRATCH.
 
-Uses the ECMWF Public data API:
-  https://software.ecmwf.int/wiki/display/WEBAPI/ECMWF+Web+API+Home
-"""
+# Functions to fetch CERA data through the ECMWF Public data API
 
 import os
 import subprocess
 from calendar import monthrange
 from ecmwfapi import ECMWFDataServer
 
-from . import hourly_get_file_name
-from . import translate_for_file_names
-from . import monolevel_analysis
-from . import monolevel_forecast
+from utils import _hourly_get_file_name
+from utils import _translate_for_file_names
+from utils import monolevel_analysis
+from utils import monolevel_forecast
 
-def fetch_data_for_month(variable,year,month):
+def fetch(variable,year,month):
+    """Get all data for one variable, for one month, from ECMWF's archive.
+
+    Data wil be stored locally in directory $SCRATCH/CERA-20C, to
+     be retrieved by :func:`cera20c.load`.
+    If the local file that would be produced already exists, this
+     function does nothing.
+
+    Args:
+        variable (str): Variable to fetch (e.g. 'prmsl')
+        year (int): Year to get data for.
+        month (int): Month to get data for (1-12).
+
+    Raises:
+        StandardError: If Variable is not a supported value.
+ 
+    """
     if variable in monolevel_analysis:
-        return fetch_analysis_data_for_month(variable,year,
+        return _fetch_analysis_data_for_month(variable,year,
                                              month)
     if variable in monolevel_forecast:
-        return fetch_forecast_data_for_month(variable,year,
+        return _fetch_forecast_data_for_month(variable,year,
                                              month)
     raise StandardError("Unsupported variable %s" % variable)
 
-def fetch_analysis_data_for_month(variable,year,month):
+def _fetch_analysis_data_for_month(variable,year,month):
         
     local_file=hourly_get_file_name(variable,year,month)
     if os.path.isfile(local_file):
@@ -67,11 +78,14 @@ def fetch_analysis_data_for_month(variable,year,month):
         'target'    : local_file
     })
 
-def fetch_forecast_data_for_month(variable,year,month):
+def _fetch_forecast_data_for_month(variable,year,month):
         
-    # Want 27 hours of forecast for each day (so we can interpolate over the seam),
-    #  but the 27-hr forcast from one day has the same validity time as the 3-hr
-    #  forecast from the next day - so need to download them separately and store
+    # Want 27 hours of forecast for each day
+    #         (so we can interpolate over the seam),
+    #  but the 27-hr forcast from one day has the same
+    #      validity time as the 3-hr forecast from the
+    #       next day - so need to download them separately
+    #       and store in different files.
 
     # First 24-hours of forecast in main file
     local_file=hourly_get_file_name(variable,year,month,
