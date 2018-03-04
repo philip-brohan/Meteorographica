@@ -10,10 +10,8 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Lesser General Public License for more details.
 #
-"""
-Functions for assigning, updating, and plotting wind vectors.
 
-"""
+#Functions for assigning, updating, and plotting wind vectors.
 
 import numpy
 import math
@@ -39,6 +37,30 @@ def allocate_vector_points(initial_points=None,
                            scale=5.0,
                            random_state=None,
                            max_points=10000):
+    """Allocate even coverage of points over a 2d space - for wind vectors.
+
+    *WARNING* This function is broken/unfinished - do not use.
+
+    To plot wind vectors in a video, we need an even coverage that moves with the wind. So we need a function that will take a set of wind-vector locations and keep their coverage fairly even, by removing any that have got too close together, and seeding new ones to fill any holes in the coverage.
+
+
+    Args:
+        initial points (`dict`, optional): None (default) or the output from a previous run of this function (see return value).
+        lat_range (`array`, optional): The latitude range to cover with points. Defaults to (-90,90).
+        lon_range (`array`, optional): The longitude range to cover with points. Defaults to (-180,180).
+        scale (`float`): Characteristic separation between points (in degrees).
+        random_state (None|`int`|`numpy.random.RandomState`): Random number generation seed, see :func:`sklearn.utils.check_random_state`.
+        max_points (`int`, optional): Maximum number of points to allocate, defaults to 10,000.
+
+
+    Returns:
+        dict: Dictionary with components 'Longitude', 'Latitude', (both arrays of float) and 'Age' (array of int). The first two give the positions of each point, and ther last counts how many times each point has been updated by this function.
+
+    Raises:
+        StandardError: if max_points is too small - more points than this are needed to cover the region.
+
+    """
+    
 
     random_state=check_random_state(random_state)
     cellsize=scale/math.sqrt(2)

@@ -352,5 +352,6 @@ intersphinx_mapping = {
 	'pandas': ('http://pandas-docs.github.io/pandas-docs-travis/', None),
         'iris': ('http://scitools.org.uk/iris/docs/latest/', None),
         'cartopy': ('http://scitools.org.uk/cartopy/docs/latest/', None),
-        'matplotlib': ('https://matplotlib.org/', None)
+        'matplotlib': ('https://matplotlib.org/', None),
+        'sklearn': ('http://scikit-learn.org/stable', None),
 }

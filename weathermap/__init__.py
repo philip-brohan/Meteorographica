@@ -11,7 +11,7 @@
 # GNU Lesser General Public License for more details.
 #
 """
-Make weathermaps using Matplotlib, Iris, & cartopy
+This package contains utility functions to simplify making weather-maps.
 
 """
 
