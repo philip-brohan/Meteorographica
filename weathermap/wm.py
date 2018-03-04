@@ -11,7 +11,7 @@
 # GNU Lesser General Public License for more details.
 #
 
-# Weather map plotting functions.        .
+# Weather map plotting functions.        
 
 import os
 import math
@@ -52,14 +52,14 @@ def add_grid(ax,
     Actually plots two grids, a minor grid at a narrow spacing with thin lines, and a major grid at a wider spacing with thicker lines. Note that the grids only cover the latitude range -85 to 85, because the line spacings become too small very close to the poles on a rotated grid.
 
     Args:
-        ax (:class:`cartopy.mpl.geoaxes.GeoAxes`): Axes on which to draw.
+        ax (:obj:`cartopy.mpl.geoaxes.GeoAxes`): Axes on which to draw.
         linestyle (:obj:`str`, optional): See :meth:`matplotlib.lines.Line2D.set_linestyle`. Defaults to '-'.
-        linewidth_minor (`float`, optional): Line width for minor grid. Defaults to 0.2.
-        linewidth_major (`float`, optional): Line width for major grid. Defaults to 0.5.
-        color (`matplotlib.color <https://matplotlib.org/api/colors_api.html>`_, optional): Grid colour. Defaults to ((0,0.30,0,0.3).
-        sep_minor (`float`, optional): Separation, in degrees, of the minor grid lines. Defaults to 0.5.
-        sep_major (`float`, optional): Separation, in degrees, of the miajor grid lines. Defaults to 2.0.
-        zorder (`float`, optional): Standard matplotlib parameter determining which things are plotted on top (high zorder), and which underneath (low zorder), Defaults to 0 - at the bottom.
+        linewidth_minor (:obj:`float`, optional): Line width for minor grid. Defaults to 0.2.
+        linewidth_major (:obj:`float`, optional): Line width for major grid. Defaults to 0.5.
+        color (see :mod:`matplotlib.colors`, optional): Grid colour. Defaults to (0,0.30,0,0.3).
+        sep_minor (:obj:`float`, optional): Separation, in degrees, of the minor grid lines. Defaults to 0.5.
+        sep_major (:obj:`float`, optional): Separation, in degrees, of the miajor grid lines. Defaults to 2.0.
+        zorder (:obj:`float`, optional): Standard matplotlib parameter determining which things are plotted on top (high zorder), and which underneath (low zorder), Defaults to 0 - at the bottom.
 
     Returns:
         Nothing - adds the grid to the plot as a side effect.
@@ -145,17 +145,17 @@ def plot_cmesh(ax,pe,resolution=0.25,
     This is the same as :meth:`matplotlib.axes.Axes.pcolorfast`, except that it takes an :class:`iris.cube.Cube` instead of an array of colour values, and its colour defaults are chosen for plots of precipitation rate.
 
     Args:
-        ax (:class:`cartopy.mpl.geoaxes.GeoAxes`): Axes on which to draw.
-        pe (:class:`iris.cube.Cube`): Variable to plot.
-        resolution (`float`, optional): What lat:lon resolution (in degrees) to interpolate pe.data to before plotting. Defaults to 0.25.
-        cmap (:class:`matplotlib.colors.LinearSegmentedColormap`): Mapping of pe.data to plot colour. Defaults to green semi-transparent.
-        zorder (`float`, optional): Standard matplotlib parameter determining which things are plotted on top (high zorder), and which underneath (low zorder), Defaults to 4.
+        ax (:obj:`cartopy.mpl.geoaxes.GeoAxes`): Axes on which to draw.
+        pe (:obj:`iris.cube.Cube`): Variable to plot.
+        resolution (:obj:`float`, optional): What lat:lon resolution (in degrees) to interpolate pe.data to before plotting. Defaults to 0.25.
+        cmap (:obj:`matplotlib.colors.LinearSegmentedColormap`): Mapping of pe.data to plot colour. Defaults to green semi-transparent.
+        zorder (:obj:`float`, optional): Standard matplotlib parameter determining which things are plotted on top (high zorder), and which underneath (low zorder), Defaults to 4.
 
     Returns:
         See :meth:`matplotlib.axes.Axes.pcolorfast` - also adds the image to the plot.
 
     """   
-    plot_cube=make_dummy(ax,resolution)
+    plot_cube=_make_dummy(ax,resolution)
     cmesh_p = pe.regrid(plot_cube,iris.analysis.Linear())
     cmesh_p.data=numpy.sqrt(cmesh_p.data)
     lats = cmesh_p.coord('latitude').points
@@ -176,19 +176,19 @@ def plot_contour(ax,pe,
     This is the same as :meth:`matplotlib.axes.Axes.contour`, except that it takes an :class:`iris.cube.Cube` instead of an array of values, and its defaults are chosen for plots of mean-sea-level pressure.
 
     Args:
-        ax (:class:`cartopy.mpl.geoaxes.GeoAxes`): Axes on which to draw.
-        pe (:class:`iris.cube.Cube`): Variable to plot.
-        resolution (`float', optional): What lat:lon resolution (in degrees) to interpolate pe.data to before plotting. Defaults to 0.25.
-        colors (`matplotlib.color <https://matplotlib.org/api/colors_api.html>`_, optional) contour line colour. Defaults to 'black'.
-        linewidths (`float`, optional): Line width for contour lines. Defaults to 0.5.
-        fontsize (`int`, optional): Font size for contour labels. Defaults to 12.
-        zorder (`float`, optional): Standard matplotlib parameter determining which things are plotted on top (high zorder), and which underneath (low zorder), Defaults to 4.
-        label (`bool`, optional): Label contour lines? Defaults to False.
+        ax (:obj:`cartopy.mpl.geoaxes.GeoAxes`): Axes on which to draw.
+        pe (:obj:`iris.cube.Cube`): Variable to plot.
+        resolution (`float`, optional): What lat:lon resolution (in degrees) to interpolate pe.data to before plotting. Defaults to 0.25.
+        colors (see :mod:`matplotlib.colors`, optional) contour line colour. Defaults to 'black'.
+        linewidths (:obj:`float`, optional): Line width for contour lines. Defaults to 0.5.
+        fontsize (:obj:`int`, optional): Font size for contour labels. Defaults to 12.
+        zorder (:obj:`float`, optional): Standard matplotlib parameter determining which things are plotted on top (high zorder), and which underneath (low zorder), Defaults to 4.
+        label (:obj:`bool`, optional): Label contour lines? Defaults to False.
 
     Returns:
         See :meth:`matplotlib.axes.Axes.contour` - also adds the lines to the plot.
     """
-    plot_cube=make_dummy(ax,resolution)
+    plot_cube=_make_dummy(ax,resolution)
     contour_p = pe.regrid(plot_cube,iris.analysis.Linear())
     lats = contour_p.coord('latitude').points
     lons = contour_p.coord('longitude').points
@@ -218,15 +218,15 @@ def plot_quiver(ax,ue,ve,points=None,
     *WARNING* This function is under development - in particular the argument names are badly chosen and will need to be changed.
 
     Args:
-        ax (:class:`cartopy.mpl.geoaxes.GeoAxes`): Axes on which to draw.
-        ue (:class:`iris.cube.Cube`): meridional value of variable to plot.
-        ve (:class:`iris.cube.Cube`): zonal value of  variable to plot.
-        resolution (`float', optional): What lat:lon resolution (in degrees) to interpolate [uv]e.data to before plotting. Defaults to 1.
-        colors (`matplotlib.color <https://matplotlib.org/api/colors_api.html>`_, optional) vector colour. Defaults to (0,0,0,0.25).
-        headwidth (`float`, optional): Controls arraw shape. Defaults to 1.
-        random_state (None|`int`|`numpy.random.RandomState`): Random number generation seed, see :func:`sklearn.utils.check_random_state`.
-        max_points (`int`, optional): Maximum number of vectors to allocate, defaults to 10,000.
-        zorder (`float`, optional): Standard matplotlib parameter determining which things are plotted on top (high zorder), and which underneath (low zorder), Defaults to 5.
+        ax (:obj:`cartopy.mpl.geoaxes.GeoAxes`): Axes on which to draw.
+        ue (:obj:`iris.cube.Cube`): meridional value of variable to plot.
+        ve (:obj:`iris.cube.Cube`): zonal value of  variable to plot.
+        resolution (:obj:`float`, optional): What lat:lon resolution (in degrees) to interpolate [uv]e.data to before plotting. Defaults to 1.
+        colors (see :mod:`matplotlib.colors`, optional) vector colour. Defaults to (0,0,0,0.25).
+        headwidth (:obj:`float`, optional): Controls arraw shape. Defaults to 1.
+        random_state (None|:obj:`int`|:obj:`numpy.random.RandomState`): Random number generation seed, see :func:`sklearn.utils.check_random_state`.
+        max_points (:obj:`int`, optional): Maximum number of vectors to allocate, defaults to 10,000.
+        zorder (:obj:`float`, optional): Standard matplotlib parameter determining which things are plotted on top (high zorder), and which underneath (low zorder), Defaults to 5.
 
     Returns:
         See :meth:`matplotlib.axes.Axes.quiver` - also adds the vectors to the plot.
@@ -237,7 +237,7 @@ def plot_quiver(ax,ue,ve,points=None,
     projection_iris=iris.coord_systems.RotatedGeogCS(pole_latitude,
                                                      pole_longitude)
     rw=rotate_winds(ue,ve,projection_iris)
-    plot_cube=make_dummy(ax,resolution)
+    plot_cube=_make_dummy(ax,resolution)
     u_p = rw[0].regrid(plot_cube,iris.analysis.Linear())
     v_p = rw[1].regrid(plot_cube,iris.analysis.Linear())
     if points is None:
@@ -281,16 +281,16 @@ def plot_wind_and_temperature(ax,ue,ve,t2,points=None,
     *WARNING* This function does not yet work - don't use it..
 
     Args:
-        ax (:class:`cartopy.mpl.geoaxes.GeoAxes`): Axes on which to draw.
-        ue (:class:`iris.cube.Cube`): meridional value of variable to plot.
-        ve (:class:`iris.cube.Cube`): zonal value of  variable to plot.
-        t2 (:class:`iris.cube.Cube`): variable to use to select arrow colour.
-        resolution (`float', optional): What lat:lon resolution (in degrees) to interpolate [uv]e.data to before plotting. Defaults to 1.
-        colors (`matplotlib.color <https://matplotlib.org/api/colors_api.html>`_, optional) vector colour. Defaults to (0,0,0,0.25).
-        headwidth (`float`, optional): Controls arrow shape. Defaults to 1.
-        random_state (None|`int`|`numpy.random.RandomState`): Random number generation seed, see :func:`sklearn.utils.check_random_state`.
-        max_points (`int`, optional): Maximum number of vectors to allocate, defaults to 10,000.
-        zorder (`float`, optional): Standard matplotlib parameter determining which things are plotted on top (high zorder), and which underneath (low zorder), Defaults to 5.
+        ax (:obj:`cartopy.mpl.geoaxes.GeoAxes`): Axes on which to draw.
+        ue (:obj:`iris.cube.Cube`): meridional value of variable to plot.
+        ve (:obj:`iris.cube.Cube`): zonal value of  variable to plot.
+        t2 (:obj:`iris.cube.Cube`): variable to use to select arrow colour.
+        resolution (:obj:`float', optional): What lat:lon resolution (in degrees) to interpolate [uv]e.data to before plotting. Defaults to 1.
+        colors (see :mod:`matplotlib.colors`, optional) vector colour. Defaults to (0,0,0,0.25).
+        headwidth (:obj:`float`, optional): Controls arrow shape. Defaults to 1.
+        random_state (None|:obj:`int`|:obj:`numpy.random.RandomState`): Random number generation seed, see :func:`sklearn.utils.check_random_state`.
+        max_points (:obj:`int`, optional): Maximum number of vectors to allocate, defaults to 10,000.
+        zorder (:obj:`float`, optional): Standard matplotlib parameter determining which things are plotted on top (high zorder), and which underneath (low zorder), Defaults to 5.
 
     Returns:
         See :meth:`matplotlib.axes.Axes.quiver` - also adds the vectors to the plot.
@@ -299,7 +299,7 @@ def plot_wind_and_temperature(ax,ue,ve,t2,points=None,
     pole_longitude=ax.projection.proj4_params['lon_0']-180
     projection_iris=iris.coord_systems.RotatedGeogCS(pole_latitude,
                                                      pole_longitude)
-    plot_cube=make_dummy(ax,resolution)
+    plot_cube=_make_dummy(ax,resolution)
     t_p = t2.regrid(plot_cube,iris.analysis.Linear())
     if points is None:
         if scale is None: scale=resolution
@@ -344,16 +344,16 @@ def plot_obs(ax,obs,
     """Plot observations as points.
 
     Args:
-        ax (:class:`cartopy.mpl.geoaxes.GeoAxes`): Axes on which to draw.
-        obs (`dict`): Dictionary containing obs positions.
-        obs_projection (:class:`cartopy.crs.CRS`, optional): Projection in which observations latitudes and longitudes are defined. Default is :class:`cartopy.crs.PlateCarree`.
-        lat_label (`string`, optional): Key, in the obs dictionary, of the latitude data. Defaults to 'Latitude'.
-        lon_label (`string`, optional): Key, in the obs dictionary, of the longitude data. Defaults to 'Longitude'.
-        radius (`float`, optional): Radius of circle marking each ob. (degrees). Defaults to 1.
-        facecolor (`matplotlib.color <https://matplotlib.org/api/colors_api.html>`_, optional): Main colour of the circle to be plotted for each ob. Defaults to 'yellow'.
-        edgecolor (`matplotlib.color <https://matplotlib.org/api/colors_api.html>`_, optional): Border colour of the circle to be plotted for each ob. Defaults to 'black'.
-        alpha (`float`, optional): Alpha value for facecolor and edgecolor. Defaults to 0.85.
-        zorder (`float`, optional): Standard matplotlib parameter determining which things are plotted on top (high zorder), and which underneath (low zorder), Defaults to 2.5.
+        ax (:obj:`cartopy.mpl.geoaxes.GeoAxes`): Axes on which to draw.
+        obs (:obj:`dict`): Dictionary containing obs positions.
+        obs_projection (:obj:`cartopy.crs.CRS`, optional): Projection in which observations latitudes and longitudes are defined. Default is :class:`cartopy.crs.PlateCarree`.
+        lat_label (:obj:`str`, optional): Key, in the obs dictionary, of the latitude data. Defaults to 'Latitude'.
+        lon_label (:obj:`str`, optional): Key, in the obs dictionary, of the longitude data. Defaults to 'Longitude'.
+        radius (:obj:`float`, optional): Radius of circle marking each ob. (degrees). Defaults to 1.
+        facecolor (see :mod:`matplotlib.colors`, optional): Main colour of the circle to be plotted for each ob. Defaults to 'yellow'.
+        edgecolor (see :mod:`matplotlib.colors`, optional): Border colour of the circle to be plotted for each ob. Defaults to 'black'.
+        alpha (:obj:`float`, optional): Alpha value for facecolor and edgecolor. Defaults to 0.85.
+        zorder (:obj:`float`, optional): Standard matplotlib parameter determining which things are plotted on top (high zorder), and which underneath (low zorder), Defaults to 2.5.
 
     Returns:
         Nothing - adds the obs. points to the plot.
@@ -386,15 +386,15 @@ def plot_label(ax,label,
     """Add a text label to the plot
 
     Args:
-        ax (:class:`cartopy.mpl.geoaxes.GeoAxes`): Axes on which to draw.
-        color (`matplotlib.color <https://matplotlib.org/api/colors_api.html>`_, optional): Text colour of the label. Defaults to 'black'.
-        facecolor (`matplotlib.color <https://matplotlib.org/api/colors_api.html>`_, optional): Background colour of the label. Defaults to 'white'.
-        x_fraction (`float`, optional): X position of the label (fraction of axes). Defaults to 0.98.
-        y_fraction (`float`, optional): Y position of the label (fraction of axes). Defaults to 0.02.
-        horizontalalignment (`string`, optional): How is the label justified to the x position (right|left|center)?. Defaults to 'right'.
-        verticalalignment (`string`, optional): How is the label justified to the y position (top|bottom|center)?. Defaults to 'bottom'.
-        fontsize (`int`, optional): Size of the text to use. Defaults to 12.
-        zorder (`float`, optional): Standard matplotlib parameter determining which things are plotted on top (high zorder), and which underneath (low zorder), Defaults to 5.5.
+        ax (:obj:`cartopy.mpl.geoaxes.GeoAxes`): Axes on which to draw.
+        color (see :mod:`matplotlib.colors`, optional): Text colour of the label. Defaults to 'black'.
+        facecolor (see :mod:`matplotlib.colors`, optional): Background colour of the label. Defaults to 'white'.
+        x_fraction (:obj:`float`, optional): X position of the label (fraction of axes). Defaults to 0.98.
+        y_fraction (:obj:`float`, optional): Y position of the label (fraction of axes). Defaults to 0.02.
+        horizontalalignment (:obj:`str`, optional): How is the label justified to the x position (right|left|center)?. Defaults to 'right'.
+        verticalalignment (:obj:`str`, optional): How is the label justified to the y position (top|bottom|center)?. Defaults to 'bottom'.
+        fontsize (:obj:`int`, optional): Size of the text to use. Defaults to 12.
+        zorder (:obj:`float`, optional): Standard matplotlib parameter determining which things are plotted on top (high zorder), and which underneath (low zorder), Defaults to 5.5.
 
     Returns:
         Nothing - adds the label points to the plot.
