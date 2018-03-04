@@ -1,0 +1,463 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Meteographica.weathermap &#8212; Meteorographica: a personal library for weather data</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Meteorographica.data.era5" href="datasources/era5.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="datasources/era5.html" title="Meteorographica.data.era5"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Meteorographica</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/UK.GS1987.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="datasources/era5.html"
+                        title="previous chapter">Meteorographica.data.era5</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/weathermap.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-Meteorographica.weathermap">
+<span id="meteographica-weathermap"></span><h1>Meteographica.weathermap<a class="headerlink" href="#module-Meteorographica.weathermap" title="Permalink to this headline">¶</a></h1>
+<p>This package contains utility functions to simplify making weather-maps.</p>
+<dl class="class">
+<dt id="Meteorographica.weathermap.Circle">
+<em class="property">class </em><code class="descclassname">Meteorographica.weathermap.</code><code class="descname">Circle</code><span class="sig-paren">(</span><em>xy</em>, <em>radius=5</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/matplotlib/patches.html#Circle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Meteorographica.weathermap.Circle" title="Permalink to this definition">¶</a></dt>
+<dd><p>A circle patch.</p>
+<dl class="method">
+<dt id="Meteorographica.weathermap.Circle.get_radius">
+<code class="descname">get_radius</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/matplotlib/patches.html#Circle.get_radius"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Meteorographica.weathermap.Circle.get_radius" title="Permalink to this definition">¶</a></dt>
+<dd><p>return the radius of the circle</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Meteorographica.weathermap.Circle.radius">
+<code class="descname">radius</code><a class="headerlink" href="#Meteorographica.weathermap.Circle.radius" title="Permalink to this definition">¶</a></dt>
+<dd><p>return the radius of the circle</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Meteorographica.weathermap.Circle.set_radius">
+<code class="descname">set_radius</code><span class="sig-paren">(</span><em>radius</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/matplotlib/patches.html#Circle.set_radius"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Meteorographica.weathermap.Circle.set_radius" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the radius of the circle</p>
+<p>ACCEPTS: float</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="Meteorographica.weathermap.add_grid">
+<code class="descclassname">Meteorographica.weathermap.</code><code class="descname">add_grid</code><span class="sig-paren">(</span><em>ax</em>, <em>linestyle='-'</em>, <em>linewidth_minor=0.2</em>, <em>linewidth_major=0.5</em>, <em>color=(0</em>, <em>0.3</em>, <em>0</em>, <em>0.3)</em>, <em>zorder=0</em>, <em>sep_major=2</em>, <em>sep_minor=0.5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Meteorographica/weathermap/wm.html#add_grid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Meteorographica.weathermap.add_grid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a lat-lon grid to the map.</p>
+<p>Actually plots two grids, a minor grid at a narrow spacing with thin lines, and a major grid at a wider spacing with thicker lines. Note that the grids only cover the latitude range -85 to 85, because the line spacings become too small very close to the poles on a rotated grid.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ax</strong> (<a class="reference external" href="http://scitools.org.uk/cartopy/docs/latest/matplotlib/geoaxes.html#cartopy.mpl.geoaxes.GeoAxes" title="(in cartopy v0.16.0)"><code class="xref py py-obj docutils literal"><span class="pre">cartopy.mpl.geoaxes.GeoAxes</span></code></a>) – Axes on which to draw.</li>
+<li><strong>linestyle</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a>, optional) – See <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.lines.Line2D.html#matplotlib.lines.Line2D.set_linestyle" title="(in Matplotlib v2.1.2)"><code class="xref py py-meth docutils literal"><span class="pre">matplotlib.lines.Line2D.set_linestyle()</span></code></a>. Defaults to ‘-‘.</li>
+<li><strong>linewidth_minor</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">float</span></code></a>, optional) – Line width for minor grid. Defaults to 0.2.</li>
+<li><strong>linewidth_major</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">float</span></code></a>, optional) – Line width for major grid. Defaults to 0.5.</li>
+<li><strong>color</strong> (see <a class="reference external" href="https://matplotlib.org/api/colors_api.html#module-matplotlib.colors" title="(in Matplotlib v2.1.2)"><code class="xref py py-mod docutils literal"><span class="pre">matplotlib.colors</span></code></a>, optional) – Grid colour. Defaults to ((0,0.30,0,0.3).</li>
+<li><strong>sep_minor</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">float</span></code></a>, optional) – Separation, in degrees, of the minor grid lines. Defaults to 0.5.</li>
+<li><strong>sep_major</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">float</span></code></a>, optional) – Separation, in degrees, of the miajor grid lines. Defaults to 2.0.</li>
+<li><strong>zorder</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">float</span></code></a>, optional) – Standard matplotlib parameter determining which things are plotted on top (high zorder), and which underneath (low zorder), Defaults to 0 - at the bottom.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Nothing - adds the grid to the plot as a side effect.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="Meteorographica.weathermap.allocate_vector_points">
+<code class="descclassname">Meteorographica.weathermap.</code><code class="descname">allocate_vector_points</code><span class="sig-paren">(</span><em>initial_points=None</em>, <em>lat_range=(-90</em>, <em>90)</em>, <em>lon_range=(-180</em>, <em>180)</em>, <em>scale=5.0</em>, <em>random_state=None</em>, <em>max_points=10000</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Meteorographica/weathermap/wind_vectors.html#allocate_vector_points"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Meteorographica.weathermap.allocate_vector_points" title="Permalink to this definition">¶</a></dt>
+<dd><p>Allocate even coverage of points over a 2d space - for wind vectors.</p>
+<p><em>WARNING</em> This function is broken/unfinished - do not use.</p>
+<p>To plot wind vectors in a video, we need an even coverage that moves with the wind. So we need a function that will take a set of wind-vector locations and keep their coverage fairly even, by removing any that have got too close together, and seeding new ones to fill any holes in the coverage.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>points</strong> (<em>initial</em>) – None (default) or the output from a previous run of this function (see return value).</li>
+<li><strong>lat_range</strong> (<cite>array</cite>, optional) – The latitude range to cover with points. Defaults to (-90,90).</li>
+<li><strong>lon_range</strong> (<cite>array</cite>, optional) – The longitude range to cover with points. Defaults to (-180,180).</li>
+<li><strong>scale</strong> (<cite>float</cite>) – Characteristic separation between points (in degrees).</li>
+<li><strong>random_state</strong> (<em>None|`int`|`numpy.random.RandomState`</em>) – Random number generation seed, see <a class="reference external" href="http://scikit-learn.org/stable/modules/generated/sklearn.utils.check_random_state.html#sklearn.utils.check_random_state" title="(in scikit-learn v0.19.1)"><code class="xref py py-func docutils literal"><span class="pre">sklearn.utils.check_random_state()</span></code></a>.</li>
+<li><strong>max_points</strong> (<cite>int</cite>, optional) – Maximum number of points to allocate, defaults to 10,000.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Dictionary with components ‘Longitude’, ‘Latitude’, (both arrays of float) and ‘Age’ (array of int). The first two give the positions of each point, and ther last counts how many times each point has been updated by this function.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)">dict</a></p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">StandardError</span></code> – if max_points is too small - more points than this are needed to cover the region.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="Meteorographica.weathermap.check_random_state">
+<code class="descclassname">Meteorographica.weathermap.</code><code class="descname">check_random_state</code><span class="sig-paren">(</span><em>seed</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sklearn/utils/validation.html#check_random_state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Meteorographica.weathermap.check_random_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Turn seed into a np.random.RandomState instance</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>seed</strong> (<em>None | int | instance of RandomState</em>) – If seed is None, return the RandomState singleton used by np.random.
+If seed is an int, return a new RandomState instance seeded with seed.
+If seed is already a RandomState instance, return it.
+Otherwise raise ValueError.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="Meteorographica.weathermap.fetch_backgrounds">
+<code class="descclassname">Meteorographica.weathermap.</code><code class="descname">fetch_backgrounds</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Meteorographica/weathermap/utils.html#fetch_backgrounds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Meteorographica.weathermap.fetch_backgrounds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fetch plot background data from Natural Earth.</p>
+<blockquote>
+<div><a class="reference external" href="http://scitools.org.uk/cartopy/docs/latest/index.html">Cartopy</a> uses background images from <a class="reference external" href="http://www.naturalearthdata.com/">Natural Earth</a> for things like continent outlines on world maps - Meteorographica folows it in this. This function downloads some Natural Earth data (continent backgrounds) and modifies it to make ocean regions transparent for easy use in map plots.</div></blockquote>
+<p>You should only have to run this function once as part of the set-up of this module.</p>
+<p>Requires three utility functions to be available: <a class="reference external" href="https://www.gnu.org/software/wget/">wget</a>, <a class="reference external" href="http://www.info-zip.org/mans/unzip.html">unzip</a>, and ‘imagemagick convert &lt;<a class="reference external" href="https://www.imagemagick.org/script/convert.php">https://www.imagemagick.org/script/convert.php</a>&gt;`_. It will create map background files in the directory specified by the CARTOPY_USER_BACKGROUNDS environment variable which should have been set during the installation of <a class="reference external" href="http://scitools.org.uk/cartopy/docs/latest/index.html">Cartopy</a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">StandardError</span></code> – Environment variable ‘CARTOPY_USER_BACKGROUNDS’ is not set</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="Meteorographica.weathermap.plot_cmesh">
+<code class="descclassname">Meteorographica.weathermap.</code><code class="descname">plot_cmesh</code><span class="sig-paren">(</span><em>ax</em>, <em>pe</em>, <em>resolution=0.25</em>, <em>cmap=&lt;matplotlib.colors.LinearSegmentedColormap object&gt;</em>, <em>zorder=4</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Meteorographica/weathermap/wm.html#plot_cmesh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Meteorographica.weathermap.plot_cmesh" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots a variable as a colour map.</p>
+<p>This is the same as <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.pcolorfast.html#matplotlib.axes.Axes.pcolorfast" title="(in Matplotlib v2.1.2)"><code class="xref py py-meth docutils literal"><span class="pre">matplotlib.axes.Axes.pcolorfast()</span></code></a>, except that it takes an <a class="reference external" href="http://scitools.org.uk/iris/docs/latest/iris/iris/cube.html#iris.cube.Cube" title="(in Iris v2.0)"><code class="xref py py-class docutils literal"><span class="pre">iris.cube.Cube</span></code></a> instead of an array of colour values, and its colour defaults are chosen for plots of precipitation rate.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ax</strong> (<a class="reference external" href="http://scitools.org.uk/cartopy/docs/latest/matplotlib/geoaxes.html#cartopy.mpl.geoaxes.GeoAxes" title="(in cartopy v0.16.0)"><code class="xref py py-obj docutils literal"><span class="pre">cartopy.mpl.geoaxes.GeoAxes</span></code></a>) – Axes on which to draw.</li>
+<li><strong>pe</strong> (<a class="reference external" href="http://scitools.org.uk/iris/docs/latest/iris/iris/cube.html#iris.cube.Cube" title="(in Iris v2.0)"><code class="xref py py-obj docutils literal"><span class="pre">iris.cube.Cube</span></code></a>) – Variable to plot.</li>
+<li><strong>resolution</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">float</span></code></a>, optional) – What lat:lon resolution (in degrees) to interpolate pe.data to before plotting. Defaults to 0.25.</li>
+<li><strong>cmap</strong> (<a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.colors.LinearSegmentedColormap.html#matplotlib.colors.LinearSegmentedColormap" title="(in Matplotlib v2.1.2)"><code class="xref py py-obj docutils literal"><span class="pre">matplotlib.colors.LinearSegmentedColormap</span></code></a>) – Mapping of pe.data to plot colour. Defaults to green semi-transparent.</li>
+<li><strong>zorder</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">float</span></code></a>, optional) – Standard matplotlib parameter determining which things are plotted on top (high zorder), and which underneath (low zorder), Defaults to 4.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">See <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.pcolorfast.html#matplotlib.axes.Axes.pcolorfast" title="(in Matplotlib v2.1.2)"><code class="xref py py-meth docutils literal"><span class="pre">matplotlib.axes.Axes.pcolorfast()</span></code></a> - also adds the image to the plot.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="Meteorographica.weathermap.plot_contour">
+<code class="descclassname">Meteorographica.weathermap.</code><code class="descname">plot_contour</code><span class="sig-paren">(</span><em>ax</em>, <em>pe</em>, <em>resolution=0.25</em>, <em>levels=None</em>, <em>colors='black'</em>, <em>linewidths=0.5</em>, <em>fontsize=12</em>, <em>zorder=4</em>, <em>label=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Meteorographica/weathermap/wm.html#plot_contour"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Meteorographica.weathermap.plot_contour" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots a variable as a contour plot.</p>
+<p>This is the same as <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.contour.html#matplotlib.axes.Axes.contour" title="(in Matplotlib v2.1.2)"><code class="xref py py-meth docutils literal"><span class="pre">matplotlib.axes.Axes.contour()</span></code></a>, except that it takes an <a class="reference external" href="http://scitools.org.uk/iris/docs/latest/iris/iris/cube.html#iris.cube.Cube" title="(in Iris v2.0)"><code class="xref py py-class docutils literal"><span class="pre">iris.cube.Cube</span></code></a> instead of an array of values, and its defaults are chosen for plots of mean-sea-level pressure.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ax</strong> (<a class="reference external" href="http://scitools.org.uk/cartopy/docs/latest/matplotlib/geoaxes.html#cartopy.mpl.geoaxes.GeoAxes" title="(in cartopy v0.16.0)"><code class="xref py py-obj docutils literal"><span class="pre">cartopy.mpl.geoaxes.GeoAxes</span></code></a>) – Axes on which to draw.</li>
+<li><strong>pe</strong> (<a class="reference external" href="http://scitools.org.uk/iris/docs/latest/iris/iris/cube.html#iris.cube.Cube" title="(in Iris v2.0)"><code class="xref py py-obj docutils literal"><span class="pre">iris.cube.Cube</span></code></a>) – Variable to plot.</li>
+<li><strong>resolution</strong> (<cite>float</cite>, optional) – What lat:lon resolution (in degrees) to interpolate pe.data to before plotting. Defaults to 0.25.</li>
+<li><strong>colors</strong> (see <a class="reference external" href="https://matplotlib.org/api/colors_api.html#module-matplotlib.colors" title="(in Matplotlib v2.1.2)"><code class="xref py py-mod docutils literal"><span class="pre">matplotlib.colors</span></code></a>, optional) – </li>
+<li><strong>linewidths</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">float</span></code></a>, optional) – Line width for contour lines. Defaults to 0.5.</li>
+<li><strong>fontsize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">int</span></code></a>, optional) – Font size for contour labels. Defaults to 12.</li>
+<li><strong>zorder</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">float</span></code></a>, optional) – Standard matplotlib parameter determining which things are plotted on top (high zorder), and which underneath (low zorder), Defaults to 4.</li>
+<li><strong>label</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">bool</span></code></a>, optional) – Label contour lines? Defaults to False.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">See <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.contour.html#matplotlib.axes.Axes.contour" title="(in Matplotlib v2.1.2)"><code class="xref py py-meth docutils literal"><span class="pre">matplotlib.axes.Axes.contour()</span></code></a> - also adds the lines to the plot.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="Meteorographica.weathermap.plot_label">
+<code class="descclassname">Meteorographica.weathermap.</code><code class="descname">plot_label</code><span class="sig-paren">(</span><em>ax</em>, <em>label</em>, <em>color='black'</em>, <em>facecolor='white'</em>, <em>x_fraction=0.98</em>, <em>y_fraction=0.02</em>, <em>horizontalalignment='right'</em>, <em>verticalalignment='bottom'</em>, <em>fontsize=12</em>, <em>zorder=5.5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Meteorographica/weathermap/wm.html#plot_label"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Meteorographica.weathermap.plot_label" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a text label to the plot</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ax</strong> (<a class="reference external" href="http://scitools.org.uk/cartopy/docs/latest/matplotlib/geoaxes.html#cartopy.mpl.geoaxes.GeoAxes" title="(in cartopy v0.16.0)"><code class="xref py py-obj docutils literal"><span class="pre">cartopy.mpl.geoaxes.GeoAxes</span></code></a>) – Axes on which to draw.</li>
+<li><strong>color</strong> (see <a class="reference external" href="https://matplotlib.org/api/colors_api.html#module-matplotlib.colors" title="(in Matplotlib v2.1.2)"><code class="xref py py-mod docutils literal"><span class="pre">matplotlib.colors</span></code></a>, optional) – Text colour of the label. Defaults to ‘black’.</li>
+<li><strong>facecolor</strong> (see <a class="reference external" href="https://matplotlib.org/api/colors_api.html#module-matplotlib.colors" title="(in Matplotlib v2.1.2)"><code class="xref py py-mod docutils literal"><span class="pre">matplotlib.colors</span></code></a>, optional) – Background colour of the label. Defaults to ‘white’.</li>
+<li><strong>x_fraction</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">float</span></code></a>, optional) – X position of the label (fraction of axes). Defaults to 0.98.</li>
+<li><strong>y_fraction</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">float</span></code></a>, optional) – Y position of the label (fraction of axes). Defaults to 0.02.</li>
+<li><strong>horizontalalignment</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a>, optional) – How is the label justified to the x position (right|left|center)?. Defaults to ‘right’.</li>
+<li><strong>verticalalignment</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a>, optional) – How is the label justified to the y position (top|bottom|center)?. Defaults to ‘bottom’.</li>
+<li><strong>fontsize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">int</span></code></a>, optional) – Size of the text to use. Defaults to 12.</li>
+<li><strong>zorder</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">float</span></code></a>, optional) – Standard matplotlib parameter determining which things are plotted on top (high zorder), and which underneath (low zorder), Defaults to 5.5.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Nothing - adds the label points to the plot.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="Meteorographica.weathermap.plot_obs">
+<code class="descclassname">Meteorographica.weathermap.</code><code class="descname">plot_obs</code><span class="sig-paren">(</span><em>ax</em>, <em>obs</em>, <em>obs_projection=&lt;cartopy.crs.PlateCarree object&gt;</em>, <em>lat_label='Latitude'</em>, <em>lon_label='Longitude'</em>, <em>radius=0.1</em>, <em>facecolor='yellow'</em>, <em>edgecolor='black'</em>, <em>alpha=0.85</em>, <em>zorder=2.5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Meteorographica/weathermap/wm.html#plot_obs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Meteorographica.weathermap.plot_obs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot observations as points.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ax</strong> (<a class="reference external" href="http://scitools.org.uk/cartopy/docs/latest/matplotlib/geoaxes.html#cartopy.mpl.geoaxes.GeoAxes" title="(in cartopy v0.16.0)"><code class="xref py py-obj docutils literal"><span class="pre">cartopy.mpl.geoaxes.GeoAxes</span></code></a>) – Axes on which to draw.</li>
+<li><strong>obs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">dict</span></code></a>) – Dictionary containing obs positions.</li>
+<li><strong>obs_projection</strong> (<a class="reference external" href="http://scitools.org.uk/cartopy/docs/latest/crs/index.html#cartopy.crs.CRS" title="(in cartopy v0.16.0)"><code class="xref py py-obj docutils literal"><span class="pre">cartopy.crs.CRS</span></code></a>, optional) – Projection in which observations latitudes and longitudes are defined. Default is <a class="reference external" href="http://scitools.org.uk/cartopy/docs/latest/crs/projections.html#cartopy.crs.PlateCarree" title="(in cartopy v0.16.0)"><code class="xref py py-class docutils literal"><span class="pre">cartopy.crs.PlateCarree</span></code></a>.</li>
+<li><strong>lat_label</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a>, optional) – Key, in the obs dictionary, of the latitude data. Defaults to ‘Latitude’.</li>
+<li><strong>lon_label</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a>, optional) – Key, in the obs dictionary, of the longitude data. Defaults to ‘Longitude’.</li>
+<li><strong>radius</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">float</span></code></a>, optional) – Radius of circle marking each ob. (degrees). Defaults to 1.</li>
+<li><strong>facecolor</strong> (see <a class="reference external" href="https://matplotlib.org/api/colors_api.html#module-matplotlib.colors" title="(in Matplotlib v2.1.2)"><code class="xref py py-mod docutils literal"><span class="pre">matplotlib.colors</span></code></a>, optional) – Main colour of the circle to be plotted for each ob. Defaults to ‘yellow’.</li>
+<li><strong>edgecolor</strong> (see <a class="reference external" href="https://matplotlib.org/api/colors_api.html#module-matplotlib.colors" title="(in Matplotlib v2.1.2)"><code class="xref py py-mod docutils literal"><span class="pre">matplotlib.colors</span></code></a>, optional) – Border colour of the circle to be plotted for each ob. Defaults to ‘black’.</li>
+<li><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">float</span></code></a>, optional) – Alpha value for facecolor and edgecolor. Defaults to 0.85.</li>
+<li><strong>zorder</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">float</span></code></a>, optional) – Standard matplotlib parameter determining which things are plotted on top (high zorder), and which underneath (low zorder), Defaults to 2.5.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Nothing - adds the obs. points to the plot.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="Meteorographica.weathermap.plot_quiver">
+<code class="descclassname">Meteorographica.weathermap.</code><code class="descname">plot_quiver</code><span class="sig-paren">(</span><em>ax</em>, <em>ue</em>, <em>ve</em>, <em>points=None</em>, <em>scale=None</em>, <em>resolution=1</em>, <em>color=(0</em>, <em>0</em>, <em>0</em>, <em>0.25)</em>, <em>headwidth=1</em>, <em>random_state=None</em>, <em>max_points=10000</em>, <em>zorder=5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Meteorographica/weathermap/wm.html#plot_quiver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Meteorographica.weathermap.plot_quiver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots a pair of variables as a 2d field of arrows.</p>
+<p>This is the same as <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.quiver.html#matplotlib.axes.Axes.quiver" title="(in Matplotlib v2.1.2)"><code class="xref py py-meth docutils literal"><span class="pre">matplotlib.axes.Axes.quiver()</span></code></a>, except that it takes <a class="reference external" href="http://scitools.org.uk/iris/docs/latest/iris/iris/cube.html#iris.cube.Cube" title="(in Iris v2.0)"><code class="xref py py-class docutils literal"><span class="pre">iris.cube.Cube</span></code></a> as arguments instead of a set of vectors, and its defaults are chosen for plots of 10m wind.</p>
+<p><em>WARNING</em> This function is under development - in particular the argument names are badly chosen and will need to be changed.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ax</strong> (<a class="reference external" href="http://scitools.org.uk/cartopy/docs/latest/matplotlib/geoaxes.html#cartopy.mpl.geoaxes.GeoAxes" title="(in cartopy v0.16.0)"><code class="xref py py-obj docutils literal"><span class="pre">cartopy.mpl.geoaxes.GeoAxes</span></code></a>) – Axes on which to draw.</li>
+<li><strong>ue</strong> (<a class="reference external" href="http://scitools.org.uk/iris/docs/latest/iris/iris/cube.html#iris.cube.Cube" title="(in Iris v2.0)"><code class="xref py py-obj docutils literal"><span class="pre">iris.cube.Cube</span></code></a>) – meridional value of variable to plot.</li>
+<li><strong>ve</strong> (<a class="reference external" href="http://scitools.org.uk/iris/docs/latest/iris/iris/cube.html#iris.cube.Cube" title="(in Iris v2.0)"><code class="xref py py-obj docutils literal"><span class="pre">iris.cube.Cube</span></code></a>) – zonal value of  variable to plot.</li>
+<li><strong>resolution</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">float</span></code></a>, optional) – What lat:lon resolution (in degrees) to interpolate [uv]e.data to before plotting. Defaults to 1.</li>
+<li><strong>colors</strong> (see <a class="reference external" href="https://matplotlib.org/api/colors_api.html#module-matplotlib.colors" title="(in Matplotlib v2.1.2)"><code class="xref py py-mod docutils literal"><span class="pre">matplotlib.colors</span></code></a>, optional) vector colour. Defaults to (0,0,0,0.25) – </li>
+<li><strong>headwidth</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">float</span></code></a>, optional) – Controls arraw shape. Defaults to 1.</li>
+<li><strong>random_state</strong> (None|:obj:<cite>int`|:obj:`numpy.random.RandomState</cite>) – Random number generation seed, see <a class="reference external" href="http://scikit-learn.org/stable/modules/generated/sklearn.utils.check_random_state.html#sklearn.utils.check_random_state" title="(in scikit-learn v0.19.1)"><code class="xref py py-func docutils literal"><span class="pre">sklearn.utils.check_random_state()</span></code></a>.</li>
+<li><strong>max_points</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">int</span></code></a>, optional) – Maximum number of vectors to allocate, defaults to 10,000.</li>
+<li><strong>zorder</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">float</span></code></a>, optional) – Standard matplotlib parameter determining which things are plotted on top (high zorder), and which underneath (low zorder), Defaults to 5.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">See <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.quiver.html#matplotlib.axes.Axes.quiver" title="(in Matplotlib v2.1.2)"><code class="xref py py-meth docutils literal"><span class="pre">matplotlib.axes.Axes.quiver()</span></code></a> - also adds the vectors to the plot.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="Meteorographica.weathermap.plot_wind_and_temperature">
+<code class="descclassname">Meteorographica.weathermap.</code><code class="descname">plot_wind_and_temperature</code><span class="sig-paren">(</span><em>ax</em>, <em>ue</em>, <em>ve</em>, <em>t2</em>, <em>points=None</em>, <em>scale=None</em>, <em>resolution=1</em>, <em>color=(0</em>, <em>0</em>, <em>0</em>, <em>0.25)</em>, <em>headwidth=1</em>, <em>random_state=None</em>, <em>max_points=10000</em>, <em>zorder=5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Meteorographica/weathermap/wm.html#plot_wind_and_temperature"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Meteorographica.weathermap.plot_wind_and_temperature" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots a pair of variables as a 2d field of arrows, coloured according to a third variable.</p>
+<p>This is the same as <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.quiver.html#matplotlib.axes.Axes.quiver" title="(in Matplotlib v2.1.2)"><code class="xref py py-meth docutils literal"><span class="pre">matplotlib.axes.Axes.quiver()</span></code></a>, except that it takes <a class="reference external" href="http://scitools.org.uk/iris/docs/latest/iris/iris/cube.html#iris.cube.Cube" title="(in Iris v2.0)"><code class="xref py py-class docutils literal"><span class="pre">iris.cube.Cube</span></code></a> as arguments instead of a set of vectors, and its defaults are chosen for plots of 10m wind.</p>
+<p><em>WARNING</em> This function does not yet work - don’t use it..</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ax</strong> (<a class="reference external" href="http://scitools.org.uk/cartopy/docs/latest/matplotlib/geoaxes.html#cartopy.mpl.geoaxes.GeoAxes" title="(in cartopy v0.16.0)"><code class="xref py py-obj docutils literal"><span class="pre">cartopy.mpl.geoaxes.GeoAxes</span></code></a>) – Axes on which to draw.</li>
+<li><strong>ue</strong> (<a class="reference external" href="http://scitools.org.uk/iris/docs/latest/iris/iris/cube.html#iris.cube.Cube" title="(in Iris v2.0)"><code class="xref py py-obj docutils literal"><span class="pre">iris.cube.Cube</span></code></a>) – meridional value of variable to plot.</li>
+<li><strong>ve</strong> (<a class="reference external" href="http://scitools.org.uk/iris/docs/latest/iris/iris/cube.html#iris.cube.Cube" title="(in Iris v2.0)"><code class="xref py py-obj docutils literal"><span class="pre">iris.cube.Cube</span></code></a>) – zonal value of  variable to plot.</li>
+<li><strong>t2</strong> (<a class="reference external" href="http://scitools.org.uk/iris/docs/latest/iris/iris/cube.html#iris.cube.Cube" title="(in Iris v2.0)"><code class="xref py py-obj docutils literal"><span class="pre">iris.cube.Cube</span></code></a>) – variable to use to select arrow colour.</li>
+<li><strong>(</strong> (<em>resolution</em>) – obj:<a href="#id2"><span class="problematic" id="id3">`</span></a>float’, optional): What lat:lon resolution (in degrees) to interpolate [uv]e.data to before plotting. Defaults to 1.</li>
+<li><strong>colors</strong> (see <a class="reference external" href="https://matplotlib.org/api/colors_api.html#module-matplotlib.colors" title="(in Matplotlib v2.1.2)"><code class="xref py py-mod docutils literal"><span class="pre">matplotlib.colors</span></code></a>, optional) vector colour. Defaults to (0,0,0,0.25) – </li>
+<li><strong>headwidth</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">float</span></code></a>, optional) – Controls arrow shape. Defaults to 1.</li>
+<li><strong>random_state</strong> (None|:obj:<cite>int`|:obj:`numpy.random.RandomState</cite>) – Random number generation seed, see <a class="reference external" href="http://scikit-learn.org/stable/modules/generated/sklearn.utils.check_random_state.html#sklearn.utils.check_random_state" title="(in scikit-learn v0.19.1)"><code class="xref py py-func docutils literal"><span class="pre">sklearn.utils.check_random_state()</span></code></a>.</li>
+<li><strong>max_points</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">int</span></code></a>, optional) – Maximum number of vectors to allocate, defaults to 10,000.</li>
+<li><strong>zorder</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">float</span></code></a>, optional) – Standard matplotlib parameter determining which things are plotted on top (high zorder), and which underneath (low zorder), Defaults to 5.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">See <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.quiver.html#matplotlib.axes.Axes.quiver" title="(in Matplotlib v2.1.2)"><code class="xref py py-meth docutils literal"><span class="pre">matplotlib.axes.Axes.quiver()</span></code></a> - also adds the vectors to the plot.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="Meteorographica.weathermap.rotate_winds">
+<code class="descclassname">Meteorographica.weathermap.</code><code class="descname">rotate_winds</code><span class="sig-paren">(</span><em>u_cube</em>, <em>v_cube</em>, <em>target_cs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/iris/analysis/cartography.html#rotate_winds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Meteorographica.weathermap.rotate_winds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transform wind vectors to a different coordinate system.</p>
+<p>The input cubes contain U and V components parallel to the local X and Y
+directions of the input grid at each point.</p>
+<p>The output cubes contain the same winds, at the same locations, but
+relative to the grid directions of a different coordinate system.
+Thus in vector terms, the magnitudes will always be the same, but the
+angles can be different.</p>
+<p>The outputs retain the original horizontal dimension coordinates, but
+also have two 2-dimensional auxiliary coordinates containing the X and
+Y locations in the target coordinate system.</p>
+<p>Args:</p>
+<ul class="simple">
+<li><dl class="first docutils">
+<dt>u_cube</dt>
+<dd>An instance of <a class="reference external" href="http://scitools.org.uk/iris/docs/latest/iris/iris/cube.html#iris.cube.Cube" title="(in Iris v2.0)"><code class="xref py py-class docutils literal"><span class="pre">iris.cube.Cube</span></code></a> that contains the x-component
+of the vector.</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>v_cube</dt>
+<dd>An instance of <a class="reference external" href="http://scitools.org.uk/iris/docs/latest/iris/iris/cube.html#iris.cube.Cube" title="(in Iris v2.0)"><code class="xref py py-class docutils literal"><span class="pre">iris.cube.Cube</span></code></a> that contains the y-component
+of the vector.</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>target_cs</dt>
+<dd>An instance of <a class="reference external" href="http://scitools.org.uk/iris/docs/latest/iris/iris/coord_systems.html#iris.coord_systems.CoordSystem" title="(in Iris v2.0)"><code class="xref py py-class docutils literal"><span class="pre">iris.coord_systems.CoordSystem</span></code></a> that specifies
+the new grid directions.</dd>
+</dl>
+</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A (u’, v’) tuple of <a class="reference external" href="http://scitools.org.uk/iris/docs/latest/iris/iris/cube.html#iris.cube.Cube" title="(in Iris v2.0)"><code class="xref py py-class docutils literal"><span class="pre">iris.cube.Cube</span></code></a> instances that are the u
+and v components in the requested target coordinate system.
+The units are the same as the inputs.</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The U and V values relate to distance, with units such as ‘m s-1’.
+These are not the same as coordinate vectors, which transform in a
+different manner.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The names of the output cubes are those of the inputs, prefixed with
+‘transformed_’ (e.g. ‘transformed_x_wind’).</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Conversion between rotated-pole and non-rotated systems can be
+expressed analytically.  However, this function always uses a numerical
+approach. In locations where this numerical approach does not preserve
+magnitude to an accuracy of 0.1%, the corresponding elements of the
+returned cubes will be masked.</p>
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="datasources/era5.html" title="Meteorographica.data.era5"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Meteorographica</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    </div>
+  </body>
+</html>

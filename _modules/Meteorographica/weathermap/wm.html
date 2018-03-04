@@ -74,10 +74,8 @@
 <span class="c1"># MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
 <span class="c1"># GNU Lesser General Public License for more details.</span>
 <span class="c1">#</span>
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Weather map plotting functions.        .</span>
 
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="c1"># Weather map plotting functions.        </span>
 
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">math</span>
@@ -98,21 +96,39 @@
 <span class="kn">import</span> <span class="nn">cartopy</span>
 <span class="kn">import</span> <span class="nn">cartopy.crs</span> <span class="k">as</span> <span class="nn">ccrs</span>
 
-<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">allocate_vector_points</span>
+<span class="kn">from</span> <span class="nn">wind_vectors</span> <span class="k">import</span> <span class="n">allocate_vector_points</span>
 
 <span class="c1"># Convert an rgb tuple colour string to its hex representation</span>
 <span class="c1">#  some functions expecting a sequence of colours misinterpret</span>
 <span class="c1">#  the tuple version.</span>
-<div class="viewcode-block" id="rgb_to_hex"><a class="viewcode-back" href="../../../source/Meteorographica.weathermap.html#Meteorographica.weathermap.wm.rgb_to_hex">[docs]</a><span class="k">def</span> <span class="nf">rgb_to_hex</span><span class="p">(</span><span class="n">rgb</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_rgb_to_hex</span><span class="p">(</span><span class="n">rgb</span><span class="p">):</span>
     <span class="n">rgb</span> <span class="o">=</span> <span class="p">[</span><span class="mi">255</span><span class="o">*</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">rgb</span><span class="p">]</span>
-    <span class="k">return</span> <span class="s1">&#39;#&#39;</span> <span class="o">+</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s1">&#39;</span><span class="si">{:02X}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">rgb</span><span class="p">])</span></div>
+    <span class="k">return</span> <span class="s1">&#39;#&#39;</span> <span class="o">+</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s1">&#39;</span><span class="si">{:02X}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">rgb</span><span class="p">])</span>
 
 <span class="c1"># Add a lat lon grid to an axes</span>
-<div class="viewcode-block" id="add_grid"><a class="viewcode-back" href="../../../source/Meteorographica.weathermap.html#Meteorographica.weathermap.wm.add_grid">[docs]</a><span class="k">def</span> <span class="nf">add_grid</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span>
+<div class="viewcode-block" id="add_grid"><a class="viewcode-back" href="../../../weathermap.html#Meteorographica.weathermap.add_grid">[docs]</a><span class="k">def</span> <span class="nf">add_grid</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span>
              <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span>
              <span class="n">linewidth_minor</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span><span class="n">linewidth_major</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
              <span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mf">0.30</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mf">0.3</span><span class="p">),</span><span class="n">zorder</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
              <span class="n">sep_major</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">sep_minor</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Add a lat-lon grid to the map.</span>
+
+<span class="sd">    Actually plots two grids, a minor grid at a narrow spacing with thin lines, and a major grid at a wider spacing with thicker lines. Note that the grids only cover the latitude range -85 to 85, because the line spacings become too small very close to the poles on a rotated grid.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        ax (:obj:`cartopy.mpl.geoaxes.GeoAxes`): Axes on which to draw.</span>
+<span class="sd">        linestyle (:obj:`str`, optional): See :meth:`matplotlib.lines.Line2D.set_linestyle`. Defaults to &#39;-&#39;.</span>
+<span class="sd">        linewidth_minor (:obj:`float`, optional): Line width for minor grid. Defaults to 0.2.</span>
+<span class="sd">        linewidth_major (:obj:`float`, optional): Line width for major grid. Defaults to 0.5.</span>
+<span class="sd">        color (see :mod:`matplotlib.colors`, optional): Grid colour. Defaults to ((0,0.30,0,0.3).</span>
+<span class="sd">        sep_minor (:obj:`float`, optional): Separation, in degrees, of the minor grid lines. Defaults to 0.5.</span>
+<span class="sd">        sep_major (:obj:`float`, optional): Separation, in degrees, of the miajor grid lines. Defaults to 2.0.</span>
+<span class="sd">        zorder (:obj:`float`, optional): Standard matplotlib parameter determining which things are plotted on top (high zorder), and which underneath (low zorder), Defaults to 0 - at the bottom.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Nothing - adds the grid to the plot as a side effect.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">gl_minor</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">gridlines</span><span class="p">(</span><span class="n">linestyle</span><span class="o">=</span><span class="n">linestyle</span><span class="p">,</span>
                           <span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth_minor</span><span class="p">,</span>
@@ -132,7 +148,7 @@
                          <span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">85</span><span class="p">,</span><span class="mi">85</span><span class="o">+</span><span class="n">sep_major</span><span class="p">,</span><span class="n">sep_major</span><span class="p">))</span></div>
 
 <span class="c1"># Make a dummy cube to use as a plot grid</span>
-<div class="viewcode-block" id="make_dummy"><a class="viewcode-back" href="../../../source/Meteorographica.weathermap.html#Meteorographica.weathermap.wm.make_dummy">[docs]</a><span class="k">def</span> <span class="nf">make_dummy</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">resolution</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_make_dummy</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">resolution</span><span class="p">):</span>
 
     <span class="n">extent</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">get_extent</span><span class="p">()</span>
     <span class="n">pole_latitude</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">projection</span><span class="o">.</span><span class="n">proj4_params</span><span class="p">[</span><span class="s1">&#39;o_lat_p&#39;</span><span class="p">]</span>
@@ -156,7 +172,7 @@
     <span class="n">plot_cube</span> <span class="o">=</span> <span class="n">iris</span><span class="o">.</span><span class="n">cube</span><span class="o">.</span><span class="n">Cube</span><span class="p">(</span><span class="n">dummy_data</span><span class="p">,</span>
                                <span class="n">dim_coords_and_dims</span><span class="o">=</span><span class="p">[(</span><span class="n">latitude</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
                                                     <span class="p">(</span><span class="n">longitude</span><span class="p">,</span> <span class="mi">1</span><span class="p">)])</span>
-    <span class="k">return</span> <span class="n">plot_cube</span></div>
+    <span class="k">return</span> <span class="n">plot_cube</span>
 
 
 <span class="c1"># Plot a field as a partially-transparent colour mesh</span>
@@ -184,11 +200,26 @@
 <span class="p">}</span> 
 <span class="n">temperature_default_cmap</span><span class="o">=</span> <span class="n">matplotlib</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">LinearSegmentedColormap</span><span class="p">(</span><span class="s1">&#39;p_cmap&#39;</span><span class="p">,</span>
                                                  <span class="n">temperature_default_colour_dict</span><span class="p">)</span>
-<div class="viewcode-block" id="plot_cmesh"><a class="viewcode-back" href="../../../source/Meteorographica.weathermap.html#Meteorographica.weathermap.wm.plot_cmesh">[docs]</a><span class="k">def</span> <span class="nf">plot_cmesh</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">pe</span><span class="p">,</span><span class="n">resolution</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span>
+
+<div class="viewcode-block" id="plot_cmesh"><a class="viewcode-back" href="../../../weathermap.html#Meteorographica.weathermap.plot_cmesh">[docs]</a><span class="k">def</span> <span class="nf">plot_cmesh</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">pe</span><span class="p">,</span><span class="n">resolution</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span>
                <span class="n">cmap</span><span class="o">=</span><span class="n">precip_default_cmap</span><span class="p">,</span>
                <span class="n">zorder</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Plots a variable as a colour map.</span>
 
-    <span class="n">plot_cube</span><span class="o">=</span><span class="n">make_dummy</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">resolution</span><span class="p">)</span>
+<span class="sd">    This is the same as :meth:`matplotlib.axes.Axes.pcolorfast`, except that it takes an :class:`iris.cube.Cube` instead of an array of colour values, and its colour defaults are chosen for plots of precipitation rate.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        ax (:obj:`cartopy.mpl.geoaxes.GeoAxes`): Axes on which to draw.</span>
+<span class="sd">        pe (:obj:`iris.cube.Cube`): Variable to plot.</span>
+<span class="sd">        resolution (:obj:`float`, optional): What lat:lon resolution (in degrees) to interpolate pe.data to before plotting. Defaults to 0.25.</span>
+<span class="sd">        cmap (:obj:`matplotlib.colors.LinearSegmentedColormap`): Mapping of pe.data to plot colour. Defaults to green semi-transparent.</span>
+<span class="sd">        zorder (:obj:`float`, optional): Standard matplotlib parameter determining which things are plotted on top (high zorder), and which underneath (low zorder), Defaults to 4.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        See :meth:`matplotlib.axes.Axes.pcolorfast` - also adds the image to the plot.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>   
+    <span class="n">plot_cube</span><span class="o">=</span><span class="n">_make_dummy</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">resolution</span><span class="p">)</span>
     <span class="n">cmesh_p</span> <span class="o">=</span> <span class="n">pe</span><span class="o">.</span><span class="n">regrid</span><span class="p">(</span><span class="n">plot_cube</span><span class="p">,</span><span class="n">iris</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">Linear</span><span class="p">())</span>
     <span class="n">cmesh_p</span><span class="o">.</span><span class="n">data</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">cmesh_p</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
     <span class="n">lats</span> <span class="o">=</span> <span class="n">cmesh_p</span><span class="o">.</span><span class="n">coord</span><span class="p">(</span><span class="s1">&#39;latitude&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">points</span>
@@ -198,13 +229,30 @@
     <span class="k">return</span> <span class="n">prate_img</span></div>
 
 <span class="c1"># Plot a field as contours</span>
-<div class="viewcode-block" id="plot_contour"><a class="viewcode-back" href="../../../source/Meteorographica.weathermap.html#Meteorographica.weathermap.wm.plot_contour">[docs]</a><span class="k">def</span> <span class="nf">plot_contour</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">pe</span><span class="p">,</span>
+<div class="viewcode-block" id="plot_contour"><a class="viewcode-back" href="../../../weathermap.html#Meteorographica.weathermap.plot_contour">[docs]</a><span class="k">def</span> <span class="nf">plot_contour</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">pe</span><span class="p">,</span>
                  <span class="n">resolution</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span>
                  <span class="n">levels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">colors</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span><span class="n">linewidths</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
                  <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
                  <span class="n">zorder</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="n">plot_cube</span><span class="o">=</span><span class="n">make_dummy</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">resolution</span><span class="p">)</span>
+    <span class="sd">&quot;&quot;&quot;Plots a variable as a contour plot.</span>
+
+<span class="sd">    This is the same as :meth:`matplotlib.axes.Axes.contour`, except that it takes an :class:`iris.cube.Cube` instead of an array of values, and its defaults are chosen for plots of mean-sea-level pressure.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        ax (:obj:`cartopy.mpl.geoaxes.GeoAxes`): Axes on which to draw.</span>
+<span class="sd">        pe (:obj:`iris.cube.Cube`): Variable to plot.</span>
+<span class="sd">        resolution (`float`, optional): What lat:lon resolution (in degrees) to interpolate pe.data to before plotting. Defaults to 0.25.</span>
+<span class="sd">        colors (see :mod:`matplotlib.colors`, optional) contour line colour. Defaults to &#39;black&#39;.</span>
+<span class="sd">        linewidths (:obj:`float`, optional): Line width for contour lines. Defaults to 0.5.</span>
+<span class="sd">        fontsize (:obj:`int`, optional): Font size for contour labels. Defaults to 12.</span>
+<span class="sd">        zorder (:obj:`float`, optional): Standard matplotlib parameter determining which things are plotted on top (high zorder), and which underneath (low zorder), Defaults to 4.</span>
+<span class="sd">        label (:obj:`bool`, optional): Label contour lines? Defaults to False.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        See :meth:`matplotlib.axes.Axes.contour` - also adds the lines to the plot.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">plot_cube</span><span class="o">=</span><span class="n">_make_dummy</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">resolution</span><span class="p">)</span>
     <span class="n">contour_p</span> <span class="o">=</span> <span class="n">pe</span><span class="o">.</span><span class="n">regrid</span><span class="p">(</span><span class="n">plot_cube</span><span class="p">,</span><span class="n">iris</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">Linear</span><span class="p">())</span>
     <span class="n">lats</span> <span class="o">=</span> <span class="n">contour_p</span><span class="o">.</span><span class="n">coord</span><span class="p">(</span><span class="s1">&#39;latitude&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">points</span>
     <span class="n">lons</span> <span class="o">=</span> <span class="n">contour_p</span><span class="o">.</span><span class="n">coord</span><span class="p">(</span><span class="s1">&#39;longitude&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">points</span>
@@ -222,18 +270,38 @@
     <span class="k">return</span> <span class="n">CS</span></div>
 
 <span class="c1"># Plot a (wind) field as vectors</span>
-<div class="viewcode-block" id="plot_quiver"><a class="viewcode-back" href="../../../source/Meteorographica.weathermap.html#Meteorographica.weathermap.wm.plot_quiver">[docs]</a><span class="k">def</span> <span class="nf">plot_quiver</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">ue</span><span class="p">,</span><span class="n">ve</span><span class="p">,</span><span class="n">points</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<div class="viewcode-block" id="plot_quiver"><a class="viewcode-back" href="../../../weathermap.html#Meteorographica.weathermap.plot_quiver">[docs]</a><span class="k">def</span> <span class="nf">plot_quiver</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">ue</span><span class="p">,</span><span class="n">ve</span><span class="p">,</span><span class="n">points</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                 <span class="n">scale</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">resolution</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
                 <span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mf">0.25</span><span class="p">),</span><span class="n">headwidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
                 <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">max_points</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span>
                 <span class="n">zorder</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Plots a pair of variables as a 2d field of arrows.</span>
+
+<span class="sd">    This is the same as :meth:`matplotlib.axes.Axes.quiver`, except that it takes :class:`iris.cube.Cube` as arguments instead of a set of vectors, and its defaults are chosen for plots of 10m wind.</span>
+
+<span class="sd">    *WARNING* This function is under development - in particular the argument names are badly chosen and will need to be changed.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        ax (:obj:`cartopy.mpl.geoaxes.GeoAxes`): Axes on which to draw.</span>
+<span class="sd">        ue (:obj:`iris.cube.Cube`): meridional value of variable to plot.</span>
+<span class="sd">        ve (:obj:`iris.cube.Cube`): zonal value of  variable to plot.</span>
+<span class="sd">        resolution (:obj:`float`, optional): What lat:lon resolution (in degrees) to interpolate [uv]e.data to before plotting. Defaults to 1.</span>
+<span class="sd">        colors (see :mod:`matplotlib.colors`, optional) vector colour. Defaults to (0,0,0,0.25).</span>
+<span class="sd">        headwidth (:obj:`float`, optional): Controls arraw shape. Defaults to 1.</span>
+<span class="sd">        random_state (None|:obj:`int`|:obj:`numpy.random.RandomState`): Random number generation seed, see :func:`sklearn.utils.check_random_state`.</span>
+<span class="sd">        max_points (:obj:`int`, optional): Maximum number of vectors to allocate, defaults to 10,000.</span>
+<span class="sd">        zorder (:obj:`float`, optional): Standard matplotlib parameter determining which things are plotted on top (high zorder), and which underneath (low zorder), Defaults to 5.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        See :meth:`matplotlib.axes.Axes.quiver` - also adds the vectors to the plot.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">pole_latitude</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">projection</span><span class="o">.</span><span class="n">proj4_params</span><span class="p">[</span><span class="s1">&#39;o_lat_p&#39;</span><span class="p">]</span>
     <span class="n">pole_longitude</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">projection</span><span class="o">.</span><span class="n">proj4_params</span><span class="p">[</span><span class="s1">&#39;lon_0&#39;</span><span class="p">]</span><span class="o">-</span><span class="mi">180</span>
     <span class="n">projection_iris</span><span class="o">=</span><span class="n">iris</span><span class="o">.</span><span class="n">coord_systems</span><span class="o">.</span><span class="n">RotatedGeogCS</span><span class="p">(</span><span class="n">pole_latitude</span><span class="p">,</span>
                                                      <span class="n">pole_longitude</span><span class="p">)</span>
     <span class="n">rw</span><span class="o">=</span><span class="n">rotate_winds</span><span class="p">(</span><span class="n">ue</span><span class="p">,</span><span class="n">ve</span><span class="p">,</span><span class="n">projection_iris</span><span class="p">)</span>
-    <span class="n">plot_cube</span><span class="o">=</span><span class="n">make_dummy</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">resolution</span><span class="p">)</span>
+    <span class="n">plot_cube</span><span class="o">=</span><span class="n">_make_dummy</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">resolution</span><span class="p">)</span>
     <span class="n">u_p</span> <span class="o">=</span> <span class="n">rw</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">regrid</span><span class="p">(</span><span class="n">plot_cube</span><span class="p">,</span><span class="n">iris</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">Linear</span><span class="p">())</span>
     <span class="n">v_p</span> <span class="o">=</span> <span class="n">rw</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">regrid</span><span class="p">(</span><span class="n">plot_cube</span><span class="p">,</span><span class="n">iris</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">Linear</span><span class="p">())</span>
     <span class="k">if</span> <span class="n">points</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -265,16 +333,37 @@
     <span class="k">return</span> <span class="n">qv</span></div>
 
 <span class="c1"># Plot a wind field as vectors coloured by temperature</span>
-<div class="viewcode-block" id="plot_wind_and_temperature"><a class="viewcode-back" href="../../../source/Meteorographica.weathermap.html#Meteorographica.weathermap.wm.plot_wind_and_temperature">[docs]</a><span class="k">def</span> <span class="nf">plot_wind_and_temperature</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">ue</span><span class="p">,</span><span class="n">ve</span><span class="p">,</span><span class="n">t2</span><span class="p">,</span><span class="n">points</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<div class="viewcode-block" id="plot_wind_and_temperature"><a class="viewcode-back" href="../../../weathermap.html#Meteorographica.weathermap.plot_wind_and_temperature">[docs]</a><span class="k">def</span> <span class="nf">plot_wind_and_temperature</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">ue</span><span class="p">,</span><span class="n">ve</span><span class="p">,</span><span class="n">t2</span><span class="p">,</span><span class="n">points</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                               <span class="n">scale</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">resolution</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
                               <span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mf">0.25</span><span class="p">),</span><span class="n">headwidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
                               <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">max_points</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span>
                               <span class="n">zorder</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Plots a pair of variables as a 2d field of arrows, coloured according to a third variable.</span>
+
+<span class="sd">    This is the same as :meth:`matplotlib.axes.Axes.quiver`, except that it takes :class:`iris.cube.Cube` as arguments instead of a set of vectors, and its defaults are chosen for plots of 10m wind.</span>
+
+<span class="sd">    *WARNING* This function does not yet work - don&#39;t use it..</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        ax (:obj:`cartopy.mpl.geoaxes.GeoAxes`): Axes on which to draw.</span>
+<span class="sd">        ue (:obj:`iris.cube.Cube`): meridional value of variable to plot.</span>
+<span class="sd">        ve (:obj:`iris.cube.Cube`): zonal value of  variable to plot.</span>
+<span class="sd">        t2 (:obj:`iris.cube.Cube`): variable to use to select arrow colour.</span>
+<span class="sd">        resolution (:obj:`float&#39;, optional): What lat:lon resolution (in degrees) to interpolate [uv]e.data to before plotting. Defaults to 1.</span>
+<span class="sd">        colors (see :mod:`matplotlib.colors`, optional) vector colour. Defaults to (0,0,0,0.25).</span>
+<span class="sd">        headwidth (:obj:`float`, optional): Controls arrow shape. Defaults to 1.</span>
+<span class="sd">        random_state (None|:obj:`int`|:obj:`numpy.random.RandomState`): Random number generation seed, see :func:`sklearn.utils.check_random_state`.</span>
+<span class="sd">        max_points (:obj:`int`, optional): Maximum number of vectors to allocate, defaults to 10,000.</span>
+<span class="sd">        zorder (:obj:`float`, optional): Standard matplotlib parameter determining which things are plotted on top (high zorder), and which underneath (low zorder), Defaults to 5.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        See :meth:`matplotlib.axes.Axes.quiver` - also adds the vectors to the plot.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">pole_latitude</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">projection</span><span class="o">.</span><span class="n">proj4_params</span><span class="p">[</span><span class="s1">&#39;o_lat_p&#39;</span><span class="p">]</span>
     <span class="n">pole_longitude</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">projection</span><span class="o">.</span><span class="n">proj4_params</span><span class="p">[</span><span class="s1">&#39;lon_0&#39;</span><span class="p">]</span><span class="o">-</span><span class="mi">180</span>
     <span class="n">projection_iris</span><span class="o">=</span><span class="n">iris</span><span class="o">.</span><span class="n">coord_systems</span><span class="o">.</span><span class="n">RotatedGeogCS</span><span class="p">(</span><span class="n">pole_latitude</span><span class="p">,</span>
                                                      <span class="n">pole_longitude</span><span class="p">)</span>
-    <span class="n">plot_cube</span><span class="o">=</span><span class="n">make_dummy</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">resolution</span><span class="p">)</span>
+    <span class="n">plot_cube</span><span class="o">=</span><span class="n">_make_dummy</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">resolution</span><span class="p">)</span>
     <span class="n">t_p</span> <span class="o">=</span> <span class="n">t2</span><span class="o">.</span><span class="n">regrid</span><span class="p">(</span><span class="n">plot_cube</span><span class="p">,</span><span class="n">iris</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">Linear</span><span class="p">())</span>
     <span class="k">if</span> <span class="n">points</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">scale</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">scale</span><span class="o">=</span><span class="n">resolution</span>
@@ -308,8 +397,7 @@
                     <span class="n">max_points</span><span class="o">=</span><span class="n">max_points</span><span class="p">,</span>
                     <span class="n">zorder</span><span class="o">=</span><span class="n">zorder</span><span class="p">)</span></div>
 
-<span class="c1"># Plot observations as points</span>
-<div class="viewcode-block" id="plot_obs"><a class="viewcode-back" href="../../../source/Meteorographica.weathermap.html#Meteorographica.weathermap.wm.plot_obs">[docs]</a><span class="k">def</span> <span class="nf">plot_obs</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">obs</span><span class="p">,</span>
+<div class="viewcode-block" id="plot_obs"><a class="viewcode-back" href="../../../weathermap.html#Meteorographica.weathermap.plot_obs">[docs]</a><span class="k">def</span> <span class="nf">plot_obs</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">obs</span><span class="p">,</span>
              <span class="n">obs_projection</span><span class="o">=</span><span class="n">ccrs</span><span class="o">.</span><span class="n">PlateCarree</span><span class="p">(),</span>
              <span class="n">lat_label</span><span class="o">=</span><span class="s1">&#39;Latitude&#39;</span><span class="p">,</span><span class="n">lon_label</span><span class="o">=</span><span class="s1">&#39;Longitude&#39;</span><span class="p">,</span>
              <span class="n">radius</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
@@ -317,6 +405,23 @@
              <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span>
              <span class="n">alpha</span><span class="o">=</span><span class="mf">0.85</span><span class="p">,</span>
              <span class="n">zorder</span><span class="o">=</span><span class="mf">2.5</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Plot observations as points.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        ax (:obj:`cartopy.mpl.geoaxes.GeoAxes`): Axes on which to draw.</span>
+<span class="sd">        obs (:obj:`dict`): Dictionary containing obs positions.</span>
+<span class="sd">        obs_projection (:obj:`cartopy.crs.CRS`, optional): Projection in which observations latitudes and longitudes are defined. Default is :class:`cartopy.crs.PlateCarree`.</span>
+<span class="sd">        lat_label (:obj:`str`, optional): Key, in the obs dictionary, of the latitude data. Defaults to &#39;Latitude&#39;.</span>
+<span class="sd">        lon_label (:obj:`str`, optional): Key, in the obs dictionary, of the longitude data. Defaults to &#39;Longitude&#39;.</span>
+<span class="sd">        radius (:obj:`float`, optional): Radius of circle marking each ob. (degrees). Defaults to 1.</span>
+<span class="sd">        facecolor (see :mod:`matplotlib.colors`, optional): Main colour of the circle to be plotted for each ob. Defaults to &#39;yellow&#39;.</span>
+<span class="sd">        edgecolor (see :mod:`matplotlib.colors`, optional): Border colour of the circle to be plotted for each ob. Defaults to &#39;black&#39;.</span>
+<span class="sd">        alpha (:obj:`float`, optional): Alpha value for facecolor and edgecolor. Defaults to 0.85.</span>
+<span class="sd">        zorder (:obj:`float`, optional): Standard matplotlib parameter determining which things are plotted on top (high zorder), and which underneath (low zorder), Defaults to 2.5.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Nothing - adds the obs. points to the plot.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">rp</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">projection</span><span class="o">.</span><span class="n">transform_points</span><span class="p">(</span><span class="n">obs_projection</span><span class="p">,</span>
                                    <span class="n">obs</span><span class="p">[</span><span class="n">lon_label</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
@@ -334,8 +439,7 @@
                             <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span>
                             <span class="n">zorder</span><span class="o">=</span><span class="n">zorder</span><span class="p">))</span></div>
 
-<span class="c1"># Add a label</span>
-<div class="viewcode-block" id="plot_label"><a class="viewcode-back" href="../../../source/Meteorographica.weathermap.html#Meteorographica.weathermap.wm.plot_label">[docs]</a><span class="k">def</span> <span class="nf">plot_label</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">label</span><span class="p">,</span>
+<div class="viewcode-block" id="plot_label"><a class="viewcode-back" href="../../../weathermap.html#Meteorographica.weathermap.plot_label">[docs]</a><span class="k">def</span> <span class="nf">plot_label</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">label</span><span class="p">,</span>
                <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span>
                <span class="n">facecolor</span><span class="o">=</span><span class="s1">&#39;white&#39;</span><span class="p">,</span>
                <span class="n">x_fraction</span><span class="o">=</span><span class="mf">0.98</span><span class="p">,</span><span class="n">y_fraction</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span>
@@ -343,6 +447,22 @@
                <span class="n">verticalalignment</span><span class="o">=</span><span class="s1">&#39;bottom&#39;</span><span class="p">,</span>
                <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
                <span class="n">zorder</span><span class="o">=</span><span class="mf">5.5</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Add a text label to the plot</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        ax (:obj:`cartopy.mpl.geoaxes.GeoAxes`): Axes on which to draw.</span>
+<span class="sd">        color (see :mod:`matplotlib.colors`, optional): Text colour of the label. Defaults to &#39;black&#39;.</span>
+<span class="sd">        facecolor (see :mod:`matplotlib.colors`, optional): Background colour of the label. Defaults to &#39;white&#39;.</span>
+<span class="sd">        x_fraction (:obj:`float`, optional): X position of the label (fraction of axes). Defaults to 0.98.</span>
+<span class="sd">        y_fraction (:obj:`float`, optional): Y position of the label (fraction of axes). Defaults to 0.02.</span>
+<span class="sd">        horizontalalignment (:obj:`str`, optional): How is the label justified to the x position (right|left|center)?. Defaults to &#39;right&#39;.</span>
+<span class="sd">        verticalalignment (:obj:`str`, optional): How is the label justified to the y position (top|bottom|center)?. Defaults to &#39;bottom&#39;.</span>
+<span class="sd">        fontsize (:obj:`int`, optional): Size of the text to use. Defaults to 12.</span>
+<span class="sd">        zorder (:obj:`float`, optional): Standard matplotlib parameter determining which things are plotted on top (high zorder), and which underneath (low zorder), Defaults to 5.5.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Nothing - adds the label points to the plot.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">extent</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">get_extent</span><span class="p">()</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">extent</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">x_fraction</span><span class="p">)</span><span class="o">+</span><span class="n">extent</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">x_fraction</span><span class="p">,</span>

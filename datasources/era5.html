@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>ERA5 &#8212; Meteorographica: a personal library for weather data</title>
+    <title>Meteorographica.data.era5 &#8212; Meteorographica: a personal library for weather data</title>
     <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -23,7 +23,8 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="prev" title="CERA20C" href="cera20c.html" /> 
+    <link rel="next" title="Meteographica.weathermap" href="../weathermap.html" />
+    <link rel="prev" title="Meteorographica.data.cera20c" href="cera20c.html" /> 
   </head>
   <body>
     <div class="related" role="navigation" aria-label="related navigation">
@@ -36,7 +37,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="cera20c.html" title="CERA20C"
+          <a href="../weathermap.html" title="Meteographica.weathermap"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cera20c.html" title="Meteorographica.data.cera20c"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">Meteorographica</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../data.html" accesskey="U">Meteorographica: Data</a> &#187;</li> 
@@ -49,7 +53,10 @@
             </a></p>
   <h4>Previous topic</h4>
   <p class="topless"><a href="cera20c.html"
-                        title="previous chapter">CERA20C</a></p>
+                        title="previous chapter">Meteorographica.data.cera20c</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../weathermap.html"
+                        title="next chapter">Meteographica.weathermap</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -76,7 +83,7 @@
           <div class="body" role="main">
             
   <div class="section" id="module-Meteorographica.data.era5">
-<span id="era5"></span><h1>ERA5<a class="headerlink" href="#module-Meteorographica.data.era5" title="Permalink to this headline">¶</a></h1>
+<span id="meteorographica-data-era5"></span><h1>Meteorographica.data.era5<a class="headerlink" href="#module-Meteorographica.data.era5" title="Permalink to this headline">¶</a></h1>
 <p>This package retrieves and loads data from the <a class="reference external" href="https://www.ecmwf.int/en/forecasts/datasets/reanalysis-datasets/era5">ERA5 reanalysis</a>.</p>
 <p>To retrieve the data, it uses the <a class="reference external" href="https://software.ecmwf.int/wiki/display/WEBAPI/ECMWF+Web+API+Home">ECMWF Public data API</a>. You will need to install a key and the client libraries as described in <a class="reference external" href="https://software.ecmwf.int/wiki/display/WEBAPI/Access+ECMWF+Public+Datasets">the API documentation</a>. Note that this is the same system used by <cite>Meteographica.data.cera20c</cite> - the same key and libraries will let you use that as well.</p>
 <p>Only hourly data is supported (no daily or monthly averages) for 7 surface variables:</p>
@@ -110,14 +117,14 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>variable</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a>) – Variable to fetch (e.g. ‘prmsl’)</li>
+<li><strong>variable</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a>) – Variable to fetch (e.g. ‘prmsl’).</li>
 <li><strong>year</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Year to get data for.</li>
 <li><strong>month</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Month to get data for (1-12).</li>
 <li><strong>stream</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a>) – Analysis stream to use, can be ‘enda’ - ensemble DA, or ‘oper’ - high res single member.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">StandardError</span></code> – If Variable is not a supported value.</p>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">StandardError</span></code> – If variable is not a supported value.</p>
 </td>
 </tr>
 </tbody>
@@ -194,7 +201,10 @@ year, month.</p>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="cera20c.html" title="CERA20C"
+          <a href="../weathermap.html" title="Meteographica.weathermap"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cera20c.html" title="Meteorographica.data.cera20c"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">Meteorographica</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../data.html" >Meteorographica: Data</a> &#187;</li> 

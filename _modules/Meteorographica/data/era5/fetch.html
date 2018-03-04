@@ -95,13 +95,13 @@
 <span class="sd">    Data wil be stored locally in directory $SCRATCH/ERA5, to be retrieved by :func:`era5.load`. If the local file that would be produced already exists, this function does nothing.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        variable (str): Variable to fetch (e.g. &#39;prmsl&#39;)</span>
+<span class="sd">        variable (str): Variable to fetch (e.g. &#39;prmsl&#39;).</span>
 <span class="sd">        year (int): Year to get data for.</span>
 <span class="sd">        month (int): Month to get data for (1-12).</span>
 <span class="sd">        stream (str): Analysis stream to use, can be &#39;enda&#39; - ensemble DA, or &#39;oper&#39; - high res single member.</span>
 
 <span class="sd">    Raises:</span>
-<span class="sd">        StandardError: If Variable is not a supported value.</span>
+<span class="sd">        StandardError: If variable is not a supported value.</span>
 <span class="sd"> </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">variable</span> <span class="ow">in</span> <span class="n">monolevel_analysis</span><span class="p">:</span>

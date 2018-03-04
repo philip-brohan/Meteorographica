@@ -1,0 +1,1248 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>iris.analysis.cartography &#8212; Meteorographica: a personal library for weather data</title>
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Meteorographica</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/UK.GS1987.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for iris.analysis.cartography</h1><div class="highlight"><pre>
+<span></span><span class="c1"># (C) British Crown Copyright 2010 - 2017, Met Office</span>
+<span class="c1">#</span>
+<span class="c1"># This file is part of Iris.</span>
+<span class="c1">#</span>
+<span class="c1"># Iris is free software: you can redistribute it and/or modify it under</span>
+<span class="c1"># the terms of the GNU Lesser General Public License as published by the</span>
+<span class="c1"># Free Software Foundation, either version 3 of the License, or</span>
+<span class="c1"># (at your option) any later version.</span>
+<span class="c1">#</span>
+<span class="c1"># Iris is distributed in the hope that it will be useful,</span>
+<span class="c1"># but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="c1"># MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="c1"># GNU Lesser General Public License for more details.</span>
+<span class="c1">#</span>
+<span class="c1"># You should have received a copy of the GNU Lesser General Public License</span>
+<span class="c1"># along with Iris.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Various utilities and numeric transformations relevant to cartography.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="p">(</span><span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">six.moves</span> <span class="k">import</span> <span class="p">(</span><span class="nb">filter</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="nb">map</span><span class="p">,</span> <span class="nb">range</span><span class="p">,</span> <span class="nb">zip</span><span class="p">)</span>  <span class="c1"># noqa</span>
+
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">namedtuple</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="kn">import</span> <span class="nn">cf_units</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">numpy.ma</span> <span class="k">as</span> <span class="nn">ma</span>
+
+<span class="kn">import</span> <span class="nn">cartopy.img_transform</span>
+<span class="kn">import</span> <span class="nn">cartopy.crs</span> <span class="k">as</span> <span class="nn">ccrs</span>
+<span class="kn">import</span> <span class="nn">iris.analysis</span>
+<span class="kn">import</span> <span class="nn">iris.coords</span>
+<span class="kn">import</span> <span class="nn">iris.coord_systems</span>
+<span class="kn">import</span> <span class="nn">iris.exceptions</span>
+
+
+<span class="c1"># This value is used as a fall-back if the cube does not define the earth</span>
+<span class="n">DEFAULT_SPHERICAL_EARTH_RADIUS</span> <span class="o">=</span> <span class="mi">6367470</span>
+<span class="c1"># TODO: This should not be necessary, as CF is always in meters</span>
+<span class="n">DEFAULT_SPHERICAL_EARTH_RADIUS_UNIT</span> <span class="o">=</span> <span class="n">cf_units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="s1">&#39;m&#39;</span><span class="p">)</span>
+<span class="c1"># Distance differentials for coordinate systems at specified locations</span>
+<span class="n">DistanceDifferential</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;DistanceDifferential&#39;</span><span class="p">,</span> <span class="s1">&#39;dx1 dy1 dx2 dy2&#39;</span><span class="p">)</span>
+<span class="c1"># Partial differentials between coordinate systems</span>
+<span class="n">PartialDifferential</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;PartialDifferential&#39;</span><span class="p">,</span> <span class="s1">&#39;dx1 dy1&#39;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">wrap_lons</span><span class="p">(</span><span class="n">lons</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">period</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wrap longitude values into the range between base and base+period.</span>
+
+<span class="sd">    .. testsetup::</span>
+
+<span class="sd">        import numpy as np</span>
+<span class="sd">        from iris.analysis.cartography import wrap_lons</span>
+
+<span class="sd">    For example:</span>
+<span class="sd">        &gt;&gt;&gt; print(wrap_lons(np.array([185, 30, -200, 75]), -180, 360))</span>
+<span class="sd">        [-175.   30.  160.   75.]</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># It is important to use 64bit floating precision when changing a floats</span>
+    <span class="c1"># numbers range.</span>
+    <span class="n">lons</span> <span class="o">=</span> <span class="n">lons</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">((</span><span class="n">lons</span> <span class="o">-</span> <span class="n">base</span> <span class="o">+</span> <span class="n">period</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span> <span class="o">%</span> <span class="n">period</span><span class="p">)</span> <span class="o">+</span> <span class="n">base</span>
+
+
+<span class="k">def</span> <span class="nf">unrotate_pole</span><span class="p">(</span><span class="n">rotated_lons</span><span class="p">,</span> <span class="n">rotated_lats</span><span class="p">,</span> <span class="n">pole_lon</span><span class="p">,</span> <span class="n">pole_lat</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert arrays of rotated-pole longitudes and latitudes to unrotated</span>
+<span class="sd">    arrays of longitudes and latitudes. The values of ``pole_lon`` and</span>
+<span class="sd">    ``pole_lat`` should describe the location of the rotated pole that</span>
+<span class="sd">    describes the arrays of rotated-pole longitudes and latitudes.</span>
+
+<span class="sd">    As the arrays of rotated-pole longitudes and latitudes must describe a</span>
+<span class="sd">    rectilinear grid, the arrays of rotated-pole longitudes and latitudes must</span>
+<span class="sd">    be of the same shape as each other.</span>
+
+<span class="sd">    Example::</span>
+
+<span class="sd">        lons, lats = unrotate_pole(rotated_lons, rotated_lats, \</span>
+<span class="sd">          pole_lon, pole_lat)</span>
+
+<span class="sd">    .. note:: Uses proj.4 to perform the conversion.</span>
+
+<span class="sd">    Args:</span>
+
+<span class="sd">        * rotated_lons:</span>
+<span class="sd">            An array of rotated-pole longitude values.</span>
+<span class="sd">        * rotated_lats:</span>
+<span class="sd">            An array of rotated-pole latitude values.</span>
+<span class="sd">        * pole_lon:</span>
+<span class="sd">            The longitude of the rotated pole that describes the arrays of</span>
+<span class="sd">            rotated-pole longitudes and latitudes.</span>
+<span class="sd">        * pole_lat:</span>
+<span class="sd">            The latitude of the rotated pole that describes the arrays of</span>
+<span class="sd">            rotated-pole longitudes and latitudes.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        An array of unrotated longitudes and an array of unrotated latitudes.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">src_proj</span> <span class="o">=</span> <span class="n">ccrs</span><span class="o">.</span><span class="n">RotatedGeodetic</span><span class="p">(</span><span class="n">pole_longitude</span><span class="o">=</span><span class="n">pole_lon</span><span class="p">,</span>
+                                    <span class="n">pole_latitude</span><span class="o">=</span><span class="n">pole_lat</span><span class="p">)</span>
+    <span class="n">target_proj</span> <span class="o">=</span> <span class="n">ccrs</span><span class="o">.</span><span class="n">Geodetic</span><span class="p">()</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">target_proj</span><span class="o">.</span><span class="n">transform_points</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">rotated_lons</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">rotated_lats</span><span class="p">,</span>
+                                       <span class="n">src_crs</span><span class="o">=</span><span class="n">src_proj</span><span class="p">)</span>
+    <span class="n">unrotated_lon</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">unrotated_lat</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">unrotated_lon</span><span class="p">,</span> <span class="n">unrotated_lat</span>
+
+
+<span class="k">def</span> <span class="nf">rotate_pole</span><span class="p">(</span><span class="n">lons</span><span class="p">,</span> <span class="n">lats</span><span class="p">,</span> <span class="n">pole_lon</span><span class="p">,</span> <span class="n">pole_lat</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert arrays of longitudes and latitudes to arrays of rotated-pole</span>
+<span class="sd">    longitudes and latitudes. The values of ``pole_lon`` and ``pole_lat``</span>
+<span class="sd">    should describe the rotated pole that the arrays of longitudes and</span>
+<span class="sd">    latitudes are to be rotated onto.</span>
+
+<span class="sd">    As the arrays of longitudes and latitudes must describe a rectilinear grid,</span>
+<span class="sd">    the arrays of rotated-pole longitudes and latitudes must be of the same</span>
+<span class="sd">    shape as each other.</span>
+
+<span class="sd">    Example::</span>
+
+<span class="sd">        rotated_lons, rotated_lats = rotate_pole(lons, lats,\</span>
+<span class="sd">         pole_lon, pole_lat)</span>
+
+<span class="sd">    .. note:: Uses proj.4 to perform the conversion.</span>
+
+<span class="sd">    Args:</span>
+
+<span class="sd">        * lons:</span>
+<span class="sd">            An array of longitude values.</span>
+<span class="sd">        * lats:</span>
+<span class="sd">            An array of latitude values.</span>
+<span class="sd">        * pole_lon:</span>
+<span class="sd">            The longitude of the rotated pole that the arrays of longitudes and</span>
+<span class="sd">            latitudes are to be rotated onto.</span>
+<span class="sd">        * pole_lat:</span>
+<span class="sd">            The latitude of the rotated pole that the arrays of longitudes and</span>
+<span class="sd">            latitudes are to be rotated onto.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        An array of rotated-pole longitudes and an array of rotated-pole</span>
+<span class="sd">        latitudes.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">src_proj</span> <span class="o">=</span> <span class="n">ccrs</span><span class="o">.</span><span class="n">Geodetic</span><span class="p">()</span>
+    <span class="n">target_proj</span> <span class="o">=</span> <span class="n">ccrs</span><span class="o">.</span><span class="n">RotatedGeodetic</span><span class="p">(</span><span class="n">pole_longitude</span><span class="o">=</span><span class="n">pole_lon</span><span class="p">,</span>
+                                       <span class="n">pole_latitude</span><span class="o">=</span><span class="n">pole_lat</span><span class="p">)</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">target_proj</span><span class="o">.</span><span class="n">transform_points</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">lons</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">lats</span><span class="p">,</span>
+                                       <span class="n">src_crs</span><span class="o">=</span><span class="n">src_proj</span><span class="p">)</span>
+    <span class="n">rotated_lon</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">rotated_lat</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">rotated_lon</span><span class="p">,</span> <span class="n">rotated_lat</span>
+
+
+<span class="k">def</span> <span class="nf">_get_lat_lon_coords</span><span class="p">(</span><span class="n">cube</span><span class="p">):</span>
+    <span class="n">lat_coords</span> <span class="o">=</span> <span class="p">[</span><span class="n">coord</span> <span class="k">for</span> <span class="n">coord</span> <span class="ow">in</span> <span class="n">cube</span><span class="o">.</span><span class="n">coords</span><span class="p">()</span>
+                  <span class="k">if</span> <span class="s2">&quot;latitude&quot;</span> <span class="ow">in</span> <span class="n">coord</span><span class="o">.</span><span class="n">name</span><span class="p">()]</span>
+    <span class="n">lon_coords</span> <span class="o">=</span> <span class="p">[</span><span class="n">coord</span> <span class="k">for</span> <span class="n">coord</span> <span class="ow">in</span> <span class="n">cube</span><span class="o">.</span><span class="n">coords</span><span class="p">()</span>
+                  <span class="k">if</span> <span class="s2">&quot;longitude&quot;</span> <span class="ow">in</span> <span class="n">coord</span><span class="o">.</span><span class="n">name</span><span class="p">()]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">lat_coords</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">lon_coords</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Calling _get_lat_lon_coords() with multiple lat or lon coords&quot;</span>
+            <span class="s2">&quot; is currently disallowed&quot;</span><span class="p">)</span>
+    <span class="n">lat_coord</span> <span class="o">=</span> <span class="n">lat_coords</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">lon_coord</span> <span class="o">=</span> <span class="n">lon_coords</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">lat_coord</span><span class="p">,</span> <span class="n">lon_coord</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_xy_range</span><span class="p">(</span><span class="n">cube</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return the x &amp; y range of this Cube.</span>
+
+<span class="sd">    Args:</span>
+
+<span class="sd">        * cube - The cube for which to calculate xy extents.</span>
+
+<span class="sd">    Kwargs:</span>
+
+<span class="sd">        * mode - If the coordinate has bounds, set this to specify the</span>
+<span class="sd">                 min/max calculation.</span>
+<span class="sd">                 Set to iris.coords.POINT_MODE or iris.coords.BOUND_MODE.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Helpful error if we have an inappropriate CoordSystem</span>
+    <span class="n">cs</span> <span class="o">=</span> <span class="n">cube</span><span class="o">.</span><span class="n">coord_system</span><span class="p">(</span><span class="s2">&quot;CoordSystem&quot;</span><span class="p">)</span>
+    <span class="n">cs_valid_types</span> <span class="o">=</span> <span class="p">(</span><span class="n">iris</span><span class="o">.</span><span class="n">coord_systems</span><span class="o">.</span><span class="n">GeogCS</span><span class="p">,</span>
+                      <span class="n">iris</span><span class="o">.</span><span class="n">coord_systems</span><span class="o">.</span><span class="n">RotatedGeogCS</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">((</span><span class="n">cs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cs</span><span class="p">,</span> <span class="n">cs_valid_types</span><span class="p">)):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Latlon coords cannot be found with </span><span class="si">{0}</span><span class="s2">.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">cs</span><span class="p">)))</span>
+
+    <span class="n">x_coord</span><span class="p">,</span> <span class="n">y_coord</span> <span class="o">=</span> <span class="n">cube</span><span class="o">.</span><span class="n">coord</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s2">&quot;X&quot;</span><span class="p">),</span> <span class="n">cube</span><span class="o">.</span><span class="n">coord</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s2">&quot;Y&quot;</span><span class="p">)</span>
+    <span class="n">cs</span> <span class="o">=</span> <span class="n">cube</span><span class="o">.</span><span class="n">coord_system</span><span class="p">(</span><span class="s1">&#39;CoordSystem&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">x_coord</span><span class="o">.</span><span class="n">has_bounds</span><span class="p">()</span> <span class="o">!=</span> <span class="n">y_coord</span><span class="o">.</span><span class="n">has_bounds</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s1">&#39;Cannot get the range of the x and y coordinates if they do &#39;</span>
+            <span class="s1">&#39;not have the same presence of bounds.&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">x_coord</span><span class="o">.</span><span class="n">has_bounds</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="n">iris</span><span class="o">.</span><span class="n">coords</span><span class="o">.</span><span class="n">POINT_MODE</span><span class="p">,</span> <span class="n">iris</span><span class="o">.</span><span class="n">coords</span><span class="o">.</span><span class="n">BOUND_MODE</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">&#39;When the coordinate has bounds, please specify &quot;mode&quot;.&#39;</span><span class="p">)</span>
+        <span class="n">_mode</span> <span class="o">=</span> <span class="n">mode</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">_mode</span> <span class="o">=</span> <span class="n">iris</span><span class="o">.</span><span class="n">coords</span><span class="o">.</span><span class="n">POINT_MODE</span>
+
+    <span class="c1"># Get the x and y grids</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cs</span><span class="p">,</span> <span class="n">iris</span><span class="o">.</span><span class="n">coord_systems</span><span class="o">.</span><span class="n">RotatedGeogCS</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">_mode</span> <span class="o">==</span> <span class="n">iris</span><span class="o">.</span><span class="n">coords</span><span class="o">.</span><span class="n">POINT_MODE</span><span class="p">:</span>
+            <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">get_xy_grids</span><span class="p">(</span><span class="n">cube</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">get_xy_contiguous_bounded_grids</span><span class="p">(</span><span class="n">cube</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">_mode</span> <span class="o">==</span> <span class="n">iris</span><span class="o">.</span><span class="n">coords</span><span class="o">.</span><span class="n">POINT_MODE</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">x_coord</span><span class="o">.</span><span class="n">points</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">y_coord</span><span class="o">.</span><span class="n">points</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">x_coord</span><span class="o">.</span><span class="n">bounds</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">y_coord</span><span class="o">.</span><span class="n">bounds</span>
+
+    <span class="c1"># Get the x and y range</span>
+    <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">x_coord</span><span class="p">,</span> <span class="s1">&#39;circular&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="n">x_range</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="n">x_coord</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">modulus</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">x_range</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+
+    <span class="n">y_range</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="n">x_range</span><span class="p">,</span> <span class="n">y_range</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">get_xy_grids</span><span class="p">(</span><span class="n">cube</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return 2D X and Y points for a given cube.</span>
+
+<span class="sd">    Args:</span>
+
+<span class="sd">        * cube - The cube for which to generate 2D X and Y points.</span>
+
+<span class="sd">    Example::</span>
+
+<span class="sd">        x, y = get_xy_grids(cube)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">x_coord</span><span class="p">,</span> <span class="n">y_coord</span> <span class="o">=</span> <span class="n">cube</span><span class="o">.</span><span class="n">coord</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s2">&quot;X&quot;</span><span class="p">),</span> <span class="n">cube</span><span class="o">.</span><span class="n">coord</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s2">&quot;Y&quot;</span><span class="p">)</span>
+
+    <span class="n">x</span> <span class="o">=</span> <span class="n">x_coord</span><span class="o">.</span><span class="n">points</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">y_coord</span><span class="o">.</span><span class="n">points</span>
+
+    <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="n">y</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="c1"># Convert to 2D.</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">x</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="n">y</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="c1"># They are already in the correct shape.</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Expected 1D or 2D XY coords&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">get_xy_contiguous_bounded_grids</span><span class="p">(</span><span class="n">cube</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return 2d arrays for x and y bounds.</span>
+
+<span class="sd">    Returns array of shape (n+1, m+1).</span>
+
+<span class="sd">    Example::</span>
+
+<span class="sd">        xs, ys = get_xy_contiguous_bounded_grids(cube)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">x_coord</span><span class="p">,</span> <span class="n">y_coord</span> <span class="o">=</span> <span class="n">cube</span><span class="o">.</span><span class="n">coord</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s2">&quot;X&quot;</span><span class="p">),</span> <span class="n">cube</span><span class="o">.</span><span class="n">coord</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s2">&quot;Y&quot;</span><span class="p">)</span>
+
+    <span class="n">x</span> <span class="o">=</span> <span class="n">x_coord</span><span class="o">.</span><span class="n">contiguous_bounds</span><span class="p">()</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">y_coord</span><span class="o">.</span><span class="n">contiguous_bounds</span><span class="p">()</span>
+    <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_quadrant_area</span><span class="p">(</span><span class="n">radian_lat_bounds</span><span class="p">,</span> <span class="n">radian_lon_bounds</span><span class="p">,</span> <span class="n">radius_of_earth</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculate spherical segment areas.</span>
+
+<span class="sd">    - radian_lat_bounds    -- [n,2] array of latitude bounds (radians)</span>
+<span class="sd">    - radian_lon_bounds    -- [n,2] array of longitude bounds (radians)</span>
+<span class="sd">    - radius_of_earth      -- radius of the earth</span>
+<span class="sd">                              (currently assumed spherical)</span>
+
+<span class="sd">    Area weights are calculated for each lat/lon cell as:</span>
+
+<span class="sd">        .. math::</span>
+
+<span class="sd">            r^2 (lon_1 - lon_0) ( sin(lat_1) - sin(lat_0))</span>
+
+<span class="sd">    The resulting array will have a shape of</span>
+<span class="sd">    *(radian_lat_bounds.shape[0], radian_lon_bounds.shape[0])*</span>
+
+<span class="sd">    The calculations are done at 64 bit precision and the returned array</span>
+<span class="sd">    will be of type numpy.float64.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># ensure pairs of bounds</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">radian_lat_bounds</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">2</span> <span class="ow">or</span>
+            <span class="n">radian_lon_bounds</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">2</span> <span class="ow">or</span>
+            <span class="n">radian_lat_bounds</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">2</span> <span class="ow">or</span>
+            <span class="n">radian_lon_bounds</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Bounds must be [n,2] array&quot;</span><span class="p">)</span>
+
+    <span class="c1"># fill in a new array of areas</span>
+    <span class="n">radius_sqr</span> <span class="o">=</span> <span class="n">radius_of_earth</span> <span class="o">**</span> <span class="mi">2</span>
+    <span class="n">radian_lat_64</span> <span class="o">=</span> <span class="n">radian_lat_bounds</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">radian_lon_64</span> <span class="o">=</span> <span class="n">radian_lon_bounds</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+
+    <span class="n">ylen</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">radian_lat_64</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">radian_lat_64</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
+    <span class="n">xlen</span> <span class="o">=</span> <span class="n">radian_lon_64</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">radian_lon_64</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">areas</span> <span class="o">=</span> <span class="n">radius_sqr</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">ylen</span><span class="p">,</span> <span class="n">xlen</span><span class="p">)</span>
+
+    <span class="c1"># we use abs because backwards bounds (min &gt; max) give negative areas.</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">areas</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">area_weights</span><span class="p">(</span><span class="n">cube</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns an array of area weights, with the same dimensions as the cube.</span>
+
+<span class="sd">    This is a 2D lat/lon area weights array, repeated over the non lat/lon</span>
+<span class="sd">    dimensions.</span>
+
+<span class="sd">    Args:</span>
+
+<span class="sd">    * cube (:class:`iris.cube.Cube`):</span>
+<span class="sd">        The cube to calculate area weights for.</span>
+
+<span class="sd">    Kwargs:</span>
+
+<span class="sd">    * normalize (False/True):</span>
+<span class="sd">        If False, weights are grid cell areas. If True, weights are grid</span>
+<span class="sd">        cell areas divided by the total grid area.</span>
+
+<span class="sd">    The cube must have coordinates &#39;latitude&#39; and &#39;longitude&#39; with bounds.</span>
+
+<span class="sd">    Area weights are calculated for each lat/lon cell as:</span>
+
+<span class="sd">        .. math::</span>
+
+<span class="sd">            r^2 (lon_1 - lon_0) (\sin(lat_1) - \sin(lat_0))</span>
+
+<span class="sd">    Currently, only supports a spherical datum.</span>
+<span class="sd">    Uses earth radius from the cube, if present and spherical.</span>
+<span class="sd">    Defaults to iris.analysis.cartography.DEFAULT_SPHERICAL_EARTH_RADIUS.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Get the radius of the earth</span>
+    <span class="n">cs</span> <span class="o">=</span> <span class="n">cube</span><span class="o">.</span><span class="n">coord_system</span><span class="p">(</span><span class="s2">&quot;CoordSystem&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cs</span><span class="p">,</span> <span class="n">iris</span><span class="o">.</span><span class="n">coord_systems</span><span class="o">.</span><span class="n">GeogCS</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">cs</span><span class="o">.</span><span class="n">inverse_flattening</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Assuming spherical earth from ellipsoid.&quot;</span><span class="p">)</span>
+        <span class="n">radius_of_earth</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">semi_major_axis</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">cs</span><span class="p">,</span> <span class="n">iris</span><span class="o">.</span><span class="n">coord_systems</span><span class="o">.</span><span class="n">RotatedGeogCS</span><span class="p">)</span> <span class="ow">and</span>
+            <span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">ellipsoid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">cs</span><span class="o">.</span><span class="n">ellipsoid</span><span class="o">.</span><span class="n">inverse_flattening</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Assuming spherical earth from ellipsoid.&quot;</span><span class="p">)</span>
+        <span class="n">radius_of_earth</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">ellipsoid</span><span class="o">.</span><span class="n">semi_major_axis</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Using DEFAULT_SPHERICAL_EARTH_RADIUS.&quot;</span><span class="p">)</span>
+        <span class="n">radius_of_earth</span> <span class="o">=</span> <span class="n">DEFAULT_SPHERICAL_EARTH_RADIUS</span>
+
+    <span class="c1"># Get the lon and lat coords and axes</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">lat</span><span class="p">,</span> <span class="n">lon</span> <span class="o">=</span> <span class="n">_get_lat_lon_coords</span><span class="p">(</span><span class="n">cube</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Cannot get latitude/longitude &#39;</span>
+                         <span class="s1">&#39;coordinates from cube </span><span class="si">{!r}</span><span class="s1">.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cube</span><span class="o">.</span><span class="n">name</span><span class="p">()))</span>
+
+    <span class="k">if</span> <span class="n">lat</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">iris</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">CoordinateMultiDimError</span><span class="p">(</span><span class="n">lat</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">lon</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">iris</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">CoordinateMultiDimError</span><span class="p">(</span><span class="n">lon</span><span class="p">)</span>
+
+    <span class="n">lat_dim</span> <span class="o">=</span> <span class="n">cube</span><span class="o">.</span><span class="n">coord_dims</span><span class="p">(</span><span class="n">lat</span><span class="p">)</span>
+    <span class="n">lat_dim</span> <span class="o">=</span> <span class="n">lat_dim</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">lat_dim</span> <span class="k">else</span> <span class="kc">None</span>
+
+    <span class="n">lon_dim</span> <span class="o">=</span> <span class="n">cube</span><span class="o">.</span><span class="n">coord_dims</span><span class="p">(</span><span class="n">lon</span><span class="p">)</span>
+    <span class="n">lon_dim</span> <span class="o">=</span> <span class="n">lon_dim</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">lon_dim</span> <span class="k">else</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">lat</span><span class="o">.</span><span class="n">has_bounds</span><span class="p">()</span> <span class="ow">and</span> <span class="n">lon</span><span class="o">.</span><span class="n">has_bounds</span><span class="p">()):</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Coordinates </span><span class="si">{!r}</span><span class="s2"> and </span><span class="si">{!r}</span><span class="s2"> must have bounds to determine &quot;</span>
+               <span class="s2">&quot;the area weights.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lat</span><span class="o">.</span><span class="n">name</span><span class="p">(),</span> <span class="n">lon</span><span class="o">.</span><span class="n">name</span><span class="p">()))</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="c1"># Convert from degrees to radians</span>
+    <span class="n">lat</span> <span class="o">=</span> <span class="n">lat</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">lon</span> <span class="o">=</span> <span class="n">lon</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">coord</span> <span class="ow">in</span> <span class="p">(</span><span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">coord</span><span class="o">.</span><span class="n">units</span> <span class="ow">in</span> <span class="p">(</span><span class="n">cf_units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="s1">&#39;degrees&#39;</span><span class="p">),</span>
+                           <span class="n">cf_units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="s1">&#39;radians&#39;</span><span class="p">)):</span>
+            <span class="n">coord</span><span class="o">.</span><span class="n">convert_units</span><span class="p">(</span><span class="s1">&#39;radians&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Units of degrees or radians required, coordinate &quot;</span>
+                   <span class="s2">&quot;</span><span class="si">{!r}</span><span class="s2"> has units: </span><span class="si">{!r}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">coord</span><span class="o">.</span><span class="n">name</span><span class="p">(),</span>
+                                                 <span class="n">coord</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="c1"># Create 2D weights from bounds.</span>
+    <span class="c1"># Use the geographical area as the weight for each cell</span>
+    <span class="n">ll_weights</span> <span class="o">=</span> <span class="n">_quadrant_area</span><span class="p">(</span><span class="n">lat</span><span class="o">.</span><span class="n">bounds</span><span class="p">,</span>
+                                <span class="n">lon</span><span class="o">.</span><span class="n">bounds</span><span class="p">,</span> <span class="n">radius_of_earth</span><span class="p">)</span>
+
+    <span class="c1"># Normalize the weights if necessary.</span>
+    <span class="k">if</span> <span class="n">normalize</span><span class="p">:</span>
+        <span class="n">ll_weights</span> <span class="o">/=</span> <span class="n">ll_weights</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+    <span class="c1"># Now we create an array of weights for each cell. This process will</span>
+    <span class="c1"># handle adding the required extra dimensions and also take care of</span>
+    <span class="c1"># the order of dimensions.</span>
+    <span class="n">broadcast_dims</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">(</span><span class="n">lat_dim</span><span class="p">,</span> <span class="n">lon_dim</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]</span>
+    <span class="n">wshape</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">idim</span><span class="p">,</span> <span class="n">dim</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="n">lat_dim</span><span class="p">,</span> <span class="n">lon_dim</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">dim</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">wshape</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ll_weights</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">idim</span><span class="p">])</span>
+    <span class="n">ll_weights</span> <span class="o">=</span> <span class="n">ll_weights</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">wshape</span><span class="p">)</span>
+    <span class="n">broad_weights</span> <span class="o">=</span> <span class="n">iris</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">broadcast_to_shape</span><span class="p">(</span><span class="n">ll_weights</span><span class="p">,</span>
+                                                 <span class="n">cube</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span>
+                                                 <span class="n">broadcast_dims</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">broad_weights</span>
+
+
+<span class="k">def</span> <span class="nf">cosine_latitude_weights</span><span class="p">(</span><span class="n">cube</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns an array of latitude weights, with the same dimensions as</span>
+<span class="sd">    the cube. The weights are the cosine of latitude.</span>
+
+<span class="sd">    These are n-dimensional latitude weights repeated over the dimensions</span>
+<span class="sd">    not covered by the latitude coordinate.</span>
+
+<span class="sd">    The cube must have a coordinate with &#39;latitude&#39; in the name. Out of</span>
+<span class="sd">    range values (greater than 90 degrees or less than -90 degrees) will</span>
+<span class="sd">    be clipped to the valid range.</span>
+
+<span class="sd">    Weights are calculated for each latitude as:</span>
+
+<span class="sd">        .. math::</span>
+
+<span class="sd">           w_l = \cos \phi_l</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">    Compute weights suitable for averaging type operations::</span>
+
+<span class="sd">        from iris.analysis.cartography import cosine_latitude_weights</span>
+<span class="sd">        cube = iris.load_cube(iris.sample_data_path(&#39;air_temp.pp&#39;))</span>
+<span class="sd">        weights = cosine_latitude_weights(cube)</span>
+
+<span class="sd">    Compute weights suitable for EOF analysis (or other covariance type</span>
+<span class="sd">    analyses)::</span>
+
+<span class="sd">        import numpy as np</span>
+<span class="sd">        from iris.analysis.cartography import cosine_latitude_weights</span>
+<span class="sd">        cube = iris.load_cube(iris.sample_data_path(&#39;air_temp.pp&#39;))</span>
+<span class="sd">        weights = np.sqrt(cosine_latitude_weights(cube))</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Find all latitude coordinates, we want one and only one.</span>
+    <span class="n">lat_coords</span> <span class="o">=</span> <span class="p">[</span><span class="n">coord</span> <span class="k">for</span> <span class="n">coord</span> <span class="ow">in</span> <span class="n">cube</span><span class="o">.</span><span class="n">coords</span><span class="p">()</span>
+                  <span class="k">if</span> <span class="s2">&quot;latitude&quot;</span> <span class="ow">in</span> <span class="n">coord</span><span class="o">.</span><span class="n">name</span><span class="p">()]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">lat_coords</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Multiple latitude coords are currently disallowed.&quot;</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">lat</span> <span class="o">=</span> <span class="n">lat_coords</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Cannot get latitude &#39;</span>
+                         <span class="s1">&#39;coordinate from cube </span><span class="si">{!r}</span><span class="s1">.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cube</span><span class="o">.</span><span class="n">name</span><span class="p">()))</span>
+
+    <span class="c1"># Get the dimension position(s) of the latitude coordinate.</span>
+    <span class="n">lat_dims</span> <span class="o">=</span> <span class="n">cube</span><span class="o">.</span><span class="n">coord_dims</span><span class="p">(</span><span class="n">lat</span><span class="p">)</span>
+
+    <span class="c1"># Convert to radians.</span>
+    <span class="n">lat</span> <span class="o">=</span> <span class="n">lat</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">lat</span><span class="o">.</span><span class="n">convert_units</span><span class="p">(</span><span class="s1">&#39;radians&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Compute the weights as the cosine of latitude. In some cases,</span>
+    <span class="c1"># particularly when working in 32-bit precision, the latitude values can</span>
+    <span class="c1"># extend beyond the allowable range of [-pi/2, pi/2] due to numerical</span>
+    <span class="c1"># precision. We first check for genuinely out of range values, and issue a</span>
+    <span class="c1"># warning if these are found. Then the cosine is computed and clipped to</span>
+    <span class="c1"># the valid range [0, 1].</span>
+    <span class="n">threshold</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="mf">0.001</span><span class="p">)</span>  <span class="c1"># small value for grid resolution</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">lat</span><span class="o">.</span><span class="n">points</span> <span class="o">&lt;</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">2.</span> <span class="o">-</span> <span class="n">threshold</span><span class="p">)</span> <span class="ow">or</span> \
+            <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">lat</span><span class="o">.</span><span class="n">points</span> <span class="o">&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">2.</span> <span class="o">+</span> <span class="n">threshold</span><span class="p">):</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Out of range latitude values will be &#39;</span>
+                      <span class="s1">&#39;clipped to the valid range.&#39;</span><span class="p">,</span>
+                      <span class="ne">UserWarning</span><span class="p">)</span>
+    <span class="n">points</span> <span class="o">=</span> <span class="n">lat</span><span class="o">.</span><span class="n">points</span>
+    <span class="n">l_weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">points</span><span class="p">)</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">)</span>
+
+    <span class="c1"># Create weights for each grid point. This operation handles adding extra</span>
+    <span class="c1"># dimensions and also the order of the dimensions.</span>
+    <span class="n">broadcast_dims</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">lat_dims</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]</span>
+    <span class="n">wshape</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">idim</span><span class="p">,</span> <span class="n">dim</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lat_dims</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">dim</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">wshape</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">l_weights</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">idim</span><span class="p">])</span>
+    <span class="n">l_weights</span> <span class="o">=</span> <span class="n">l_weights</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">wshape</span><span class="p">)</span>
+    <span class="n">broad_weights</span> <span class="o">=</span> <span class="n">iris</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">broadcast_to_shape</span><span class="p">(</span><span class="n">l_weights</span><span class="p">,</span>
+                                                 <span class="n">cube</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span>
+                                                 <span class="n">broadcast_dims</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">broad_weights</span>
+
+
+<span class="k">def</span> <span class="nf">project</span><span class="p">(</span><span class="n">cube</span><span class="p">,</span> <span class="n">target_proj</span><span class="p">,</span> <span class="n">nx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ny</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Nearest neighbour regrid to a specified target projection.</span>
+
+<span class="sd">    Return a new cube that is the result of projecting a cube with 1 or 2</span>
+<span class="sd">    dimensional latitude-longitude coordinates from its coordinate system into</span>
+<span class="sd">    a specified projection e.g. Robinson or Polar Stereographic.</span>
+<span class="sd">    This function is intended to be used in cases where the cube&#39;s coordinates</span>
+<span class="sd">    prevent one from directly visualising the data, e.g. when the longitude</span>
+<span class="sd">    and latitude are two dimensional and do not make up a regular grid.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        * cube</span>
+<span class="sd">            An instance of :class:`iris.cube.Cube`.</span>
+<span class="sd">        * target_proj</span>
+<span class="sd">            An instance of the Cartopy Projection class, or an instance of</span>
+<span class="sd">            :class:`iris.coord_systems.CoordSystem` from which a projection</span>
+<span class="sd">            will be obtained.</span>
+<span class="sd">    Kwargs:</span>
+<span class="sd">        * nx</span>
+<span class="sd">            Desired number of sample points in the x direction for a domain</span>
+<span class="sd">            covering the globe.</span>
+<span class="sd">        * ny</span>
+<span class="sd">            Desired number of sample points in the y direction for a domain</span>
+<span class="sd">            covering the globe.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        An instance of :class:`iris.cube.Cube` and a list describing the</span>
+<span class="sd">        extent of the projection.</span>
+
+<span class="sd">    .. note::</span>
+
+<span class="sd">        This function assumes global data and will if necessary extrapolate</span>
+<span class="sd">        beyond the geographical extent of the source cube using a nearest</span>
+<span class="sd">        neighbour approach. nx and ny then include those points which are</span>
+<span class="sd">        outside of the target projection.</span>
+
+<span class="sd">    .. note::</span>
+
+<span class="sd">        Masked arrays are handled by passing their masked status to the</span>
+<span class="sd">        resulting nearest neighbour values.  If masked, the value in the</span>
+<span class="sd">        resulting cube is set to 0.</span>
+
+<span class="sd">    .. warning::</span>
+
+<span class="sd">        This function uses a nearest neighbour approach rather than any form</span>
+<span class="sd">        of linear/non-linear interpolation to determine the data value of each</span>
+<span class="sd">        cell in the resulting cube. Consequently it may have an adverse effect</span>
+<span class="sd">        on the statistics of the data e.g. the mean and standard deviation</span>
+<span class="sd">        will not be preserved.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">lat_coord</span><span class="p">,</span> <span class="n">lon_coord</span> <span class="o">=</span> <span class="n">_get_lat_lon_coords</span><span class="p">(</span><span class="n">cube</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Cannot get latitude/longitude &#39;</span>
+                         <span class="s1">&#39;coordinates from cube </span><span class="si">{!r}</span><span class="s1">.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cube</span><span class="o">.</span><span class="n">name</span><span class="p">()))</span>
+
+    <span class="k">if</span> <span class="n">lat_coord</span><span class="o">.</span><span class="n">coord_system</span> <span class="o">!=</span> <span class="n">lon_coord</span><span class="o">.</span><span class="n">coord_system</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;latitude and longitude coords appear to have &#39;</span>
+                         <span class="s1">&#39;different coordinates systems.&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">lon_coord</span><span class="o">.</span><span class="n">units</span> <span class="o">!=</span> <span class="s1">&#39;degrees&#39;</span><span class="p">:</span>
+        <span class="n">lon_coord</span> <span class="o">=</span> <span class="n">lon_coord</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">lon_coord</span><span class="o">.</span><span class="n">convert_units</span><span class="p">(</span><span class="s1">&#39;degrees&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">lat_coord</span><span class="o">.</span><span class="n">units</span> <span class="o">!=</span> <span class="s1">&#39;degrees&#39;</span><span class="p">:</span>
+        <span class="n">lat_coord</span> <span class="o">=</span> <span class="n">lat_coord</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">lat_coord</span><span class="o">.</span><span class="n">convert_units</span><span class="p">(</span><span class="s1">&#39;degrees&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Determine source coordinate system</span>
+    <span class="k">if</span> <span class="n">lat_coord</span><span class="o">.</span><span class="n">coord_system</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Assume WGS84 latlon if unspecified</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Coordinate system of latitude and longitude &#39;</span>
+                      <span class="s1">&#39;coordinates is not specified. Assuming WGS84 Geodetic.&#39;</span><span class="p">)</span>
+        <span class="n">orig_cs</span> <span class="o">=</span> <span class="n">iris</span><span class="o">.</span><span class="n">coord_systems</span><span class="o">.</span><span class="n">GeogCS</span><span class="p">(</span><span class="n">semi_major_axis</span><span class="o">=</span><span class="mf">6378137.0</span><span class="p">,</span>
+                                            <span class="n">inverse_flattening</span><span class="o">=</span><span class="mf">298.257223563</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">orig_cs</span> <span class="o">=</span> <span class="n">lat_coord</span><span class="o">.</span><span class="n">coord_system</span>
+
+    <span class="c1"># Convert to cartopy crs</span>
+    <span class="n">source_cs</span> <span class="o">=</span> <span class="n">orig_cs</span><span class="o">.</span><span class="n">as_cartopy_crs</span><span class="p">()</span>
+
+    <span class="c1"># Obtain coordinate arrays (ignoring bounds) and convert to 2d</span>
+    <span class="c1"># if not already.</span>
+    <span class="n">source_x</span> <span class="o">=</span> <span class="n">lon_coord</span><span class="o">.</span><span class="n">points</span>
+    <span class="n">source_y</span> <span class="o">=</span> <span class="n">lat_coord</span><span class="o">.</span><span class="n">points</span>
+    <span class="k">if</span> <span class="n">source_x</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">source_y</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">source_x</span><span class="p">,</span> <span class="n">source_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">source_x</span><span class="p">,</span> <span class="n">source_y</span><span class="p">)</span>
+
+    <span class="c1"># Calculate target grid</span>
+    <span class="n">target_cs</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target_proj</span><span class="p">,</span> <span class="n">iris</span><span class="o">.</span><span class="n">coord_systems</span><span class="o">.</span><span class="n">CoordSystem</span><span class="p">):</span>
+        <span class="n">target_cs</span> <span class="o">=</span> <span class="n">target_proj</span>
+        <span class="n">target_proj</span> <span class="o">=</span> <span class="n">target_proj</span><span class="o">.</span><span class="n">as_cartopy_projection</span><span class="p">()</span>
+
+    <span class="c1"># Resolution of new grid</span>
+    <span class="k">if</span> <span class="n">nx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">nx</span> <span class="o">=</span> <span class="n">source_x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">ny</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ny</span> <span class="o">=</span> <span class="n">source_x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">target_x</span><span class="p">,</span> <span class="n">target_y</span><span class="p">,</span> <span class="n">extent</span> <span class="o">=</span> <span class="n">cartopy</span><span class="o">.</span><span class="n">img_transform</span><span class="o">.</span><span class="n">mesh_projection</span><span class="p">(</span>
+        <span class="n">target_proj</span><span class="p">,</span> <span class="n">nx</span><span class="p">,</span> <span class="n">ny</span><span class="p">)</span>
+
+    <span class="c1"># Determine dimension mappings - expect either 1d or 2d</span>
+    <span class="k">if</span> <span class="n">lat_coord</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="n">lon_coord</span><span class="o">.</span><span class="n">ndim</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The latitude and longitude coordinates have &quot;</span>
+                         <span class="s2">&quot;different dimensionality.&quot;</span><span class="p">)</span>
+
+    <span class="n">latlon_ndim</span> <span class="o">=</span> <span class="n">lat_coord</span><span class="o">.</span><span class="n">ndim</span>
+    <span class="n">lon_dims</span> <span class="o">=</span> <span class="n">cube</span><span class="o">.</span><span class="n">coord_dims</span><span class="p">(</span><span class="n">lon_coord</span><span class="p">)</span>
+    <span class="n">lat_dims</span> <span class="o">=</span> <span class="n">cube</span><span class="o">.</span><span class="n">coord_dims</span><span class="p">(</span><span class="n">lat_coord</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">latlon_ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">xdim</span> <span class="o">=</span> <span class="n">lon_dims</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">ydim</span> <span class="o">=</span> <span class="n">lat_dims</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">latlon_ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">lon_dims</span> <span class="o">!=</span> <span class="n">lat_dims</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The 2d latitude and longitude coordinates &quot;</span>
+                             <span class="s2">&quot;correspond to different dimensions.&quot;</span><span class="p">)</span>
+        <span class="c1"># If coords are 2d assume that grid is ordered such that x corresponds</span>
+        <span class="c1"># to the last dimension (shortest stride).</span>
+        <span class="n">xdim</span> <span class="o">=</span> <span class="n">lon_dims</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">ydim</span> <span class="o">=</span> <span class="n">lon_dims</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Expected the latitude and longitude coordinates &#39;</span>
+                         <span class="s1">&#39;to have 1 or 2 dimensions, got </span><span class="si">{}</span><span class="s1"> and &#39;</span>
+                         <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lat_coord</span><span class="o">.</span><span class="n">ndim</span><span class="p">,</span> <span class="n">lon_coord</span><span class="o">.</span><span class="n">ndim</span><span class="p">))</span>
+
+    <span class="c1"># Create array to store regridded data</span>
+    <span class="n">new_shape</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">cube</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="n">new_shape</span><span class="p">[</span><span class="n">xdim</span><span class="p">]</span> <span class="o">=</span> <span class="n">nx</span>
+    <span class="n">new_shape</span><span class="p">[</span><span class="n">ydim</span><span class="p">]</span> <span class="o">=</span> <span class="n">ny</span>
+    <span class="n">new_data</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">new_shape</span><span class="p">,</span> <span class="n">cube</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+
+    <span class="c1"># Create iterators to step through cube data in lat long slices</span>
+    <span class="n">new_shape</span><span class="p">[</span><span class="n">xdim</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">new_shape</span><span class="p">[</span><span class="n">ydim</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">index_it</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ndindex</span><span class="p">(</span><span class="o">*</span><span class="n">new_shape</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">lat_coord</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">lon_coord</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">slice_it</span> <span class="o">=</span> <span class="n">cube</span><span class="o">.</span><span class="n">slices</span><span class="p">([</span><span class="n">lat_coord</span><span class="p">,</span> <span class="n">lon_coord</span><span class="p">])</span>
+    <span class="k">elif</span> <span class="n">lat_coord</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">lon_coord</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">slice_it</span> <span class="o">=</span> <span class="n">cube</span><span class="o">.</span><span class="n">slices</span><span class="p">(</span><span class="n">lat_coord</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Expected the latitude and longitude coordinates &#39;</span>
+                         <span class="s1">&#39;to have 1 or 2 dimensions, got </span><span class="si">{}</span><span class="s1"> and &#39;</span>
+                         <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lat_coord</span><span class="o">.</span><span class="n">ndim</span><span class="p">,</span> <span class="n">lon_coord</span><span class="o">.</span><span class="n">ndim</span><span class="p">))</span>
+
+<span class="c1">#    # Mask out points outside of extent in source_cs - disabled until</span>
+<span class="c1">#    # a way to specify global/limited extent is agreed upon and code</span>
+<span class="c1">#    # is generalised to handle -180 to +180, 0 to 360 and &gt;360 longitudes.</span>
+<span class="c1">#    source_desired_xy = source_cs.transform_points(target_proj,</span>
+<span class="c1">#                                                   target_x.flatten(),</span>
+<span class="c1">#                                                   target_y.flatten())</span>
+<span class="c1">#    if np.any(source_x &lt; 0.0) and np.any(source_x &gt; 180.0):</span>
+<span class="c1">#        raise ValueError(&#39;Unable to handle range of longitude.&#39;)</span>
+<span class="c1">#    # This does not work in all cases e.g. lon &gt; 360</span>
+<span class="c1">#    if np.any(source_x &gt; 180.0):</span>
+<span class="c1">#        source_desired_x = (source_desired_xy[:, 0].reshape(ny, nx) +</span>
+<span class="c1">#                            360.0) % 360.0</span>
+<span class="c1">#    else:</span>
+<span class="c1">#        source_desired_x = source_desired_xy[:, 0].reshape(ny, nx)</span>
+<span class="c1">#    source_desired_y = source_desired_xy[:, 1].reshape(ny, nx)</span>
+<span class="c1">#    outof_extent_points = ((source_desired_x &lt; source_x.min()) |</span>
+<span class="c1">#                           (source_desired_x &gt; source_x.max()) |</span>
+<span class="c1">#                           (source_desired_y &lt; source_y.min()) |</span>
+<span class="c1">#                           (source_desired_y &gt; source_y.max()))</span>
+<span class="c1">#    # Make array a mask by default (rather than a single bool) to allow mask</span>
+<span class="c1">#    # to be assigned to slices.</span>
+<span class="c1">#    new_data.mask = np.zeros(new_shape)</span>
+
+    <span class="c1"># Step through cube data, regrid onto desired projection and insert results</span>
+    <span class="c1"># in new_data array</span>
+    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">ll_slice</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">index_it</span><span class="p">,</span> <span class="n">slice_it</span><span class="p">):</span>
+        <span class="c1"># Regrid source data onto target grid</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+        <span class="n">index</span><span class="p">[</span><span class="n">xdim</span><span class="p">]</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">index</span><span class="p">[</span><span class="n">ydim</span><span class="p">]</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">new_data</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">cartopy</span><span class="o">.</span><span class="n">img_transform</span><span class="o">.</span><span class="n">regrid</span><span class="p">(</span><span class="n">ll_slice</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
+                                                       <span class="n">source_x</span><span class="p">,</span> <span class="n">source_y</span><span class="p">,</span>
+                                                       <span class="n">source_cs</span><span class="p">,</span>
+                                                       <span class="n">target_proj</span><span class="p">,</span>
+                                                       <span class="n">target_x</span><span class="p">,</span> <span class="n">target_y</span><span class="p">)</span>
+
+<span class="c1">#    # Mask out points beyond extent</span>
+<span class="c1">#    new_data[index].mask[outof_extent_points] = True</span>
+
+    <span class="c1"># Remove mask if it is unnecessary</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">new_data</span><span class="o">.</span><span class="n">mask</span><span class="p">):</span>
+        <span class="n">new_data</span> <span class="o">=</span> <span class="n">new_data</span><span class="o">.</span><span class="n">data</span>
+
+    <span class="c1"># Create new cube</span>
+    <span class="n">new_cube</span> <span class="o">=</span> <span class="n">iris</span><span class="o">.</span><span class="n">cube</span><span class="o">.</span><span class="n">Cube</span><span class="p">(</span><span class="n">new_data</span><span class="p">)</span>
+
+    <span class="c1"># Add new grid coords</span>
+    <span class="n">x_coord</span> <span class="o">=</span> <span class="n">iris</span><span class="o">.</span><span class="n">coords</span><span class="o">.</span><span class="n">DimCoord</span><span class="p">(</span><span class="n">target_x</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:],</span> <span class="s1">&#39;projection_x_coordinate&#39;</span><span class="p">,</span>
+                                   <span class="n">units</span><span class="o">=</span><span class="s1">&#39;m&#39;</span><span class="p">,</span>
+                                   <span class="n">coord_system</span><span class="o">=</span><span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">target_cs</span><span class="p">))</span>
+    <span class="n">y_coord</span> <span class="o">=</span> <span class="n">iris</span><span class="o">.</span><span class="n">coords</span><span class="o">.</span><span class="n">DimCoord</span><span class="p">(</span><span class="n">target_y</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;projection_y_coordinate&#39;</span><span class="p">,</span>
+                                   <span class="n">units</span><span class="o">=</span><span class="s1">&#39;m&#39;</span><span class="p">,</span>
+                                   <span class="n">coord_system</span><span class="o">=</span><span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">target_cs</span><span class="p">))</span>
+
+    <span class="n">new_cube</span><span class="o">.</span><span class="n">add_dim_coord</span><span class="p">(</span><span class="n">x_coord</span><span class="p">,</span> <span class="n">xdim</span><span class="p">)</span>
+    <span class="n">new_cube</span><span class="o">.</span><span class="n">add_dim_coord</span><span class="p">(</span><span class="n">y_coord</span><span class="p">,</span> <span class="n">ydim</span><span class="p">)</span>
+
+    <span class="c1"># Add resampled lat/lon in original coord system</span>
+    <span class="n">source_desired_xy</span> <span class="o">=</span> <span class="n">source_cs</span><span class="o">.</span><span class="n">transform_points</span><span class="p">(</span><span class="n">target_proj</span><span class="p">,</span>
+                                                   <span class="n">target_x</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span>
+                                                   <span class="n">target_y</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
+    <span class="n">new_lon_points</span> <span class="o">=</span> <span class="n">source_desired_xy</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">ny</span><span class="p">,</span> <span class="n">nx</span><span class="p">)</span>
+    <span class="n">new_lat_points</span> <span class="o">=</span> <span class="n">source_desired_xy</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">ny</span><span class="p">,</span> <span class="n">nx</span><span class="p">)</span>
+    <span class="n">new_lon_coord</span> <span class="o">=</span> <span class="n">iris</span><span class="o">.</span><span class="n">coords</span><span class="o">.</span><span class="n">AuxCoord</span><span class="p">(</span><span class="n">new_lon_points</span><span class="p">,</span>
+                                         <span class="n">standard_name</span><span class="o">=</span><span class="s1">&#39;longitude&#39;</span><span class="p">,</span>
+                                         <span class="n">units</span><span class="o">=</span><span class="s1">&#39;degrees&#39;</span><span class="p">,</span>
+                                         <span class="n">coord_system</span><span class="o">=</span><span class="n">orig_cs</span><span class="p">)</span>
+    <span class="n">new_lat_coord</span> <span class="o">=</span> <span class="n">iris</span><span class="o">.</span><span class="n">coords</span><span class="o">.</span><span class="n">AuxCoord</span><span class="p">(</span><span class="n">new_lat_points</span><span class="p">,</span>
+                                         <span class="n">standard_name</span><span class="o">=</span><span class="s1">&#39;latitude&#39;</span><span class="p">,</span>
+                                         <span class="n">units</span><span class="o">=</span><span class="s1">&#39;degrees&#39;</span><span class="p">,</span>
+                                         <span class="n">coord_system</span><span class="o">=</span><span class="n">orig_cs</span><span class="p">)</span>
+    <span class="n">new_cube</span><span class="o">.</span><span class="n">add_aux_coord</span><span class="p">(</span><span class="n">new_lon_coord</span><span class="p">,</span> <span class="p">[</span><span class="n">ydim</span><span class="p">,</span> <span class="n">xdim</span><span class="p">])</span>
+    <span class="n">new_cube</span><span class="o">.</span><span class="n">add_aux_coord</span><span class="p">(</span><span class="n">new_lat_coord</span><span class="p">,</span> <span class="p">[</span><span class="n">ydim</span><span class="p">,</span> <span class="n">xdim</span><span class="p">])</span>
+
+    <span class="n">coords_to_ignore</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">coords_to_ignore</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">cube</span><span class="o">.</span><span class="n">coords</span><span class="p">(</span><span class="n">contains_dimension</span><span class="o">=</span><span class="n">xdim</span><span class="p">))</span>
+    <span class="n">coords_to_ignore</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">cube</span><span class="o">.</span><span class="n">coords</span><span class="p">(</span><span class="n">contains_dimension</span><span class="o">=</span><span class="n">ydim</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">coord</span> <span class="ow">in</span> <span class="n">cube</span><span class="o">.</span><span class="n">dim_coords</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">coord</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">coords_to_ignore</span><span class="p">:</span>
+            <span class="n">new_cube</span><span class="o">.</span><span class="n">add_dim_coord</span><span class="p">(</span><span class="n">coord</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">cube</span><span class="o">.</span><span class="n">coord_dims</span><span class="p">(</span><span class="n">coord</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">coord</span> <span class="ow">in</span> <span class="n">cube</span><span class="o">.</span><span class="n">aux_coords</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">coord</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">coords_to_ignore</span><span class="p">:</span>
+            <span class="n">new_cube</span><span class="o">.</span><span class="n">add_aux_coord</span><span class="p">(</span><span class="n">coord</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">cube</span><span class="o">.</span><span class="n">coord_dims</span><span class="p">(</span><span class="n">coord</span><span class="p">))</span>
+    <span class="n">discarded_coords</span> <span class="o">=</span> <span class="n">coords_to_ignore</span><span class="o">.</span><span class="n">difference</span><span class="p">([</span><span class="n">lat_coord</span><span class="p">,</span> <span class="n">lon_coord</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">discarded_coords</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Discarding coordinates that share dimensions with &#39;</span>
+                      <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> and </span><span class="si">{}</span><span class="s1">: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lat_coord</span><span class="o">.</span><span class="n">name</span><span class="p">(),</span>
+                                             <span class="n">lon_coord</span><span class="o">.</span><span class="n">name</span><span class="p">(),</span>
+                                             <span class="p">[</span><span class="n">coord</span><span class="o">.</span><span class="n">name</span><span class="p">()</span> <span class="k">for</span>
+                                              <span class="n">coord</span> <span class="ow">in</span> <span class="n">discarded_coords</span><span class="p">]))</span>
+
+    <span class="c1"># TODO handle derived coords/aux_factories</span>
+
+    <span class="c1"># Copy metadata across</span>
+    <span class="n">new_cube</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="n">cube</span><span class="o">.</span><span class="n">metadata</span>
+
+    <span class="k">return</span> <span class="n">new_cube</span><span class="p">,</span> <span class="n">extent</span>
+
+
+<span class="k">def</span> <span class="nf">_transform_xy</span><span class="p">(</span><span class="n">crs_from</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">crs_to</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Shorthand function to transform 2d points between coordinate</span>
+<span class="sd">    reference systems.</span>
+
+<span class="sd">    Args:</span>
+
+<span class="sd">    * crs_from, crs_to (:class:`cartopy.crs.Projection`):</span>
+<span class="sd">        The coordinate reference systems.</span>
+<span class="sd">    * x, y (arrays):</span>
+<span class="sd">        point locations defined in &#39;crs_from&#39;.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        x, y :  Arrays of locations defined in &#39;crs_to&#39;.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pts</span> <span class="o">=</span> <span class="n">crs_to</span><span class="o">.</span><span class="n">transform_points</span><span class="p">(</span><span class="n">crs_from</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">pts</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">pts</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">_inter_crs_differentials</span><span class="p">(</span><span class="n">crs1</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">crs2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate coordinate partial differentials from crs1 to crs2.</span>
+
+<span class="sd">    Returns dx2/dx1, dy2/dx1, dx2/dy1 and dy2/dy1, at given locations.</span>
+
+<span class="sd">    Args:</span>
+
+<span class="sd">    * crs1, crs2 (`cartopy.crs.Projection`):</span>
+<span class="sd">        The coordinate systems, &quot;from&quot; and &quot;to&quot;.</span>
+<span class="sd">    * x, y (array):</span>
+<span class="sd">        Point locations defined in &#39;crs1&#39;.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        (dx2/dx1, dy2/dx1, dx2/dy1, dy2/dy1) at given locations. Each</span>
+<span class="sd">        element of this tuple will be the same shape as the &#39;x&#39; and &#39;y&#39;</span>
+<span class="sd">        arrays and will be the partial differentials between the two systems.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Get locations in target crs.</span>
+    <span class="n">crs2_x</span><span class="p">,</span> <span class="n">crs2_y</span> <span class="o">=</span> <span class="n">_transform_xy</span><span class="p">(</span><span class="n">crs1</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">crs2</span><span class="p">)</span>
+
+    <span class="c1"># Define small x-deltas in the source crs.</span>
+    <span class="n">VECTOR_DELTAS_FACTOR</span> <span class="o">=</span> <span class="mf">360000.0</span>  <span class="c1"># Empirical factor to obtain small delta.</span>
+    <span class="n">delta_x</span> <span class="o">=</span> <span class="p">(</span><span class="n">crs1</span><span class="o">.</span><span class="n">x_limits</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">crs1</span><span class="o">.</span><span class="n">x_limits</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="n">VECTOR_DELTAS_FACTOR</span>
+    <span class="n">delta_x</span> <span class="o">=</span> <span class="n">delta_x</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="n">eps</span> <span class="o">=</span> <span class="mf">1e-9</span>
+    <span class="c1"># Reverse deltas where we would otherwise step outside the valid range.</span>
+    <span class="n">invalid_dx</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">delta_x</span> <span class="o">&gt;</span> <span class="n">crs1</span><span class="o">.</span><span class="n">x_limits</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">eps</span>
+    <span class="n">delta_x</span><span class="p">[</span><span class="n">invalid_dx</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">delta_x</span><span class="p">[</span><span class="n">invalid_dx</span><span class="p">]</span>
+    <span class="c1"># Calculate the transformed point with x = x + dx.</span>
+    <span class="n">crs2_x2</span><span class="p">,</span> <span class="n">crs2_y2</span> <span class="o">=</span> <span class="n">_transform_xy</span><span class="p">(</span><span class="n">crs1</span><span class="p">,</span> <span class="n">x</span> <span class="o">+</span> <span class="n">delta_x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">crs2</span><span class="p">)</span>
+    <span class="c1"># Form differentials wrt dx.</span>
+    <span class="n">dx2_dx</span> <span class="o">=</span> <span class="p">(</span><span class="n">crs2_x2</span> <span class="o">-</span> <span class="n">crs2_x</span><span class="p">)</span> <span class="o">/</span> <span class="n">delta_x</span>
+    <span class="n">dy2_dx</span> <span class="o">=</span> <span class="p">(</span><span class="n">crs2_y2</span> <span class="o">-</span> <span class="n">crs2_y</span><span class="p">)</span> <span class="o">/</span> <span class="n">delta_x</span>
+
+    <span class="c1"># Define small y-deltas in the source crs.</span>
+    <span class="n">delta_y</span> <span class="o">=</span> <span class="p">(</span><span class="n">crs1</span><span class="o">.</span><span class="n">y_limits</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">crs1</span><span class="o">.</span><span class="n">y_limits</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="n">VECTOR_DELTAS_FACTOR</span>
+    <span class="n">delta_y</span> <span class="o">=</span> <span class="n">delta_y</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="c1"># Reverse deltas where we would otherwise step outside the valid range.</span>
+    <span class="n">invalid_dy</span> <span class="o">=</span> <span class="n">y</span> <span class="o">+</span> <span class="n">delta_y</span> <span class="o">&gt;</span> <span class="n">crs1</span><span class="o">.</span><span class="n">y_limits</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">eps</span>
+    <span class="n">delta_y</span><span class="p">[</span><span class="n">invalid_dy</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">delta_y</span><span class="p">[</span><span class="n">invalid_dy</span><span class="p">]</span>
+    <span class="c1"># Calculate the transformed point with y = y + dy.</span>
+    <span class="n">crs2_x2</span><span class="p">,</span> <span class="n">crs2_y2</span> <span class="o">=</span> <span class="n">_transform_xy</span><span class="p">(</span><span class="n">crs1</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">+</span> <span class="n">delta_y</span><span class="p">,</span> <span class="n">crs2</span><span class="p">)</span>
+    <span class="c1"># Form differentials wrt dy.</span>
+    <span class="n">dx2_dy</span> <span class="o">=</span> <span class="p">(</span><span class="n">crs2_x2</span> <span class="o">-</span> <span class="n">crs2_x</span><span class="p">)</span> <span class="o">/</span> <span class="n">delta_y</span>
+    <span class="n">dy2_dy</span> <span class="o">=</span> <span class="p">(</span><span class="n">crs2_y2</span> <span class="o">-</span> <span class="n">crs2_y</span><span class="p">)</span> <span class="o">/</span> <span class="n">delta_y</span>
+
+    <span class="k">return</span> <span class="n">dx2_dx</span><span class="p">,</span> <span class="n">dy2_dx</span><span class="p">,</span> <span class="n">dx2_dy</span><span class="p">,</span> <span class="n">dy2_dy</span>
+
+
+<span class="k">def</span> <span class="nf">_crs_distance_differentials</span><span class="p">(</span><span class="n">crs</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate d(distance) / d(x) and ... / d(y) for a coordinate</span>
+<span class="sd">    reference system at specified locations.</span>
+
+<span class="sd">    Args:</span>
+
+<span class="sd">    * crs (:class:`cartopy.crs.Projection`):</span>
+<span class="sd">        The coordinate reference system.</span>
+<span class="sd">    * x, y (array):</span>
+<span class="sd">        Locations at which to calculate the differentials,</span>
+<span class="sd">        defined in &#39;crs&#39; coordinate reference system.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        (abs(ds/dx), abs(ds/dy)).</span>
+<span class="sd">        Numerically approximated partial differentials,</span>
+<span class="sd">        i.e. scaling factors between changes in distance and changes in</span>
+<span class="sd">        coordinate values.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Make a true-latlon coordinate system for distance calculations.</span>
+    <span class="n">crs_latlon</span> <span class="o">=</span> <span class="n">ccrs</span><span class="o">.</span><span class="n">Geodetic</span><span class="p">(</span><span class="n">globe</span><span class="o">=</span><span class="n">ccrs</span><span class="o">.</span><span class="n">Globe</span><span class="p">(</span><span class="n">ellipse</span><span class="o">=</span><span class="s1">&#39;sphere&#39;</span><span class="p">))</span>
+    <span class="c1"># Transform points to true-latlon (just to get the true latitudes).</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">true_lat</span> <span class="o">=</span> <span class="n">_transform_xy</span><span class="p">(</span><span class="n">crs</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">crs_latlon</span><span class="p">)</span>
+    <span class="c1"># Get coordinate differentials w.r.t. true-latlon.</span>
+    <span class="n">dlon_dx</span><span class="p">,</span> <span class="n">dlat_dx</span><span class="p">,</span> <span class="n">dlon_dy</span><span class="p">,</span> <span class="n">dlat_dy</span> <span class="o">=</span> \
+        <span class="n">_inter_crs_differentials</span><span class="p">(</span><span class="n">crs</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">crs_latlon</span><span class="p">)</span>
+    <span class="c1"># Calculate effective scalings of X and Y coordinates.</span>
+    <span class="n">lat_factor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">true_lat</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">ds_dx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">dlat_dx</span> <span class="o">*</span> <span class="n">dlat_dx</span> <span class="o">+</span> <span class="n">dlon_dx</span> <span class="o">*</span> <span class="n">dlon_dx</span> <span class="o">*</span> <span class="n">lat_factor</span><span class="p">)</span>
+    <span class="n">ds_dy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">dlat_dy</span> <span class="o">*</span> <span class="n">dlat_dy</span> <span class="o">+</span> <span class="n">dlon_dy</span> <span class="o">*</span> <span class="n">dlon_dy</span> <span class="o">*</span> <span class="n">lat_factor</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ds_dx</span><span class="p">,</span> <span class="n">ds_dy</span>
+
+
+<span class="k">def</span> <span class="nf">_transform_distance_vectors</span><span class="p">(</span><span class="n">u_dist</span><span class="p">,</span> <span class="n">v_dist</span><span class="p">,</span> <span class="n">ds</span><span class="p">,</span> <span class="n">dx2</span><span class="p">,</span> <span class="n">dy2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Transform distance vectors from one coordinate reference system to</span>
+<span class="sd">    another, preserving magnitude and physical direction.</span>
+
+<span class="sd">    Args:</span>
+
+<span class="sd">    * u_dist, v_dist (array):</span>
+<span class="sd">        Components of each vector along the x and y directions of the source</span>
+<span class="sd">        crs at each location.</span>
+<span class="sd">    * ds (`DistanceDifferential`):</span>
+<span class="sd">        Distance differentials for the source and the target crs at specified</span>
+<span class="sd">        locations.</span>
+<span class="sd">    * dx2, dy2 (`PartialDifferential`):</span>
+<span class="sd">        Partial differentials from the source to the target crs.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        (ut_dist, vt_dist): Tuple of arrays containing the vector components</span>
+<span class="sd">        along the x and y directions of the target crs at each location.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Scale input distance vectors --&gt; source-coordinate differentials.</span>
+    <span class="n">u1</span><span class="p">,</span> <span class="n">v1</span> <span class="o">=</span> <span class="n">u_dist</span> <span class="o">/</span> <span class="n">ds</span><span class="o">.</span><span class="n">dx1</span><span class="p">,</span> <span class="n">v_dist</span> <span class="o">/</span> <span class="n">ds</span><span class="o">.</span><span class="n">dy1</span>
+    <span class="c1"># Transform vectors into the target system.</span>
+    <span class="n">u2</span> <span class="o">=</span> <span class="n">dx2</span><span class="o">.</span><span class="n">dx1</span> <span class="o">*</span> <span class="n">u1</span> <span class="o">+</span> <span class="n">dx2</span><span class="o">.</span><span class="n">dy1</span> <span class="o">*</span> <span class="n">v1</span>
+    <span class="n">v2</span> <span class="o">=</span> <span class="n">dy2</span><span class="o">.</span><span class="n">dx1</span> <span class="o">*</span> <span class="n">u1</span> <span class="o">+</span> <span class="n">dy2</span><span class="o">.</span><span class="n">dy1</span> <span class="o">*</span> <span class="n">v1</span>
+    <span class="c1"># Rescale output coordinate vectors --&gt; target distance vectors.</span>
+    <span class="n">u2_dist</span><span class="p">,</span> <span class="n">v2_dist</span> <span class="o">=</span> <span class="n">u2</span> <span class="o">*</span> <span class="n">ds</span><span class="o">.</span><span class="n">dx2</span><span class="p">,</span> <span class="n">v2</span> <span class="o">*</span> <span class="n">ds</span><span class="o">.</span><span class="n">dy2</span>
+
+    <span class="k">return</span> <span class="n">u2_dist</span><span class="p">,</span> <span class="n">v2_dist</span>
+
+
+<span class="k">def</span> <span class="nf">_transform_distance_vectors_tolerance_mask</span><span class="p">(</span><span class="n">src_crs</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">tgt_crs</span><span class="p">,</span>
+                                               <span class="n">ds</span><span class="p">,</span> <span class="n">dx2</span><span class="p">,</span> <span class="n">dy2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return a mask that can be applied to data array to mask elements</span>
+<span class="sd">    where the magnitude of vectors are not preserved due to numerical</span>
+<span class="sd">    errors introduced by the tranformation between coordinate systems.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">    * src_crs (`cartopy.crs.Projection`):</span>
+<span class="sd">        The source coordinate reference systems.</span>
+<span class="sd">    * x, y (array):</span>
+<span class="sd">        Locations of each vector defined in &#39;src_crs&#39;.</span>
+<span class="sd">    * tgt_crs (`cartopy.crs.Projection`):</span>
+<span class="sd">        The target coordinate reference systems.</span>
+<span class="sd">    * ds (`DistanceDifferential`):</span>
+<span class="sd">        Distance differentials for src_crs and tgt_crs at specified locations</span>
+<span class="sd">    * dx2, dy2 (`PartialDifferential`):</span>
+<span class="sd">        Partial differentials from src_crs to tgt_crs.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        2d boolean array that is the same shape as x and y.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Arrays do not have matching shapes. &#39;</span>
+                         <span class="s1">&#39;x.shape is </span><span class="si">{}</span><span class="s1">, y.shape is </span><span class="si">{}</span><span class="s1">.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span>
+                                                                <span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+    <span class="n">ones</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="n">zeros</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="n">u_one_t</span><span class="p">,</span> <span class="n">v_zero_t</span> <span class="o">=</span> <span class="n">_transform_distance_vectors</span><span class="p">(</span><span class="n">ones</span><span class="p">,</span> <span class="n">zeros</span><span class="p">,</span> <span class="n">ds</span><span class="p">,</span> <span class="n">dx2</span><span class="p">,</span> <span class="n">dy2</span><span class="p">)</span>
+    <span class="n">u_zero_t</span><span class="p">,</span> <span class="n">v_one_t</span> <span class="o">=</span> <span class="n">_transform_distance_vectors</span><span class="p">(</span><span class="n">zeros</span><span class="p">,</span> <span class="n">ones</span><span class="p">,</span> <span class="n">ds</span><span class="p">,</span> <span class="n">dx2</span><span class="p">,</span> <span class="n">dy2</span><span class="p">)</span>
+    <span class="c1"># Squared magnitudes should be equal to one within acceptable tolerance.</span>
+    <span class="c1"># A value of atol=2e-3 is used, which corresponds to a change in magnitude</span>
+    <span class="c1"># of approximately 0.1%.</span>
+    <span class="n">sqmag_1_0</span> <span class="o">=</span> <span class="n">u_one_t</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">v_zero_t</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">sqmag_0_1</span> <span class="o">=</span> <span class="n">u_zero_t</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">v_one_t</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_not</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">sqmag_1_0</span><span class="p">,</span> <span class="n">ones</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">2e-3</span><span class="p">),</span>
+                       <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">sqmag_0_1</span><span class="p">,</span> <span class="n">ones</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">2e-3</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="n">mask</span>
+
+
+<div class="viewcode-block" id="rotate_winds"><a class="viewcode-back" href="../../../weathermap.html#Meteorographica.weathermap.rotate_winds">[docs]</a><span class="k">def</span> <span class="nf">rotate_winds</span><span class="p">(</span><span class="n">u_cube</span><span class="p">,</span> <span class="n">v_cube</span><span class="p">,</span> <span class="n">target_cs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Transform wind vectors to a different coordinate system.</span>
+
+<span class="sd">    The input cubes contain U and V components parallel to the local X and Y</span>
+<span class="sd">    directions of the input grid at each point.</span>
+
+<span class="sd">    The output cubes contain the same winds, at the same locations, but</span>
+<span class="sd">    relative to the grid directions of a different coordinate system.</span>
+<span class="sd">    Thus in vector terms, the magnitudes will always be the same, but the</span>
+<span class="sd">    angles can be different.</span>
+
+<span class="sd">    The outputs retain the original horizontal dimension coordinates, but</span>
+<span class="sd">    also have two 2-dimensional auxiliary coordinates containing the X and</span>
+<span class="sd">    Y locations in the target coordinate system.</span>
+
+<span class="sd">    Args:</span>
+
+<span class="sd">    * u_cube</span>
+<span class="sd">        An instance of :class:`iris.cube.Cube` that contains the x-component</span>
+<span class="sd">        of the vector.</span>
+<span class="sd">    * v_cube</span>
+<span class="sd">        An instance of :class:`iris.cube.Cube` that contains the y-component</span>
+<span class="sd">        of the vector.</span>
+<span class="sd">    * target_cs</span>
+<span class="sd">        An instance of :class:`iris.coord_systems.CoordSystem` that specifies</span>
+<span class="sd">        the new grid directions.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A (u&#39;, v&#39;) tuple of :class:`iris.cube.Cube` instances that are the u</span>
+<span class="sd">        and v components in the requested target coordinate system.</span>
+<span class="sd">        The units are the same as the inputs.</span>
+
+<span class="sd">    .. note::</span>
+
+<span class="sd">        The U and V values relate to distance, with units such as &#39;m s-1&#39;.</span>
+<span class="sd">        These are not the same as coordinate vectors, which transform in a</span>
+<span class="sd">        different manner.</span>
+
+<span class="sd">    .. note::</span>
+
+<span class="sd">        The names of the output cubes are those of the inputs, prefixed with</span>
+<span class="sd">        &#39;transformed\_&#39; (e.g. &#39;transformed_x_wind&#39;).</span>
+
+<span class="sd">    .. warning::</span>
+
+<span class="sd">        Conversion between rotated-pole and non-rotated systems can be</span>
+<span class="sd">        expressed analytically.  However, this function always uses a numerical</span>
+<span class="sd">        approach. In locations where this numerical approach does not preserve</span>
+<span class="sd">        magnitude to an accuracy of 0.1%, the corresponding elements of the</span>
+<span class="sd">        returned cubes will be masked.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Check u_cube and v_cube have the same shape. We iterate through</span>
+    <span class="c1"># the u and v cube slices which relies on the shapes matching.</span>
+    <span class="k">if</span> <span class="n">u_cube</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">v_cube</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;Expected u and v cubes to have the same shape. &#39;</span> \
+              <span class="s1">&#39;u cube has shape </span><span class="si">{}</span><span class="s1">, v cube has shape </span><span class="si">{}</span><span class="s1">.&#39;</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">u_cube</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">v_cube</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+
+    <span class="c1"># Check the u_cube and v_cube have the same x and y coords.</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;Coordinates differ between u and v cubes. Coordinate </span><span class="si">{!r}</span><span class="s1"> from &#39;</span> \
+          <span class="s1">&#39;u cube does not equal coordinate </span><span class="si">{!r}</span><span class="s1"> from v cube.&#39;</span>
+    <span class="k">if</span> <span class="n">u_cube</span><span class="o">.</span><span class="n">coord</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">)</span> <span class="o">!=</span> <span class="n">v_cube</span><span class="o">.</span><span class="n">coord</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">u_cube</span><span class="o">.</span><span class="n">coord</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">(),</span>
+                                    <span class="n">v_cube</span><span class="o">.</span><span class="n">coord</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">()))</span>
+    <span class="k">if</span> <span class="n">u_cube</span><span class="o">.</span><span class="n">coord</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">)</span> <span class="o">!=</span> <span class="n">v_cube</span><span class="o">.</span><span class="n">coord</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">u_cube</span><span class="o">.</span><span class="n">coord</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">(),</span>
+                                    <span class="n">v_cube</span><span class="o">.</span><span class="n">coord</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">()))</span>
+
+    <span class="c1"># Check x and y coords have the same coordinate system.</span>
+    <span class="n">x_coord</span> <span class="o">=</span> <span class="n">u_cube</span><span class="o">.</span><span class="n">coord</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+    <span class="n">y_coord</span> <span class="o">=</span> <span class="n">u_cube</span><span class="o">.</span><span class="n">coord</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">x_coord</span><span class="o">.</span><span class="n">coord_system</span> <span class="o">!=</span> <span class="n">y_coord</span><span class="o">.</span><span class="n">coord_system</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Coordinate systems of x and y coordinates differ. &quot;</span> \
+              <span class="s2">&quot;Coordinate </span><span class="si">{!r}</span><span class="s2"> has a coord system of </span><span class="si">{!r}</span><span class="s2">, but coordinate &quot;</span> \
+              <span class="s2">&quot;</span><span class="si">{!r}</span><span class="s2"> has a coord system of </span><span class="si">{!r}</span><span class="s2">.&quot;</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x_coord</span><span class="o">.</span><span class="n">name</span><span class="p">(),</span> <span class="n">x_coord</span><span class="o">.</span><span class="n">coord_system</span><span class="p">,</span>
+                                    <span class="n">y_coord</span><span class="o">.</span><span class="n">name</span><span class="p">(),</span> <span class="n">y_coord</span><span class="o">.</span><span class="n">coord_system</span><span class="p">))</span>
+
+    <span class="c1"># Convert from iris coord systems to cartopy CRSs to access</span>
+    <span class="c1"># transform functionality. Use projection as cartopy</span>
+    <span class="c1"># transform_vectors relies on x_limits and y_limits.</span>
+    <span class="k">if</span> <span class="n">x_coord</span><span class="o">.</span><span class="n">coord_system</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">src_crs</span> <span class="o">=</span> <span class="n">x_coord</span><span class="o">.</span><span class="n">coord_system</span><span class="o">.</span><span class="n">as_cartopy_projection</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Default to Geodetic (but actually use PlateCarree as a</span>
+        <span class="c1"># projection is needed).</span>
+        <span class="n">src_crs</span> <span class="o">=</span> <span class="n">ccrs</span><span class="o">.</span><span class="n">PlateCarree</span><span class="p">()</span>
+    <span class="n">target_crs</span> <span class="o">=</span> <span class="n">target_cs</span><span class="o">.</span><span class="n">as_cartopy_projection</span><span class="p">()</span>
+
+    <span class="c1"># Check the number of dimensions of the x and y coords is the same.</span>
+    <span class="c1"># Subsequent logic assumes either both 1d or both 2d.</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">x_coord</span><span class="o">.</span><span class="n">points</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">y_coord</span><span class="o">.</span><span class="n">points</span>
+    <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="n">y</span><span class="o">.</span><span class="n">ndim</span> <span class="ow">or</span> <span class="n">x</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">y</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;x and y coordinates must have the same number of dimensions &#39;</span> \
+              <span class="s1">&#39;and be either 1D or 2D. The number of dimensions are </span><span class="si">{}</span><span class="s1"> and &#39;</span> \
+              <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">, respectively.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">ndim</span><span class="p">,</span> <span class="n">y</span><span class="o">.</span><span class="n">ndim</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="c1"># Check the dimension mappings match between u_cube and v_cube.</span>
+    <span class="k">if</span> <span class="n">u_cube</span><span class="o">.</span><span class="n">coord_dims</span><span class="p">(</span><span class="n">x_coord</span><span class="p">)</span> <span class="o">!=</span> <span class="n">v_cube</span><span class="o">.</span><span class="n">coord_dims</span><span class="p">(</span><span class="n">x_coord</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Dimension mapping of x coordinate differs &#39;</span>
+                         <span class="s1">&#39;between u and v cubes.&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">u_cube</span><span class="o">.</span><span class="n">coord_dims</span><span class="p">(</span><span class="n">y_coord</span><span class="p">)</span> <span class="o">!=</span> <span class="n">v_cube</span><span class="o">.</span><span class="n">coord_dims</span><span class="p">(</span><span class="n">y_coord</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Dimension mapping of y coordinate differs &#39;</span>
+                         <span class="s1">&#39;between u and v cubes.&#39;</span><span class="p">)</span>
+    <span class="n">x_dims</span> <span class="o">=</span> <span class="n">u_cube</span><span class="o">.</span><span class="n">coord_dims</span><span class="p">(</span><span class="n">x_coord</span><span class="p">)</span>
+    <span class="n">y_dims</span> <span class="o">=</span> <span class="n">u_cube</span><span class="o">.</span><span class="n">coord_dims</span><span class="p">(</span><span class="n">y_coord</span><span class="p">)</span>
+
+    <span class="c1"># Convert points to 2D, if not already, and determine dims.</span>
+    <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="n">y</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="n">dims</span> <span class="o">=</span> <span class="p">(</span><span class="n">y_dims</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x_dims</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dims</span> <span class="o">=</span> <span class="n">x_dims</span>
+
+    <span class="c1"># Transpose x, y 2d arrays to match the order in cube&#39;s data</span>
+    <span class="c1"># array so that x, y and the sliced data all line up.</span>
+    <span class="k">if</span> <span class="n">dims</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">dims</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+
+    <span class="c1"># Create resulting cubes.</span>
+    <span class="n">ut_cube</span> <span class="o">=</span> <span class="n">u_cube</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">vt_cube</span> <span class="o">=</span> <span class="n">v_cube</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">ut_cube</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s1">&#39;transformed_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">u_cube</span><span class="o">.</span><span class="n">name</span><span class="p">()))</span>
+    <span class="n">vt_cube</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s1">&#39;transformed_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">v_cube</span><span class="o">.</span><span class="n">name</span><span class="p">()))</span>
+
+    <span class="c1"># Get distance scalings for source crs.</span>
+    <span class="n">ds_dx1</span><span class="p">,</span> <span class="n">ds_dy1</span> <span class="o">=</span> <span class="n">_crs_distance_differentials</span><span class="p">(</span><span class="n">src_crs</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+    <span class="c1"># Get distance scalings for target crs.</span>
+    <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span> <span class="o">=</span> <span class="n">_transform_xy</span><span class="p">(</span><span class="n">src_crs</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">target_crs</span><span class="p">)</span>
+    <span class="n">ds_dx2</span><span class="p">,</span> <span class="n">ds_dy2</span> <span class="o">=</span> <span class="n">_crs_distance_differentials</span><span class="p">(</span><span class="n">target_crs</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">)</span>
+
+    <span class="n">ds</span> <span class="o">=</span> <span class="n">DistanceDifferential</span><span class="p">(</span><span class="n">ds_dx1</span><span class="p">,</span> <span class="n">ds_dy1</span><span class="p">,</span> <span class="n">ds_dx2</span><span class="p">,</span> <span class="n">ds_dy2</span><span class="p">)</span>
+
+    <span class="c1"># Calculate coordinate partial differentials from source crs to target crs.</span>
+    <span class="n">dx2_dx1</span><span class="p">,</span> <span class="n">dy2_dx1</span><span class="p">,</span> <span class="n">dx2_dy1</span><span class="p">,</span> <span class="n">dy2_dy1</span> <span class="o">=</span> <span class="n">_inter_crs_differentials</span><span class="p">(</span><span class="n">src_crs</span><span class="p">,</span>
+                                                                  <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span>
+                                                                  <span class="n">target_crs</span><span class="p">)</span>
+
+    <span class="n">dx2</span> <span class="o">=</span> <span class="n">PartialDifferential</span><span class="p">(</span><span class="n">dx2_dx1</span><span class="p">,</span> <span class="n">dx2_dy1</span><span class="p">)</span>
+    <span class="n">dy2</span> <span class="o">=</span> <span class="n">PartialDifferential</span><span class="p">(</span><span class="n">dy2_dx1</span><span class="p">,</span> <span class="n">dy2_dy1</span><span class="p">)</span>
+
+    <span class="c1"># Calculate mask based on preservation of magnitude.</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">_transform_distance_vectors_tolerance_mask</span><span class="p">(</span><span class="n">src_crs</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span>
+                                                      <span class="n">target_crs</span><span class="p">,</span>
+                                                      <span class="n">ds</span><span class="p">,</span> <span class="n">dx2</span><span class="p">,</span> <span class="n">dy2</span><span class="p">)</span>
+    <span class="n">apply_mask</span> <span class="o">=</span> <span class="n">mask</span><span class="o">.</span><span class="n">any</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">apply_mask</span><span class="p">:</span>
+        <span class="c1"># Make masked arrays to accept masking.</span>
+        <span class="n">ut_cube</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">asanyarray</span><span class="p">(</span><span class="n">ut_cube</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">vt_cube</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">asanyarray</span><span class="p">(</span><span class="n">vt_cube</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="c1"># Project vectors with u, v components one horiz slice at a time and</span>
+    <span class="c1"># insert into the resulting cubes.</span>
+    <span class="n">shape</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">u_cube</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">dims</span><span class="p">:</span>
+        <span class="n">shape</span><span class="p">[</span><span class="n">dim</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">ndindex</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ndindex</span><span class="p">(</span><span class="o">*</span><span class="n">shape</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">ndindex</span><span class="p">:</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">dims</span><span class="p">:</span>
+            <span class="n">index</span><span class="p">[</span><span class="n">dim</span><span class="p">]</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+        <span class="n">u</span> <span class="o">=</span> <span class="n">u_cube</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">v_cube</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+        <span class="n">ut</span><span class="p">,</span> <span class="n">vt</span> <span class="o">=</span> <span class="n">_transform_distance_vectors</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">ds</span><span class="p">,</span> <span class="n">dx2</span><span class="p">,</span> <span class="n">dy2</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">apply_mask</span><span class="p">:</span>
+            <span class="n">ut</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">asanyarray</span><span class="p">(</span><span class="n">ut</span><span class="p">)</span>
+            <span class="n">ut</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span>
+            <span class="n">vt</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">asanyarray</span><span class="p">(</span><span class="n">vt</span><span class="p">)</span>
+            <span class="n">vt</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span>
+        <span class="n">ut_cube</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">ut</span>
+        <span class="n">vt_cube</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">vt</span>
+
+    <span class="c1"># Calculate new coords of locations in target coordinate system.</span>
+    <span class="n">xyz_tran</span> <span class="o">=</span> <span class="n">target_crs</span><span class="o">.</span><span class="n">transform_points</span><span class="p">(</span><span class="n">src_crs</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="n">xt</span> <span class="o">=</span> <span class="n">xyz_tran</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="n">yt</span> <span class="o">=</span> <span class="n">xyz_tran</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+    <span class="c1"># Transpose xt, yt 2d arrays to match the dim order</span>
+    <span class="c1"># of the original x an y arrays - i.e. undo the earlier</span>
+    <span class="c1"># transpose (if applied).</span>
+    <span class="k">if</span> <span class="n">dims</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">dims</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+        <span class="n">xt</span> <span class="o">=</span> <span class="n">xt</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+        <span class="n">yt</span> <span class="o">=</span> <span class="n">yt</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+
+    <span class="n">xt_coord</span> <span class="o">=</span> <span class="n">iris</span><span class="o">.</span><span class="n">coords</span><span class="o">.</span><span class="n">AuxCoord</span><span class="p">(</span><span class="n">xt</span><span class="p">,</span>
+                                    <span class="n">standard_name</span><span class="o">=</span><span class="s1">&#39;projection_x_coordinate&#39;</span><span class="p">,</span>
+                                    <span class="n">coord_system</span><span class="o">=</span><span class="n">target_cs</span><span class="p">)</span>
+    <span class="n">yt_coord</span> <span class="o">=</span> <span class="n">iris</span><span class="o">.</span><span class="n">coords</span><span class="o">.</span><span class="n">AuxCoord</span><span class="p">(</span><span class="n">yt</span><span class="p">,</span>
+                                    <span class="n">standard_name</span><span class="o">=</span><span class="s1">&#39;projection_y_coordinate&#39;</span><span class="p">,</span>
+                                    <span class="n">coord_system</span><span class="o">=</span><span class="n">target_cs</span><span class="p">)</span>
+    <span class="c1"># Set units based on coord_system.</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target_cs</span><span class="p">,</span> <span class="p">(</span><span class="n">iris</span><span class="o">.</span><span class="n">coord_systems</span><span class="o">.</span><span class="n">GeogCS</span><span class="p">,</span>
+                              <span class="n">iris</span><span class="o">.</span><span class="n">coord_systems</span><span class="o">.</span><span class="n">RotatedGeogCS</span><span class="p">)):</span>
+        <span class="n">xt_coord</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="n">yt_coord</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s1">&#39;degrees&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">xt_coord</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="n">yt_coord</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s1">&#39;m&#39;</span>
+
+    <span class="n">ut_cube</span><span class="o">.</span><span class="n">add_aux_coord</span><span class="p">(</span><span class="n">xt_coord</span><span class="p">,</span> <span class="n">dims</span><span class="p">)</span>
+    <span class="n">ut_cube</span><span class="o">.</span><span class="n">add_aux_coord</span><span class="p">(</span><span class="n">yt_coord</span><span class="p">,</span> <span class="n">dims</span><span class="p">)</span>
+    <span class="n">vt_cube</span><span class="o">.</span><span class="n">add_aux_coord</span><span class="p">(</span><span class="n">xt_coord</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">dims</span><span class="p">)</span>
+    <span class="n">vt_cube</span><span class="o">.</span><span class="n">add_aux_coord</span><span class="p">(</span><span class="n">yt_coord</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">dims</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">ut_cube</span><span class="p">,</span> <span class="n">vt_cube</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Meteorographica</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    </div>
+  </body>
+</html>

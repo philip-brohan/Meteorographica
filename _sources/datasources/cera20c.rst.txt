@@ -1,5 +1,5 @@
-CERA20C
-=======
+Meteorographica.data.cera20c
+============================
 
 .. automodule:: Meteorographica.data.cera20c
     :members:

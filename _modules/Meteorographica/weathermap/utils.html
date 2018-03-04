@@ -74,15 +74,26 @@
 <span class="c1"># MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
 <span class="c1"># GNU Lesser General Public License for more details.</span>
 <span class="c1">#</span>
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Utility functions for weather mapping.</span>
 
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="c1"># Utility functions for weather mapping.</span>
 
+<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">os.path</span>
 
 <span class="c1"># Fetch the background data from Natural Earth</span>
-<div class="viewcode-block" id="fetch_backgrounds"><a class="viewcode-back" href="../../../source/Meteorographica.weathermap.html#Meteorographica.weathermap.utils.fetch_backgrounds">[docs]</a><span class="k">def</span> <span class="nf">fetch_backgrounds</span><span class="p">():</span>
+<div class="viewcode-block" id="fetch_backgrounds"><a class="viewcode-back" href="../../../weathermap.html#Meteorographica.weathermap.fetch_backgrounds">[docs]</a><span class="k">def</span> <span class="nf">fetch_backgrounds</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Fetch plot background data from Natural Earth.</span>
+
+<span class="sd">     `Cartopy &lt;http://scitools.org.uk/cartopy/docs/latest/index.html&gt;`_ uses background images from `Natural Earth &lt;http://www.naturalearthdata.com/&gt;`_ for things like continent outlines on world maps - Meteorographica folows it in this. This function downloads some Natural Earth data (continent backgrounds) and modifies it to make ocean regions transparent for easy use in map plots.</span>
+
+<span class="sd">    You should only have to run this function once as part of the set-up of this module.</span>
+
+<span class="sd">    Requires three utility functions to be available: `wget &lt;https://www.gnu.org/software/wget/&gt;`_, `unzip &lt;http://www.info-zip.org/mans/unzip.html&gt;`_, and &#39;imagemagick convert &lt;https://www.imagemagick.org/script/convert.php&gt;`_. It will create map background files in the directory specified by the CARTOPY_USER_BACKGROUNDS environment variable which should have been set during the installation of `Cartopy &lt;http://scitools.org.uk/cartopy/docs/latest/index.html&gt;`_.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        StandardError: Environment variable &#39;CARTOPY_USER_BACKGROUNDS&#39; is not set</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
     <span class="n">bgdir</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;CARTOPY_USER_BACKGROUNDS&#39;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">bgdir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">StandardError</span><span class="p">(</span><span class="s2">&quot;CARTOPY_USER_BACKGROUNDS environment &quot;</span>
