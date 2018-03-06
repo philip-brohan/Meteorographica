@@ -10,35 +10,13 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Lesser General Public License for more details.
 #
-"""
-The functions in this module fetch 20CR data from NERSC.
 
-This data is not publicly accessible yet - this will only
-work for Philip.
+# Functions for getting data from NERSC.
 
-"""
-import version_2
-import version_3
-from . import get_version_from_ensda
+import version_2c
 
-def fetch_data_for_month(variable,year,month,version,
-                                     type='ensemble'):
-    vn=get_version_from_ensda(version)
-    if vn==2:
-        raise StandardError('Use "fetch_data_for_year" for V2.')
-    if vn==3:
-        return version_3.fetch_data_for_month(
-                              variable,year,month,
-                              type=type,
-                              version=version)
+def fetch(variable,year,month,version):
 
-def fetch_data_for_year(variable,year,version,
-                                     type='ensemble'):
-    vn=get_version_from_ensda(version)
-    if vn==2:
-        return version_2.fetch_data_for_year(
-                              variable,year,
-                              type=type,
-                              version=version)
-    if vn==3:
-        raise StandardError('Use "fetch_data_for_month" for V3.')
+    if version=='2c':
+        return version_2.fetch(variable,year)
+    raise StandardError("Unsupported version %s" % version)

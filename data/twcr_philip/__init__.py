@@ -10,16 +10,13 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Lesser General Public License for more details.
 #
+"""
+A package for handling data from the 20th Century Reanalysis.
 
-# Utility functions for file and variable name mapping for 20CR.
+"""
 
-import version_2c
-
-# File name for data for a given variable and month
-def _hourly_get_file_name(variable,year,month=6,
-                          day=15,hour=12,
-                          version=None):
-    if vn=='2c':
-        return version_2c.get_data_file_name(
-                                 variable,year)
-   raise StandardError('Invalid version %s' % version)
+import version_2
+import version_3
+from utils import *
+from load import *
+from fetch import *

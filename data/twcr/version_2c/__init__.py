@@ -11,15 +11,8 @@
 # GNU Lesser General Public License for more details.
 #
 
-# Utility functions for file and variable name mapping for 20CR.
+# 2c-specific data handling functions
 
-import version_2c
-
-# File name for data for a given variable and month
-def _hourly_get_file_name(variable,year,month=6,
-                          day=15,hour=12,
-                          version=None):
-    if vn=='2c':
-        return version_2c.get_data_file_name(
-                                 variable,year)
-   raise StandardError('Invalid version %s' % version)
+from utils import *
+from load import *
+from fetch import *
