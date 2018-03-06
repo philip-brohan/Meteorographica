@@ -26,17 +26,17 @@ from utils import monolevel_forecast
 def fetch(variable,year,month):
     """Get all data for one variable, for one month, from ECMWF's archive.
 
-Data wil be stored locally in directory $SCRATCH/CERA-20C, to be retrieved by :func:`load`. If the local file that would be produced already exists, this function does nothing.
+    Data wil be stored locally in directory $SCRATCH/CERA-20C, to be retrieved by :func:`load`. If the local file that would be produced already exists, this function does nothing.
 
     Args:
-        variable (str): Variable to fetch (e.g. 'prmsl')
-        year (int): Year to get data for.
-        month (int): Month to get data for (1-12).
+        variable (:obj:`str`): Variable to fetch (e.g. 'prmsl')
+        year (:obj:`int`): Year to get data for.
+        month (:obj:`int`): Month to get data for (1-12).
 
     Raises:
         StandardError: If Variable is not a supported value.
 
-|
+    |
     """
     if variable in monolevel_analysis:
         return _fetch_analysis_data_for_month(variable,year,

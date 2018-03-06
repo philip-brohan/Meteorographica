@@ -14,7 +14,6 @@
 #The functions in this module fetch ERA5 data from ECMWF and
 # store it in $SCRATCH.
 
-
 import os
 import subprocess
 import calendar
@@ -28,18 +27,18 @@ from utils import monolevel_forecast
 def fetch(variable,year,month,stream='enda'):
     """Get all data for one variable, for one month, from ECMWF's archive.
 
-Data wil be stored locally in directory $SCRATCH/ERA5, to be retrieved by :func:`load`. If the local file that would be produced already exists, this function does nothing.
+    Data wil be stored locally in directory $SCRATCH/ERA5, to be retrieved by :func:`load`. If the local file that would be produced already exists, this function does nothing.
 
     Args:
-        variable (str): Variable to fetch (e.g. 'prmsl').
-        year (int): Year to get data for.
-        month (int): Month to get data for (1-12).
-        stream (str): Analysis stream to use, can be 'enda' - ensemble DA, or 'oper' - high res single member.
+        variable (:obj:`str`): Variable to fetch (e.g. 'prmsl').
+        year (:obj:`int`): Year to get data for.
+        month (:obj:`int`): Month to get data for (1-12).
+        stream (:obj:`str`): Analysis stream to use, can be 'enda' - ensemble DA, or 'oper' - high res single member.
 
     Raises:
         StandardError: If variable is not a supported value.
  
-|
+    |
     """
     if variable in monolevel_analysis:
         return _fetch_analysis_data_for_month(variable,year,

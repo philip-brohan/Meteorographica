@@ -20,11 +20,10 @@ import copy
 def cube_order_dimensions(cube,dims_list):
     """Reshape the data in an :class:`iris.cube.Cube` by re-ordering the dimensions.
 
-If the cube interface is not doing what I want, and I need to access the internal data array directly, then the exact shape of the array starts to matter, and a [latitude,longitude] array is not the same as a [longitude,latitude] one. This function sets the exact shape of the data array by specifying the order of the dimensions of the cube. Note that it does not modify the input cube, it returns a new one.
+    If the cube interface is not doing what I want, and I need to access the internal data array directly, then the exact shape of the array starts to matter, and a [latitude,longitude] array is not the same as a [longitude,latitude] one. This function sets the exact shape of the data array by specifying the order of the dimensions of the cube. Note that it does not modify the input cube, it returns a new one.
 
     Args:
         cube (:obj:`iris.cube.Cube`): The cube to have its data re-ordered.
-
         dims_list (:obj:`list` of :obj:`str`): Dimension names in desired order (e.g. "('Latitude','Longitude','member')").
 
     Returns:
@@ -33,7 +32,7 @@ If the cube interface is not doing what I want, and I need to access the interna
     Raises:
         StandardError: Names in the dims_list do not match the names of the vector dimensions of the cube.
 
-|
+    |
     """ 
 
     crds2=cube.coords()

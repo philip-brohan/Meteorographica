@@ -20,14 +20,16 @@ import os.path
 def fetch_backgrounds():
     """Fetch plot background data from Natural Earth.
 
-     `Cartopy <http://scitools.org.uk/cartopy/docs/latest/index.html>`_ uses background images from `Natural Earth <http://www.naturalearthdata.com/>`_ for things like continent outlines on world maps - Meteorographica folows it in this. This function downloads some Natural Earth data (continent backgrounds) and modifies it to make ocean regions transparent for easy use in map plots.
+    `Cartopy <http://scitools.org.uk/cartopy/docs/latest/index.html>`_ uses background images from `Natural Earth <http://www.naturalearthdata.com/>`_ for things like continent outlines on world maps - Meteorographica folows it in this. This function downloads some Natural Earth data (continent backgrounds) and modifies it to make ocean regions transparent for easy use in map plots.
 
     You should only have to run this function once as part of the set-up of this module.
 
-    Requires three utility functions to be available: `wget <https://www.gnu.org/software/wget/>`_, `unzip <http://www.info-zip.org/mans/unzip.html>`_, and 'imagemagick convert <https://www.imagemagick.org/script/convert.php>`_. It will create map background files in the directory specified by the CARTOPY_USER_BACKGROUNDS environment variable which should have been set during the installation of `Cartopy <http://scitools.org.uk/cartopy/docs/latest/index.html>`_.
+    Requires three utility functions to be available: `wget <https://www.gnu.org/software/wget/>`_, `unzip <http://www.info-zip.org/mans/unzip.html>`_, and `imagemagick convert <https://www.imagemagick.org/script/convert.php>`_. It will create map background files in the directory specified by the CARTOPY_USER_BACKGROUNDS environment variable which should have been set during the installation of `Cartopy <http://scitools.org.uk/cartopy/docs/latest/index.html>`_.
 
     Raises:
         StandardError: Environment variable 'CARTOPY_USER_BACKGROUNDS' is not set
+
+    |
     """
     
     bgdir=os.getenv('CARTOPY_USER_BACKGROUNDS')

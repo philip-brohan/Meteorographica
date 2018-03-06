@@ -24,10 +24,10 @@ import pandas
 
 import matplotlib
 import matplotlib.colors
-from matplotlib.patches import Circle
+import matplotlib.patches
 
 import iris
-from iris.analysis.cartography import rotate_winds
+import iris.analysis.cartography
 
 import cartopy
 import cartopy.crs as ccrs
@@ -58,12 +58,13 @@ def add_grid(ax,
         linewidth_major (:obj:`float`, optional): Line width for major grid. Defaults to 0.5.
         color (see :mod:`matplotlib.colors`, optional): Grid colour. Defaults to (0,0.30,0,0.3).
         sep_minor (:obj:`float`, optional): Separation, in degrees, of the minor grid lines. Defaults to 0.5.
-        sep_major (:obj:`float`, optional): Separation, in degrees, of the miajor grid lines. Defaults to 2.0.
+        sep_major (:obj:`float`, optional): Separation, in degrees, of the major grid lines. Defaults to 2.0.
         zorder (:obj:`float`, optional): Standard matplotlib parameter determining which things are plotted on top (high zorder), and which underneath (low zorder), Defaults to 0 - at the bottom.
 
     Returns:
         Nothing - adds the grid to the plot as a side effect.
 
+    |
     """
 
     gl_minor=ax.gridlines(linestyle=linestyle,
@@ -154,6 +155,7 @@ def plot_cmesh(ax,pe,resolution=0.25,
     Returns:
         See :meth:`matplotlib.axes.Axes.pcolorfast` - also adds the image to the plot.
 
+    |
     """   
     plot_cube=_make_dummy(ax,resolution)
     cmesh_p = pe.regrid(plot_cube,iris.analysis.Linear())
@@ -187,6 +189,8 @@ def plot_contour(ax,pe,
 
     Returns:
         See :meth:`matplotlib.axes.Axes.contour` - also adds the lines to the plot.
+
+    |
     """
     plot_cube=_make_dummy(ax,resolution)
     contour_p = pe.regrid(plot_cube,iris.analysis.Linear())
@@ -230,13 +234,15 @@ def plot_quiver(ax,ue,ve,points=None,
 
     Returns:
         See :meth:`matplotlib.axes.Axes.quiver` - also adds the vectors to the plot.
+
+    |
     """
 
     pole_latitude=ax.projection.proj4_params['o_lat_p']
     pole_longitude=ax.projection.proj4_params['lon_0']-180
     projection_iris=iris.coord_systems.RotatedGeogCS(pole_latitude,
                                                      pole_longitude)
-    rw=rotate_winds(ue,ve,projection_iris)
+    rw=iris.analysis.cartography.rotate_winds(ue,ve,projection_iris)
     plot_cube=_make_dummy(ax,resolution)
     u_p = rw[0].regrid(plot_cube,iris.analysis.Linear())
     v_p = rw[1].regrid(plot_cube,iris.analysis.Linear())
@@ -285,7 +291,7 @@ def plot_wind_and_temperature(ax,ue,ve,t2,points=None,
         ue (:obj:`iris.cube.Cube`): meridional value of variable to plot.
         ve (:obj:`iris.cube.Cube`): zonal value of  variable to plot.
         t2 (:obj:`iris.cube.Cube`): variable to use to select arrow colour.
-        resolution (:obj:`float', optional): What lat:lon resolution (in degrees) to interpolate [uv]e.data to before plotting. Defaults to 1.
+        resolution (:obj:`float`, optional): What lat:lon resolution (in degrees) to interpolate [uv]e.data to before plotting. Defaults to 1.
         colors (see :mod:`matplotlib.colors`, optional) vector colour. Defaults to (0,0,0,0.25).
         headwidth (:obj:`float`, optional): Controls arrow shape. Defaults to 1.
         random_state (None|:obj:`int`|:obj:`numpy.random.RandomState`): Random number generation seed, see :func:`sklearn.utils.check_random_state`.
@@ -294,6 +300,8 @@ def plot_wind_and_temperature(ax,ue,ve,t2,points=None,
 
     Returns:
         See :meth:`matplotlib.axes.Axes.quiver` - also adds the vectors to the plot.
+
+    |
     """
     pole_latitude=ax.projection.proj4_params['o_lat_p']
     pole_longitude=ax.projection.proj4_params['lon_0']-180
@@ -357,6 +365,8 @@ def plot_obs(ax,obs,
 
     Returns:
         Nothing - adds the obs. points to the plot.
+
+    |
     """
 
     rp=ax.projection.transform_points(obs_projection,
@@ -367,13 +377,13 @@ def plot_obs(ax,obs,
 
     # Plot each ob as a circle
     for i in range(0,len(new_longitude)):
-        ax.add_patch(Circle((new_longitude[i],
-                             new_latitude[i]),
-                            radius=radius,
-                            facecolor=facecolor,
-                            edgecolor=edgecolor,
-                            alpha=alpha,
-                            zorder=zorder))
+        ax.add_patch(matplotlib.patches.Circle((new_longitude[i],
+                                                new_latitude[i]),
+                                                radius=radius,
+                                                facecolor=facecolor,
+                                                edgecolor=edgecolor,
+                                                alpha=alpha,
+                                                zorder=zorder))
 
 def plot_label(ax,label,
                color='black',
@@ -398,6 +408,8 @@ def plot_label(ax,label,
 
     Returns:
         Nothing - adds the label points to the plot.
+
+    |
     """
 
     extent=ax.get_extent()

@@ -15,12 +15,12 @@
 
 import numpy
 import math
-from sklearn.utils import check_random_state
+import sklearn.utils
 
 # Generate a set of random points at distance between 1 and 2
 #  from (0,0) - we'll sample from these many times.
 # Uses a fixed seed, so should get same set of points every time
-random_state = check_random_state(12) # Arbitrary argument
+random_state = sklearn.utils.check_random_state(12) # Arbitrary argument
 sample_cache_x=numpy.array(random_state.uniform(-3,3,10000))
 sample_cache_y=numpy.array(random_state.uniform(-3,3,10000))
 sample_mag=sample_cache_x**2+sample_cache_y**2
@@ -45,24 +45,25 @@ def allocate_vector_points(initial_points=None,
 
 
     Args:
-        initial points (`dict`, optional): None (default) or the output from a previous run of this function (see return value).
-        lat_range (`array`, optional): The latitude range to cover with points. Defaults to (-90,90).
-        lon_range (`array`, optional): The longitude range to cover with points. Defaults to (-180,180).
-        scale (`float`): Characteristic separation between points (in degrees).
-        random_state (None|`int`|`numpy.random.RandomState`): Random number generation seed, see :func:`sklearn.utils.check_random_state`.
-        max_points (`int`, optional): Maximum number of points to allocate, defaults to 10,000.
+        initial points (:obj:`dict`, optional): None (default) or the output from a previous run of this function (see return value).
+        lat_range (:obj:`list`, optional): The latitude range to cover with points. Defaults to (-90,90).
+        lon_range (:obj:`list`, optional): The longitude range to cover with points. Defaults to (-180,180).
+        scale (:obj:`float`): Characteristic separation between points (in degrees).
+        random_state (None|:obj:`int`|:obj:`numpy.random.RandomState`): Random number generation seed, see :func:`sklearn.utils.check_random_state`.
+        max_points (:obj:`int`, optional): Maximum number of points to allocate, defaults to 10,000.
 
 
     Returns:
-        dict: Dictionary with components 'Longitude', 'Latitude', (both arrays of float) and 'Age' (array of int). The first two give the positions of each point, and ther last counts how many times each point has been updated by this function.
+        :obj:`dict`: Dictionary with components 'Longitude', 'Latitude', (both arrays of float) and 'Age' (array of int). The first two give the positions of each point, and ther last counts how many times each point has been updated by this function.
 
     Raises:
         StandardError: if max_points is too small - more points than this are needed to cover the region.
 
+    |
     """
     
 
-    random_state=check_random_state(random_state)
+    random_state=sklearn.utils.check_random_state(random_state)
     cellsize=scale/math.sqrt(2)
     x_n_cells=int(math.ceil((lon_range[1]-lon_range[0])/cellsize))
     y_n_cells=int(math.ceil((lat_range[1]-lat_range[0])/cellsize))

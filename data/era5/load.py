@@ -102,27 +102,27 @@ def load(variable,year,month,day,hour,
                       stream='enda',fc_init=None):
     """Load requested data from disc, interpolating if necessary.
 
-Data must be available in directory $SCRATCH/ERA5, previously retrieved by :func:`fetch`.
+    Data must be available in directory $SCRATCH/ERA5, previously retrieved by :func:`fetch`.
 
     Args:
-        variable (str): Variable to fetch (e.g. 'prmsl')
-        year (int): Year to get data for.
-        month (int): Month to get data for (1-12).
-        day (int): Day to get data for (1-31).
-        hour (float): Hour to get data for (0-23.99). Note that this isn't an integer, for minutes and seconds, use fractions of an hour.
-        fc_init (int): If not None; 6 or 18. See below.
+        variable (:obj:`str`): Variable to fetch (e.g. 'prmsl')
+        year (:obj:`int`): Year to get data for.
+        month (:obj:`int`): Month to get data for (1-12).
+        day (:obj:`int`): Day to get data for (1-31).
+        hour (:obj:`float`): Hour to get data for (0-23.99). Note that this isn't an integer, for minutes and seconds, use fractions of an hour.
+        fc_init (:obj:`int`): If not None; 6 or 18. See below.
 
     Returns:
-        :class:`iris.cube.Cube`: Global field of variable at
-                                 time.
+        :obj:`iris.cube.Cube`: Global field of variable at time.
 
-Note that ERA5 data is only output every 3 hours (enda) or hour (oper), so if hour%3!=0, the result may be linearly interpolated in time. If you want data after 21:00 on the last day of a month, you will need to fetch the next month's data too, as it will be used in the interpolation.
+    Note that ERA5 data is only output every 3 hours (enda) or hour (oper), so if hour%3!=0, the result may be linearly interpolated in time. If you want data after 21:00 on the last day of a month, you will need to fetch the next month's data too, as it will be used in the interpolation.
 
-Precipitation data in ERA5 is a forecast field: twice a day (at 06:00 and 18:00) forecast data is calculated for the next 18 hours. So at 21:00, for example, there are 2 sets of precipitation available: a 3-hour forecast starting at 18 that day, and a 15-hour forecast starting at 06:00, and there is a discontinuity between the two fields. This function will always load the shortest lead-time forecast available unless fc_init is set (to 6 or 18) in which case it will load the forecast starting at the hour specified. You will only need this if you are making videos, or otherwise need time-continuous forecast fields, in which case you will need to be clever in smoothing over the discontinuity. For analysis fields (everything except prate), this issue does not arise and fc_init is ignored.
+    Precipitation data in ERA5 is a forecast field: twice a day (at 06:00 and 18:00) forecast data is calculated for the next 18 hours. So at 21:00, for example, there are 2 sets of precipitation available: a 3-hour forecast starting at 18 that day, and a 15-hour forecast starting at 06:00, and there is a discontinuity between the two fields. This function will always load the shortest lead-time forecast available unless fc_init is set (to 6 or 18) in which case it will load the forecast starting at the hour specified. You will only need this if you are making videos, or otherwise need time-continuous forecast fields, in which case you will need to be clever in smoothing over the discontinuity. For analysis fields (everything except prate), this issue does not arise and fc_init is ignored.
 
     Raises:
         StandardError: Data not on disc - see :func:`fetch`
 
+    |
     """
     if _is_in_file(variable,year,month,day,hour,stream=stream):
         return(_get_slice_at_hour_at_timestep(variable,year,

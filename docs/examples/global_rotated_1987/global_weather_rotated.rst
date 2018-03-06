@@ -1,4 +1,4 @@
-`Meteographica examples main page <examples.html>`_
+`Meteographica examples main page <../examples.html>`_
 
 Meteorographica examples: Global weathermap
 ===========================================
@@ -7,7 +7,7 @@ Meteorographica examples: Global weathermap
 
     <center>
     <table><tr><td>
-    <a href="https://github.com/oldweather/DWR/raw/master/analyses/spaghetti_contour/Spaghetti_prmsl_1903102218_cera.png"><img src="https://github.com/oldweather/DWR/raw/master/analyses/spaghetti_contour/Spaghetti_prmsl_1903102218_cera.png""></a></td></tr>
+    <a href="https://github.com/philip-brohan/Meteorographica/raw/master/docs/examples/global.rotated.1987-10-16:06.png"><img src="https://github.com/philip-brohan/Meteorographica/raw/master/docs/examples/global.rotated.1987-10-16:06.png"></a></td></tr>
     <tr><td>Global weather map for 16 October 1987, at 6am UTC, as reconstructed by the CERA-20C reanalysis (ensemble member 1 is shown). Contours show mean-sea-level pressure, vectors 10m wind, and green shading precipitation rate.</td></tr>
     </table>
     </center>
@@ -22,5 +22,5 @@ Collect the data (sea-level pressure, precipitation and 10m-wind ensembles from 
 
 Make the figure:
 
-.. literalinclude:: ../../../analyses/spaghetti_contour/prmsl_CERA.py
+.. literalinclude:: GS_1987.rotated.py
 
