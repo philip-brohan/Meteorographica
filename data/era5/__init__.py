@@ -42,7 +42,7 @@ Will retrieve precipitation rate data for the whole of March 2015, and
 
 will then load the precipitation rates at quarter past 3pm on March 12 2015 from the retrieved dataset as a :class:`iris.cube.Cube`. Note that as ERA only provides data at hourly or 3-hourly intervals, the value for 15.25 will be interpolated between the outputs. Also, as ERA5 stream 'enda' is an ensemble dataset, the result will include all 10 ensemble members.
 
-
+|
 """
 
 

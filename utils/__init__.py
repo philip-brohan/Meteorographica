@@ -11,8 +11,9 @@
 # GNU Lesser General Public License for more details.
 #
 """
-General utility functions operating on weather data.
+This is the 'miscellaneous' section - a collection of useful functions that don't fit anywhere else.
 
+|
 """
 
 from cube_operations import *

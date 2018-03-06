@@ -15,8 +15,8 @@
 
 import os
 import subprocess
-from calendar import monthrange
-from ecmwfapi import ECMWFDataServer
+import calendar
+import ecmwfapi
 
 from utils import _hourly_get_file_name
 from utils import _translate_for_file_names
@@ -26,10 +26,7 @@ from utils import monolevel_forecast
 def fetch(variable,year,month):
     """Get all data for one variable, for one month, from ECMWF's archive.
 
-    Data wil be stored locally in directory $SCRATCH/CERA-20C, to
-     be retrieved by :func:`cera20c.load`.
-    If the local file that would be produced already exists, this
-     function does nothing.
+Data wil be stored locally in directory $SCRATCH/CERA-20C, to be retrieved by :func:`load`. If the local file that would be produced already exists, this function does nothing.
 
     Args:
         variable (str): Variable to fetch (e.g. 'prmsl')
@@ -38,7 +35,8 @@ def fetch(variable,year,month):
 
     Raises:
         StandardError: If Variable is not a supported value.
- 
+
+|
     """
     if variable in monolevel_analysis:
         return _fetch_analysis_data_for_month(variable,year,
@@ -50,7 +48,7 @@ def fetch(variable,year,month):
 
 def _fetch_analysis_data_for_month(variable,year,month):
         
-    local_file=hourly_get_file_name(variable,year,month)
+    local_file=_hourly_get_file_name(variable,year,month)
     if os.path.isfile(local_file):
         # Got this data already
         return
@@ -58,7 +56,7 @@ def _fetch_analysis_data_for_month(variable,year,month):
     if not os.path.exists(os.path.dirname(local_file)):
         os.makedirs(os.path.dirname(local_file))
 
-    server = ECMWFDataServer()
+    server = ecmwfapi.ECMWFDataServer()
     server.retrieve({
         'dataset'   : 'cera20c',
         'stream'    : 'enda',
@@ -66,14 +64,14 @@ def _fetch_analysis_data_for_month(variable,year,month):
         'class'     : 'ep',
         'expver'    : '1',
         'levtype'   : 'sfc',
-        'param'     : translate_for_file_names(variable),
+        'param'     : _translate_for_file_names(variable),
         'time'      : '00/03/06/09/12/15/18/21',
         'grid'      : '1.25/1.25',
         'number'    : '0/1/2/3/4/5/6/7/8/9',
         'date'      : "%04d-%02d-%02d/to/%04d-%02d-%02d" %
                        (year,month,1,
                         year,month,
-                        monthrange(year,month)[1]),
+                        calendar.monthrange(year,month)[1]),
         'format'    : 'netcdf',
         'target'    : local_file
     })
@@ -88,7 +86,7 @@ def _fetch_forecast_data_for_month(variable,year,month):
     #       and store in different files.
 
     # First 24-hours of forecast in main file
-    local_file=hourly_get_file_name(variable,year,month,
+    local_file=_hourly_get_file_name(variable,year,month,
                                     fc_init=None)
     if os.path.isfile(local_file):
         # Got this data already
@@ -97,7 +95,7 @@ def _fetch_forecast_data_for_month(variable,year,month):
     if not os.path.exists(os.path.dirname(local_file)):
         os.makedirs(os.path.dirname(local_file))
 
-    server = ECMWFDataServer()
+    server = ecmwfapi.ECMWFDataServer()
     server.retrieve({
         'dataset'   : 'cera20c',
         'stream'    : 'enda',
@@ -105,7 +103,7 @@ def _fetch_forecast_data_for_month(variable,year,month):
         'class'     : 'ep',
         'expver'    : '1',
         'levtype'   : 'sfc',
-        'param'     : translate_for_file_names(variable),
+        'param'     : _translate_for_file_names(variable),
         'time'      : '18',
         'step'      : '3/6/9/12/15/18/21/24',
         'grid'      : '1.25/1.25',
@@ -113,15 +111,15 @@ def _fetch_forecast_data_for_month(variable,year,month):
         'date'      : "%04d-%02d-%02d/to/%04d-%02d-%02d" %
                        (year,month,1,
                         year,month,
-                        monthrange(year,month)[1]),
+                        calendar.monthrange(year,month)[1]),
         'format'    : 'netcdf',
         'target'    : local_file
     })
 
 
     # 27-hour forecast in additional file
-    local_file=get_data_file_name(variable,year,month,
-                                  fc_init='last')
+    local_file=_hourly_get_file_name(variable,year,month,
+                                     fc_init='last')
     if os.path.isfile(local_file):
         # Got this data already
         return
@@ -137,7 +135,7 @@ def _fetch_forecast_data_for_month(variable,year,month):
         'class'     : 'ep',
         'expver'    : '1',
         'levtype'   : 'sfc',
-        'param'     : translate_for_file_names(variable),
+        'param'     : _translate_for_file_names(variable),
         'time'      : '18',
         'step'      : '27',
         'grid'      : '1.25/1.25',
@@ -145,7 +143,7 @@ def _fetch_forecast_data_for_month(variable,year,month):
         'date'      : "%04d-%02d-%02d/to/%04d-%02d-%02d" %
                        (year,month,1,
                         year,month,
-                        monthrange(year,month)),
+                        calendar.monthrange(year,month)[1]),
         'format'    : 'netcdf',
         'target'    : local_file
     })

@@ -17,8 +17,8 @@
 
 import os
 import subprocess
-from calendar import monthrange
-from ecmwfapi import ECMWFDataServer
+import calendar
+import ecmwfapi
 
 from utils import _hourly_get_file_name
 from utils import _translate_for_file_names
@@ -28,7 +28,7 @@ from utils import monolevel_forecast
 def fetch(variable,year,month,stream='enda'):
     """Get all data for one variable, for one month, from ECMWF's archive.
 
-    Data wil be stored locally in directory $SCRATCH/ERA5, to be retrieved by :func:`era5.load`. If the local file that would be produced already exists, this function does nothing.
+Data wil be stored locally in directory $SCRATCH/ERA5, to be retrieved by :func:`load`. If the local file that would be produced already exists, this function does nothing.
 
     Args:
         variable (str): Variable to fetch (e.g. 'prmsl').
@@ -39,6 +39,7 @@ def fetch(variable,year,month,stream='enda'):
     Raises:
         StandardError: If variable is not a supported value.
  
+|
     """
     if variable in monolevel_analysis:
         return _fetch_analysis_data_for_month(variable,year,
@@ -65,7 +66,7 @@ def _fetch_analysis_data_for_month(variable,year,month,
     grid='0.5/0.5'
     if stream=='oper':
         grid='0.25/0.25'
-    server = ECMWFDataServer()
+    server = ecmwfapi.ECMWFDataServer()
     server.retrieve({
         'dataset'   : 'era5',
         'stream'    : stream,
@@ -77,7 +78,7 @@ def _fetch_analysis_data_for_month(variable,year,month,
         'date'      : "%04d-%02d-%02d/to/%04d-%02d-%02d" %
                        (year,month,1,
                         year,month,
-                        monthrange(year,month)[1]),
+                        calendar.monthrange(year,month)[1]),
         'format'    : 'netcdf',
         'target'    : local_file
     })
@@ -100,7 +101,7 @@ def _fetch_forecast_data_for_month(variable,year,month,
         grid='0.5/0.5'
         if stream=='oper':
             grid='0.25/0.25'
-        server = ECMWFDataServer()
+        server = ecmwfapi.ECMWFDataServer()
         server.retrieve({
             'dataset'   : 'era5',
             'stream'    :  stream,
@@ -115,7 +116,7 @@ def _fetch_forecast_data_for_month(variable,year,month,
             'date'      : "%04d-%02d-%02d/to/%04d-%02d-%02d" %
                            (year,month,1,
                             year,month,
-                            monthrange(year,month)[1]),
+                            calendar.monthrange(year,month)[1]),
             'format'    : 'netcdf',
             'target'    : local_file
         })

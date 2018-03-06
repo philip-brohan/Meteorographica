@@ -55,13 +55,29 @@ def _get_next_field_time(variable,year,month,day,hour):
     return dr
 
 def _get_slice_at_hour_at_timestep(variable,year,month,day,hour,
-                                   fc_init=None):
+                                   fc_init=None,deaccumulate=True):
     
     # Get the cube with the data, given that the specified time
     #   matches a data timestep.
     
     if not _is_in_file(variable,year,month,day,hour):
         raise ValueError("Invalid hour - data not in file")
+
+    # Precipitation is accumulated over the forecast, and we want rate.
+    if (variable=='prate' and deaccumulate and
+       (hour!=21 or (fc_init is not None and fc_init=='last'))):
+        r1=_get_slice_at_hour_at_timestep(variable,year,month,day,hour,
+                                           fc_init=fc_init,deaccumulate=False)
+        # Subtract the values from 3 hours ago
+        lt=datetime.datetime(year,month,day,hour)-datetime.timedelta(hours=3)
+        r2=_get_slice_at_hour_at_timestep(variable,lt.year,lt.month,lt.day,lt.hour,
+                                           fc_init=fc_init,deaccumulate=False)
+        r1=(r1-r2)/3 # to m/hr
+        r1=r1/3.6    # to kg m**-2 s**-1 - same as 20CR
+        r1.units='kg m**-2 s**-1'
+        return r1
+
+    # Not precipitation - just get the data for this timestep
     file_name=_hourly_get_file_name(variable,year,month,day,hour,
                                     type=type,fc_init=fc_init)
     if not os.path.isfile(file_name):
@@ -90,7 +106,7 @@ def _get_slice_at_hour_at_timestep(variable,year,month,day,hour,
 def load(variable,year,month,day,hour,fc_init=None):
     """Load requested data from disc, interpolating if necessary.
 
-     Data must be available in directory $SCRATCH/CERA-20C, previously retrieved by :func:`cera20c.fetch`.
+Data must be available in directory $SCRATCH/CERA-20C, previously retrieved by :func:`fetch`.
 
     Args:
         variable (str): Variable to fetch (e.g. 'prmsl')
@@ -103,9 +119,9 @@ def load(variable,year,month,day,hour,fc_init=None):
     Returns:
         :class:`iris.cube.Cube`: Global field of variable at time.
 
-    Note that CERA-20C data is only output every 3 hours, so if hour%3!=0, the result will be linearly interpolated in time. If you want data after 21:00 on the last day of a month, you will need to fetch the next month's data too, as it will be used in the interpolation.
+Note that CERA-20C data is only output every 3 hours, so if hour%3!=0, the result will be linearly interpolated in time. If you want data after 21:00 on the last day of a month, you will need to fetch the next month's data too, as it will be used in the interpolation.
 
-    Precipitation data in CERA is a forecast field:  once a day (at 18:00) 3-hourly forecast data is calculated for the next 27 hours. So at 21:00, there are 2 sets of precipitation available: a 3-hour forecast starting at 18 that day, and a 27-hour forecast starting at 18:00 the day before; and there is a discontinuity in the fields at that time. This function will always load the shortest lead-time forecast available unless fc_init is set to 'last'. You will only need this if you are making videos, or otherwise needxtime-continuous forecast fields, in which case you will need to be clever in smoothing over the discontinuity. For analysis fields (everything except prate), this issue does not arise and fc_init is ignored.
+Precipitation data in CERA is a forecast field:  once a day (at 18:00) 3-hourly forecast data is calculated for the next 27 hours. So at 21:00, there are 2 sets of precipitation available: a 3-hour forecast starting at 18 that day, and a 27-hour forecast starting at 18:00 the day before; and there is a discontinuity in the fields at that time. This function will always load the shortest lead-time forecast available unless fc_init is set to 'last'. You will only need this if you are making videos, or otherwise needxtime-continuous forecast fields, in which case you will need to be clever in smoothing over the discontinuity. For analysis fields (everything except prate), this issue does not arise and fc_init is ignored.
 
     Raises:
         StandardError: Data not on disc - see :func:`fetch`

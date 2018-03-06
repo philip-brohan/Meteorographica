@@ -42,7 +42,7 @@ Will retrieve precipitation rate data for the whole of March 1969, and
 
 will then load the precipitation rates at quarter past 3pm on March 12 1969 from the retrieved dataset as a :class:`iris.cube.Cube`. Note that as CERA only provides data at 3-hourly intervals, the value for 15.25 will be interpolated between the 15:00 and 18:00 outputs. Also, as CERA is an ensemble dataset, the result will include all 10 ensemble members.
 
-
+|
 """
 
 from utils import *

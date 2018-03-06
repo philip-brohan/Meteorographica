@@ -11,7 +11,9 @@
 # GNU Lesser General Public License for more details.
 #
 """
-This package contains utility functions to simplify making weather-maps.
+This package contains utility functions to simplify making weather-maps. The idea is to get data cubes loaded by :mod:`Meteorographica.data` and plot them as contour plots, colour maps and the like. So there is one function to take a data cube and add it to a :mod:`Cartopy` map as a contour plot; another for a colour map, and so on.
+
+It is probably best illustrated by example.
 
 """
 

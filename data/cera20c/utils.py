@@ -71,7 +71,7 @@ def _get_data_dir():
 def _hourly_get_file_name(variable,year,month,
                           day=15,hour=12,
                           fc_init=None,type='ensemble'):
-    base_dir=get_data_dir()
+    base_dir=_get_data_dir()
     if type=='normal':
         file_name="%s/normals/hourly/%02d/%s.nc" % (base_dir,
                                                     month,variable)
