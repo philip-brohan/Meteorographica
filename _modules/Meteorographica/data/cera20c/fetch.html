@@ -1,30 +1,34 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
     <title>Meteorographica.data.cera20c.fetch &#8212; Meteorographica: a personal library for weather data</title>
+    
     <link rel="stylesheet" href="../../../../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../../',
         VERSION:     '0.0.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
+        HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
-    <link rel="search" title="Search" href="../../../../search.html" /> 
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="top" title="Meteorographica: a personal library for weather data" href="../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../index.html" /> 
   </head>
-  <body>
+  <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -79,30 +83,28 @@
 
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
-<span class="kn">from</span> <span class="nn">calendar</span> <span class="k">import</span> <span class="n">monthrange</span>
-<span class="kn">from</span> <span class="nn">ecmwfapi</span> <span class="k">import</span> <span class="n">ECMWFDataServer</span>
+<span class="kn">import</span> <span class="nn">calendar</span>
+<span class="kn">import</span> <span class="nn">ecmwfapi</span>
 
 <span class="kn">from</span> <span class="nn">utils</span> <span class="k">import</span> <span class="n">_hourly_get_file_name</span>
 <span class="kn">from</span> <span class="nn">utils</span> <span class="k">import</span> <span class="n">_translate_for_file_names</span>
 <span class="kn">from</span> <span class="nn">utils</span> <span class="k">import</span> <span class="n">monolevel_analysis</span>
 <span class="kn">from</span> <span class="nn">utils</span> <span class="k">import</span> <span class="n">monolevel_forecast</span>
 
-<div class="viewcode-block" id="fetch"><a class="viewcode-back" href="../../../../datasources/cera20c.html#Meteorographica.data.cera20c.fetch">[docs]</a><span class="k">def</span> <span class="nf">fetch</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">):</span>
+<div class="viewcode-block" id="fetch"><a class="viewcode-back" href="../../../../subdata/data_cera20c.html#Meteorographica.data.cera20c.fetch">[docs]</a><span class="k">def</span> <span class="nf">fetch</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Get all data for one variable, for one month, from ECMWF&#39;s archive.</span>
 
-<span class="sd">    Data wil be stored locally in directory $SCRATCH/CERA-20C, to</span>
-<span class="sd">     be retrieved by :func:`cera20c.load`.</span>
-<span class="sd">    If the local file that would be produced already exists, this</span>
-<span class="sd">     function does nothing.</span>
+<span class="sd">    Data wil be stored locally in directory $SCRATCH/CERA-20C, to be retrieved by :func:`load`. If the local file that would be produced already exists, this function does nothing.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        variable (str): Variable to fetch (e.g. &#39;prmsl&#39;)</span>
-<span class="sd">        year (int): Year to get data for.</span>
-<span class="sd">        month (int): Month to get data for (1-12).</span>
+<span class="sd">        variable (:obj:`str`): Variable to fetch (e.g. &#39;prmsl&#39;)</span>
+<span class="sd">        year (:obj:`int`): Year to get data for.</span>
+<span class="sd">        month (:obj:`int`): Month to get data for (1-12).</span>
 
 <span class="sd">    Raises:</span>
 <span class="sd">        StandardError: If Variable is not a supported value.</span>
-<span class="sd"> </span>
+
+<span class="sd">    |</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">variable</span> <span class="ow">in</span> <span class="n">monolevel_analysis</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">_fetch_analysis_data_for_month</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span>
@@ -114,7 +116,7 @@
 
 <span class="k">def</span> <span class="nf">_fetch_analysis_data_for_month</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">):</span>
         
-    <span class="n">local_file</span><span class="o">=</span><span class="n">hourly_get_file_name</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">)</span>
+    <span class="n">local_file</span><span class="o">=</span><span class="n">_hourly_get_file_name</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">local_file</span><span class="p">):</span>
         <span class="c1"># Got this data already</span>
         <span class="k">return</span>
@@ -122,7 +124,7 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">local_file</span><span class="p">)):</span>
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">local_file</span><span class="p">))</span>
 
-    <span class="n">server</span> <span class="o">=</span> <span class="n">ECMWFDataServer</span><span class="p">()</span>
+    <span class="n">server</span> <span class="o">=</span> <span class="n">ecmwfapi</span><span class="o">.</span><span class="n">ECMWFDataServer</span><span class="p">()</span>
     <span class="n">server</span><span class="o">.</span><span class="n">retrieve</span><span class="p">({</span>
         <span class="s1">&#39;dataset&#39;</span>   <span class="p">:</span> <span class="s1">&#39;cera20c&#39;</span><span class="p">,</span>
         <span class="s1">&#39;stream&#39;</span>    <span class="p">:</span> <span class="s1">&#39;enda&#39;</span><span class="p">,</span>
@@ -130,14 +132,14 @@
         <span class="s1">&#39;class&#39;</span>     <span class="p">:</span> <span class="s1">&#39;ep&#39;</span><span class="p">,</span>
         <span class="s1">&#39;expver&#39;</span>    <span class="p">:</span> <span class="s1">&#39;1&#39;</span><span class="p">,</span>
         <span class="s1">&#39;levtype&#39;</span>   <span class="p">:</span> <span class="s1">&#39;sfc&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;param&#39;</span>     <span class="p">:</span> <span class="n">translate_for_file_names</span><span class="p">(</span><span class="n">variable</span><span class="p">),</span>
+        <span class="s1">&#39;param&#39;</span>     <span class="p">:</span> <span class="n">_translate_for_file_names</span><span class="p">(</span><span class="n">variable</span><span class="p">),</span>
         <span class="s1">&#39;time&#39;</span>      <span class="p">:</span> <span class="s1">&#39;00/03/06/09/12/15/18/21&#39;</span><span class="p">,</span>
         <span class="s1">&#39;grid&#39;</span>      <span class="p">:</span> <span class="s1">&#39;1.25/1.25&#39;</span><span class="p">,</span>
         <span class="s1">&#39;number&#39;</span>    <span class="p">:</span> <span class="s1">&#39;0/1/2/3/4/5/6/7/8/9&#39;</span><span class="p">,</span>
         <span class="s1">&#39;date&#39;</span>      <span class="p">:</span> <span class="s2">&quot;</span><span class="si">%04d</span><span class="s2">-</span><span class="si">%02d</span><span class="s2">-</span><span class="si">%02d</span><span class="s2">/to/</span><span class="si">%04d</span><span class="s2">-</span><span class="si">%02d</span><span class="s2">-</span><span class="si">%02d</span><span class="s2">&quot;</span> <span class="o">%</span>
                        <span class="p">(</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span>
                         <span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span>
-                        <span class="n">monthrange</span><span class="p">(</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">)[</span><span class="mi">1</span><span class="p">]),</span>
+                        <span class="n">calendar</span><span class="o">.</span><span class="n">monthrange</span><span class="p">(</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">)[</span><span class="mi">1</span><span class="p">]),</span>
         <span class="s1">&#39;format&#39;</span>    <span class="p">:</span> <span class="s1">&#39;netcdf&#39;</span><span class="p">,</span>
         <span class="s1">&#39;target&#39;</span>    <span class="p">:</span> <span class="n">local_file</span>
     <span class="p">})</span>
@@ -152,7 +154,7 @@
     <span class="c1">#       and store in different files.</span>
 
     <span class="c1"># First 24-hours of forecast in main file</span>
-    <span class="n">local_file</span><span class="o">=</span><span class="n">hourly_get_file_name</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span>
+    <span class="n">local_file</span><span class="o">=</span><span class="n">_hourly_get_file_name</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span>
                                     <span class="n">fc_init</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">local_file</span><span class="p">):</span>
         <span class="c1"># Got this data already</span>
@@ -161,7 +163,7 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">local_file</span><span class="p">)):</span>
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">local_file</span><span class="p">))</span>
 
-    <span class="n">server</span> <span class="o">=</span> <span class="n">ECMWFDataServer</span><span class="p">()</span>
+    <span class="n">server</span> <span class="o">=</span> <span class="n">ecmwfapi</span><span class="o">.</span><span class="n">ECMWFDataServer</span><span class="p">()</span>
     <span class="n">server</span><span class="o">.</span><span class="n">retrieve</span><span class="p">({</span>
         <span class="s1">&#39;dataset&#39;</span>   <span class="p">:</span> <span class="s1">&#39;cera20c&#39;</span><span class="p">,</span>
         <span class="s1">&#39;stream&#39;</span>    <span class="p">:</span> <span class="s1">&#39;enda&#39;</span><span class="p">,</span>
@@ -169,7 +171,7 @@
         <span class="s1">&#39;class&#39;</span>     <span class="p">:</span> <span class="s1">&#39;ep&#39;</span><span class="p">,</span>
         <span class="s1">&#39;expver&#39;</span>    <span class="p">:</span> <span class="s1">&#39;1&#39;</span><span class="p">,</span>
         <span class="s1">&#39;levtype&#39;</span>   <span class="p">:</span> <span class="s1">&#39;sfc&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;param&#39;</span>     <span class="p">:</span> <span class="n">translate_for_file_names</span><span class="p">(</span><span class="n">variable</span><span class="p">),</span>
+        <span class="s1">&#39;param&#39;</span>     <span class="p">:</span> <span class="n">_translate_for_file_names</span><span class="p">(</span><span class="n">variable</span><span class="p">),</span>
         <span class="s1">&#39;time&#39;</span>      <span class="p">:</span> <span class="s1">&#39;18&#39;</span><span class="p">,</span>
         <span class="s1">&#39;step&#39;</span>      <span class="p">:</span> <span class="s1">&#39;3/6/9/12/15/18/21/24&#39;</span><span class="p">,</span>
         <span class="s1">&#39;grid&#39;</span>      <span class="p">:</span> <span class="s1">&#39;1.25/1.25&#39;</span><span class="p">,</span>
@@ -177,15 +179,15 @@
         <span class="s1">&#39;date&#39;</span>      <span class="p">:</span> <span class="s2">&quot;</span><span class="si">%04d</span><span class="s2">-</span><span class="si">%02d</span><span class="s2">-</span><span class="si">%02d</span><span class="s2">/to/</span><span class="si">%04d</span><span class="s2">-</span><span class="si">%02d</span><span class="s2">-</span><span class="si">%02d</span><span class="s2">&quot;</span> <span class="o">%</span>
                        <span class="p">(</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span>
                         <span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span>
-                        <span class="n">monthrange</span><span class="p">(</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">)[</span><span class="mi">1</span><span class="p">]),</span>
+                        <span class="n">calendar</span><span class="o">.</span><span class="n">monthrange</span><span class="p">(</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">)[</span><span class="mi">1</span><span class="p">]),</span>
         <span class="s1">&#39;format&#39;</span>    <span class="p">:</span> <span class="s1">&#39;netcdf&#39;</span><span class="p">,</span>
         <span class="s1">&#39;target&#39;</span>    <span class="p">:</span> <span class="n">local_file</span>
     <span class="p">})</span>
 
 
     <span class="c1"># 27-hour forecast in additional file</span>
-    <span class="n">local_file</span><span class="o">=</span><span class="n">get_data_file_name</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span>
-                                  <span class="n">fc_init</span><span class="o">=</span><span class="s1">&#39;last&#39;</span><span class="p">)</span>
+    <span class="n">local_file</span><span class="o">=</span><span class="n">_hourly_get_file_name</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span>
+                                     <span class="n">fc_init</span><span class="o">=</span><span class="s1">&#39;last&#39;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">local_file</span><span class="p">):</span>
         <span class="c1"># Got this data already</span>
         <span class="k">return</span>
@@ -201,7 +203,7 @@
         <span class="s1">&#39;class&#39;</span>     <span class="p">:</span> <span class="s1">&#39;ep&#39;</span><span class="p">,</span>
         <span class="s1">&#39;expver&#39;</span>    <span class="p">:</span> <span class="s1">&#39;1&#39;</span><span class="p">,</span>
         <span class="s1">&#39;levtype&#39;</span>   <span class="p">:</span> <span class="s1">&#39;sfc&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;param&#39;</span>     <span class="p">:</span> <span class="n">translate_for_file_names</span><span class="p">(</span><span class="n">variable</span><span class="p">),</span>
+        <span class="s1">&#39;param&#39;</span>     <span class="p">:</span> <span class="n">_translate_for_file_names</span><span class="p">(</span><span class="n">variable</span><span class="p">),</span>
         <span class="s1">&#39;time&#39;</span>      <span class="p">:</span> <span class="s1">&#39;18&#39;</span><span class="p">,</span>
         <span class="s1">&#39;step&#39;</span>      <span class="p">:</span> <span class="s1">&#39;27&#39;</span><span class="p">,</span>
         <span class="s1">&#39;grid&#39;</span>      <span class="p">:</span> <span class="s1">&#39;1.25/1.25&#39;</span><span class="p">,</span>
@@ -209,7 +211,7 @@
         <span class="s1">&#39;date&#39;</span>      <span class="p">:</span> <span class="s2">&quot;</span><span class="si">%04d</span><span class="s2">-</span><span class="si">%02d</span><span class="s2">-</span><span class="si">%02d</span><span class="s2">/to/</span><span class="si">%04d</span><span class="s2">-</span><span class="si">%02d</span><span class="s2">-</span><span class="si">%02d</span><span class="s2">&quot;</span> <span class="o">%</span>
                        <span class="p">(</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span>
                         <span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span>
-                        <span class="n">monthrange</span><span class="p">(</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">)),</span>
+                        <span class="n">calendar</span><span class="o">.</span><span class="n">monthrange</span><span class="p">(</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">)[</span><span class="mi">1</span><span class="p">]),</span>
         <span class="s1">&#39;format&#39;</span>    <span class="p">:</span> <span class="s1">&#39;netcdf&#39;</span><span class="p">,</span>
         <span class="s1">&#39;target&#39;</span>    <span class="p">:</span> <span class="n">local_file</span>
     <span class="p">})</span>

@@ -1,21 +1,23 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
     <title>Meteorographica: a personal library for weather data &#8212; Meteorographica: a personal library for weather data</title>
+    
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
         VERSION:     '0.0.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
+        HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
@@ -23,9 +25,10 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Meteorographica: Data" href="data.html" /> 
+    <link rel="top" title="Meteorographica: a personal library for weather data" href="#" />
+    <link rel="next" title="Installation" href="install.html" /> 
   </head>
-  <body>
+  <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -36,7 +39,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="data.html" title="Meteorographica: Data"
+          <a href="install.html" title="Installation"
              accesskey="N">next</a> |</li>
         <li class="nav-item nav-item-0"><a href="#">Meteorographica</a> &#187;</li> 
       </ul>
@@ -47,12 +50,12 @@
               <img class="logo" src="_static/UK.GS1987.png" alt="Logo"/>
             </a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="data.html"
-                        title="next chapter">Meteorographica: Data</a></p>
+  <p class="topless"><a href="install.html"
+                        title="next chapter">Installation</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="_sources/index.rst.txt"
+      <li><a href="_sources/index.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -77,16 +80,36 @@
   <div class="section" id="meteorographica-a-personal-library-for-weather-data">
 <h1>Meteorographica: a personal library for weather data<a class="headerlink" href="#meteorographica-a-personal-library-for-weather-data" title="Permalink to this headline">¶</a></h1>
 <p>This code library extends <a class="reference external" href="http://scitools.org.uk/">SciTools</a> (<a class="reference external" href="http://scitools.org.uk/iris/docs/latest/index.html">Iris</a> and <a class="reference external" href="http://scitools.org.uk/cartopy/docs/latest/index.html">Cartopy</a>) in providing tools for handling and plotting meteorological data. It uses Iris data structures and methods for handling the data, and adds to it by providing functions for importing data from several sources. It uses Cartopy for making plots, and adds convenience functions for easily making some particular types of plot.</p>
-<p>Note that this is one person’s personal library: I have no resources for support or extension beyond what is necessary for my own research. You are welcome to re-use any part of it (subject to the license, see below), but you would almost certainly be better advised to copy any bits you like and incoporate them into your own codebase than to rely on the stability of this.</p>
+<p>Note that this is one person&#8217;s personal library: I have no resources for support or extension beyond what is necessary for my own research. You are welcome to re-use any part of it (subject to the license, see below), but you would almost certainly be better advised to copy any bits you like and incoporate them into your own codebase than to rely on the stability of this.</p>
+<p>Installation instructions:</p>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="data.html">Meteorographica: Data</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="datasources/cera20c.html">Meteorographica.data.cera20c</a></li>
-<li class="toctree-l2"><a class="reference internal" href="datasources/era5.html">Meteorographica.data.era5</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+</ul>
+</div>
+<p>Modules in the library:</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="data.html">Meteorographica.data</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="subdata/data_cera20c.html">Meteorographica.data.cera20c</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subdata/data_era5.html">Meteorographica.data.era5</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="weathermap.html">Meteographica.weathermap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="oddments.html">Meteographica.utils</a></li>
 </ul>
+</div>
+<p>Use of the library is best illustrated by example:</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="examples/global_rotated_1987/global_weather_rotated.html">Meteorographica examples: Global weathermap</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
 </div>
 <p>The code in this library is licensed under the terms of the <a class="reference external" href="https://www.gnu.org/licenses/lgpl.html">GNU Lesser General Public License</a>. The documentation under the terms of the <a class="reference external" href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/2/">Open Government Licence</a>.</p>
 </div>
@@ -107,7 +130,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="data.html" title="Meteorographica: Data"
+          <a href="install.html" title="Installation"
              >next</a> |</li>
         <li class="nav-item nav-item-0"><a href="#">Meteorographica</a> &#187;</li> 
       </ul>

@@ -1,0 +1,220 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Meteorographica.data.era5 &#8212; Meteorographica: a personal library for weather data</title>
+    
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="top" title="Meteorographica: a personal library for weather data" href="index.html" />
+    <link rel="up" title="Meteorographica.data" href="data.html" />
+    <link rel="next" title="Meteographica.weathermap" href="weathermap.html" />
+    <link rel="prev" title="Meteorographica.data.cera20c" href="data_cera20c.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="weathermap.html" title="Meteographica.weathermap"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="data_cera20c.html" title="Meteorographica.data.cera20c"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Meteorographica</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="data.html" accesskey="U">Meteorographica.data</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/UK.GS1987.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="data_cera20c.html"
+                        title="previous chapter">Meteorographica.data.cera20c</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="weathermap.html"
+                        title="next chapter">Meteographica.weathermap</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/data_era5.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-Meteorographica.data.era5">
+<span id="meteorographica-data-era5"></span><h1>Meteorographica.data.era5<a class="headerlink" href="#module-Meteorographica.data.era5" title="Permalink to this headline">¶</a></h1>
+<p>This package retrieves and loads data from the <a class="reference external" href="https://www.ecmwf.int/en/forecasts/datasets/reanalysis-datasets/era5">ERA5 reanalysis</a>.</p>
+<p>To retrieve the data, it uses the <a class="reference external" href="https://software.ecmwf.int/wiki/display/WEBAPI/ECMWF+Web+API+Home">ECMWF Public data API</a>. You will need to install a key and the client libraries as described in <a class="reference external" href="https://software.ecmwf.int/wiki/display/WEBAPI/Access+ECMWF+Public+Datasets">the API documentation</a>. Note that this is the same system used by <cite>Meteographica.data.cera20c</cite> - the same key and libraries will let you use that as well.</p>
+<p>Only hourly data is supported (no daily or monthly averages) for 7 surface variables:</p>
+<ul class="simple">
+<li>Mean-sea-level pressure: &#8216;mslp&#8217;</li>
+<li>2m air temperature: &#8216;air.2m&#8217;</li>
+<li>Precipitation rate: &#8216;prate&#8217;</li>
+<li>10m meridional wind: &#8216;uwnd.10m&#8217;</li>
+<li>10m zonal wind: &#8216;vwnd.10m&#8217;</li>
+<li>Sea-surface temperature: &#8216;sst&#8217;</li>
+<li>Sea-ice coverage: &#8216;icec&#8217;</li>
+</ul>
+<p>Data retrieved is stored in directory $SCRATCH/ERA5 - the &#8216;SCRATCH&#8217; environment variable must be set. Data is retrieved in 1-month batches: ERA 5 comes in two streams: the &#8216;oper&#8217; stream is a single member analysis at highest resolution, and the &#8216;enda&#8217; stream is a 10-member ensemble at lower resolution - both are supported.</p>
+<p>For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">Meteorographica.data.era5</span> <span class="kn">as</span> <span class="nn">era5</span>
+<span class="n">era5</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="s1">&#39;prate&#39;</span><span class="p">,</span><span class="mi">2015</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="n">stream</span><span class="o">=</span><span class="s1">&#39;enda&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Will retrieve precipitation rate data for the whole of March 2015, and</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">pr</span><span class="o">=</span><span class="n">era5</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;prate&#39;</span><span class="p">,</span><span class="mi">2015</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="mf">15.25</span><span class="p">,</span><span class="n">stream</span><span class="o">=</span><span class="s1">&#39;enda&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>will then load the precipitation rates at quarter past 3pm on March 12 2015 from the retrieved dataset as a <a class="reference external" href="http://scitools.org.uk/iris/docs/latest/iris/iris/cube.html#iris.cube.Cube" title="(in Iris v2.0)"><code class="xref py py-class docutils literal"><span class="pre">iris.cube.Cube</span></code></a>. Note that as ERA only provides data at hourly or 3-hourly intervals, the value for 15.25 will be interpolated between the outputs. Also, as ERA5 stream &#8216;enda&#8217; is an ensemble dataset, the result will include all 10 ensemble members.</p>
+<dl class="function">
+<dt id="Meteorographica.data.era5.fetch">
+<code class="descclassname">Meteorographica.data.era5.</code><code class="descname">fetch</code><span class="sig-paren">(</span><em>variable</em>, <em>year</em>, <em>month</em>, <em>stream='enda'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Meteorographica/data/era5/fetch.html#fetch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Meteorographica.data.era5.fetch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all data for one variable, for one month, from ECMWF&#8217;s archive.</p>
+<p>Data wil be stored locally in directory $SCRATCH/ERA5, to be retrieved by <code class="xref py py-func docutils literal"><span class="pre">era5.load()</span></code>. If the local file that would be produced already exists, this function does nothing.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>variable</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a>) &#8211; Variable to fetch (e.g. &#8216;prmsl&#8217;).</li>
+<li><strong>year</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) &#8211; Year to get data for.</li>
+<li><strong>month</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) &#8211; Month to get data for (1-12).</li>
+<li><strong>stream</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a>) &#8211; Analysis stream to use, can be &#8216;enda&#8217; - ensemble DA, or &#8216;oper&#8217; - high res single member.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">StandardError</span></code> &#8211; If variable is not a supported value.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="Meteorographica.data.era5.load">
+<code class="descclassname">Meteorographica.data.era5.</code><code class="descname">load</code><span class="sig-paren">(</span><em>variable</em>, <em>year</em>, <em>month</em>, <em>day</em>, <em>hour</em>, <em>stream='enda'</em>, <em>fc_init=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Meteorographica/data/era5/load.html#load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Meteorographica.data.era5.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load requested data from disc, interpolating if necessary.</p>
+<blockquote>
+<div>Data must be available in directory $SCRATCH/ERA5, previously retrieved by <code class="xref py py-func docutils literal"><span class="pre">era5.fetch()</span></code>.</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>variable</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a>) &#8211; Variable to fetch (e.g. &#8216;prmsl&#8217;)</li>
+<li><strong>year</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) &#8211; Year to get data for.</li>
+<li><strong>month</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) &#8211; Month to get data for (1-12).</li>
+<li><strong>day</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) &#8211; Day to get data for (1-31).</li>
+<li><strong>hour</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) &#8211; Hour to get data for (0-23.99). Note that this isn&#8217;t an integer, for minutes and seconds, use fractions of an hour.</li>
+<li><strong>fc_init</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) &#8211; If not None; 6 or 18. See below.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><dl class="docutils">
+<dt>Global field of variable at</dt>
+<dd><p class="first last">time.</p>
+</dd>
+</dl>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="http://scitools.org.uk/iris/docs/latest/iris/iris/cube.html#iris.cube.Cube" title="(in Iris v2.0)"><code class="xref py py-class docutils literal"><span class="pre">iris.cube.Cube</span></code></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Note that ERA5 data is only output every 3 hours (enda) or hour (oper), so if hour%3!=0, the result may be linearly interpolated in time. If you want data after 21:00 on the last day of a month, you will need to fetch the next month&#8217;s data too, as it will be used in the interpolation.</p>
+<p>Precipitation data in ERA5 is a forecast field: twice a day (at 06:00 and 18:00) forecast data is calculated for the next 18 hours. So at 21:00, for example, there are 2 sets of precipitation available: a 3-hour forecast starting at 18 that day, and a 15-hour forecast starting at 06:00, and there is a discontinuity between the two fields. This function will always load the shortest lead-time forecast available unless fc_init is set (to 6 or 18) in which case it will load the forecast starting at the hour specified. You will only need this if you are making videos, or otherwise need time-continuous forecast fields, in which case you will need to be clever in smoothing over the discontinuity. For analysis fields (everything except prate), this issue does not arise and fc_init is ignored.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">StandardError</span></code> &#8211; Data not on disc - see <a class="reference internal" href="#Meteorographica.data.era5.fetch" title="Meteorographica.data.era5.fetch"><code class="xref py py-func docutils literal"><span class="pre">fetch()</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="Meteorographica.data.era5.monthrange">
+<code class="descclassname">Meteorographica.data.era5.</code><code class="descname">monthrange</code><span class="sig-paren">(</span><em>year</em>, <em>month</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/calendar.html#monthrange"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Meteorographica.data.era5.monthrange" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return weekday (0-6 ~ Mon-Sun) and number of days (28-31) for
+year, month.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="weathermap.html" title="Meteographica.weathermap"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="data_cera20c.html" title="Meteorographica.data.cera20c"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Meteorographica</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="data.html" >Meteorographica.data</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    </div>
+  </body>
+</html>

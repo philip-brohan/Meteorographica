@@ -1,6 +1,0 @@
-Weathermaps
-===========
-
-.. automodule:: Meteorographica.weathermaps
-    :members:
-    :imported-members:

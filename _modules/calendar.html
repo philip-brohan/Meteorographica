@@ -1,30 +1,34 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
     <title>calendar &#8212; Meteorographica: a personal library for weather data</title>
+    
     <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
         VERSION:     '0.0.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
+        HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" /> 
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="top" title="Meteorographica: a personal library for weather data" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" /> 
   </head>
-  <body>
+  <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -177,7 +181,7 @@
     <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">)</span><span class="o">.</span><span class="n">weekday</span><span class="p">()</span>
 
 
-<div class="viewcode-block" id="monthrange"><a class="viewcode-back" href="../datasources/era5.html#Meteorographica.data.cera20c.monthrange">[docs]</a><span class="k">def</span> <span class="nf">monthrange</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">):</span>
+<div class="viewcode-block" id="monthrange"><a class="viewcode-back" href="../subdata/data_era5.html#Meteorographica.data.cera20c.monthrange">[docs]</a><span class="k">def</span> <span class="nf">monthrange</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Return weekday (0-6 ~ Mon-Sun) and number of days (28-31) for</span>
 <span class="sd">       year, month.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="mi">1</span> <span class="o">&lt;=</span> <span class="n">month</span> <span class="o">&lt;=</span> <span class="mi">12</span><span class="p">:</span>
@@ -238,23 +242,22 @@
 <span class="sd">        Like itermonthdates(), but will yield (day number, weekday number)</span>
 <span class="sd">        tuples. For days outside the specified month the day number is 0.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">itermonthdays</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">firstweekday</span><span class="p">):</span>
-            <span class="k">yield</span> <span class="n">d</span><span class="p">,</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">7</span>
+        <span class="k">for</span> <span class="n">date</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">itermonthdates</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">date</span><span class="o">.</span><span class="n">month</span> <span class="o">!=</span> <span class="n">month</span><span class="p">:</span>
+                <span class="k">yield</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">date</span><span class="o">.</span><span class="n">weekday</span><span class="p">())</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">yield</span> <span class="p">(</span><span class="n">date</span><span class="o">.</span><span class="n">day</span><span class="p">,</span> <span class="n">date</span><span class="o">.</span><span class="n">weekday</span><span class="p">())</span>
 
     <span class="k">def</span> <span class="nf">itermonthdays</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Like itermonthdates(), but will yield day numbers. For days outside</span>
 <span class="sd">        the specified month the day number is 0.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">day1</span><span class="p">,</span> <span class="n">ndays</span> <span class="o">=</span> <span class="n">monthrange</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">)</span>
-        <span class="n">days_before</span> <span class="o">=</span> <span class="p">(</span><span class="n">day1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">firstweekday</span><span class="p">)</span> <span class="o">%</span> <span class="mi">7</span>
-        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">days_before</span><span class="p">):</span>
-            <span class="k">yield</span> <span class="mi">0</span>
-        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">ndays</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
-            <span class="k">yield</span> <span class="n">d</span>
-        <span class="n">days_after</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">firstweekday</span> <span class="o">-</span> <span class="n">day1</span> <span class="o">-</span> <span class="n">ndays</span><span class="p">)</span> <span class="o">%</span> <span class="mi">7</span>
-        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">days_after</span><span class="p">):</span>
-            <span class="k">yield</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">date</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">itermonthdates</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">date</span><span class="o">.</span><span class="n">month</span> <span class="o">!=</span> <span class="n">month</span><span class="p">:</span>
+                <span class="k">yield</span> <span class="mi">0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">yield</span> <span class="n">date</span><span class="o">.</span><span class="n">day</span>
 
     <span class="k">def</span> <span class="nf">monthdatescalendar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -572,7 +575,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">firstweekday</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">locale</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="n">TextCalendar</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">firstweekday</span><span class="p">)</span>
+        <span class="n">TextCalendar</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">firstweekday</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">locale</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">locale</span> <span class="o">=</span> <span class="n">_locale</span><span class="o">.</span><span class="n">getdefaultlocale</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">locale</span> <span class="o">=</span> <span class="n">locale</span>
@@ -606,7 +609,7 @@
 <span class="sd">    as unicode.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">firstweekday</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">locale</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="n">HTMLCalendar</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">firstweekday</span><span class="p">)</span>
+        <span class="n">HTMLCalendar</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">firstweekday</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">locale</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">locale</span> <span class="o">=</span> <span class="n">_locale</span><span class="o">.</span><span class="n">getdefaultlocale</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">locale</span> <span class="o">=</span> <span class="n">locale</span>
@@ -635,7 +638,7 @@
 
 <span class="k">def</span> <span class="nf">setfirstweekday</span><span class="p">(</span><span class="n">firstweekday</span><span class="p">):</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">firstweekday</span><span class="o">.</span><span class="fm">__index__</span>
+        <span class="n">firstweekday</span><span class="o">.</span><span class="n">__index__</span>
     <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">IllegalWeekdayError</span><span class="p">(</span><span class="n">firstweekday</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">MONDAY</span> <span class="o">&lt;=</span> <span class="n">firstweekday</span> <span class="o">&lt;=</span> <span class="n">SUNDAY</span><span class="p">:</span>
@@ -774,7 +777,7 @@
         <span class="nb">print</span> <span class="n">result</span>
 
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="n">main</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span>
 </pre></div>
 

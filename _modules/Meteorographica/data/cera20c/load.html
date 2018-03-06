@@ -1,30 +1,34 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
     <title>Meteorographica.data.cera20c.load &#8212; Meteorographica: a personal library for weather data</title>
+    
     <link rel="stylesheet" href="../../../../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../../',
         VERSION:     '0.0.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
+        HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
-    <link rel="search" title="Search" href="../../../../search.html" /> 
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="top" title="Meteorographica: a personal library for weather data" href="../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../index.html" /> 
   </head>
-  <body>
+  <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -119,13 +123,29 @@
     <span class="k">return</span> <span class="n">dr</span>
 
 <span class="k">def</span> <span class="nf">_get_slice_at_hour_at_timestep</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span><span class="n">day</span><span class="p">,</span><span class="n">hour</span><span class="p">,</span>
-                                   <span class="n">fc_init</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+                                   <span class="n">fc_init</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">deaccumulate</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     
     <span class="c1"># Get the cube with the data, given that the specified time</span>
     <span class="c1">#   matches a data timestep.</span>
     
     <span class="k">if</span> <span class="ow">not</span> <span class="n">_is_in_file</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span><span class="n">day</span><span class="p">,</span><span class="n">hour</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid hour - data not in file&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Precipitation is accumulated over the forecast, and we want rate.</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">variable</span><span class="o">==</span><span class="s1">&#39;prate&#39;</span> <span class="ow">and</span> <span class="n">deaccumulate</span> <span class="ow">and</span>
+       <span class="p">(</span><span class="n">hour</span><span class="o">!=</span><span class="mi">21</span> <span class="ow">or</span> <span class="p">(</span><span class="n">fc_init</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">fc_init</span><span class="o">==</span><span class="s1">&#39;last&#39;</span><span class="p">))):</span>
+        <span class="n">r1</span><span class="o">=</span><span class="n">_get_slice_at_hour_at_timestep</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span><span class="n">day</span><span class="p">,</span><span class="n">hour</span><span class="p">,</span>
+                                           <span class="n">fc_init</span><span class="o">=</span><span class="n">fc_init</span><span class="p">,</span><span class="n">deaccumulate</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="c1"># Subtract the values from 3 hours ago</span>
+        <span class="n">lt</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span><span class="n">day</span><span class="p">,</span><span class="n">hour</span><span class="p">)</span><span class="o">-</span><span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">r2</span><span class="o">=</span><span class="n">_get_slice_at_hour_at_timestep</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">lt</span><span class="o">.</span><span class="n">year</span><span class="p">,</span><span class="n">lt</span><span class="o">.</span><span class="n">month</span><span class="p">,</span><span class="n">lt</span><span class="o">.</span><span class="n">day</span><span class="p">,</span><span class="n">lt</span><span class="o">.</span><span class="n">hour</span><span class="p">,</span>
+                                           <span class="n">fc_init</span><span class="o">=</span><span class="n">fc_init</span><span class="p">,</span><span class="n">deaccumulate</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">r1</span><span class="o">=</span><span class="p">(</span><span class="n">r1</span><span class="o">-</span><span class="n">r2</span><span class="p">)</span><span class="o">/</span><span class="mi">3</span> <span class="c1"># to m/hr</span>
+        <span class="n">r1</span><span class="o">=</span><span class="n">r1</span><span class="o">/</span><span class="mf">3.6</span>    <span class="c1"># to kg m**-2 s**-1 - same as 20CR</span>
+        <span class="n">r1</span><span class="o">.</span><span class="n">units</span><span class="o">=</span><span class="s1">&#39;kg m**-2 s**-1&#39;</span>
+        <span class="k">return</span> <span class="n">r1</span>
+
+    <span class="c1"># Not precipitation - just get the data for this timestep</span>
     <span class="n">file_name</span><span class="o">=</span><span class="n">_hourly_get_file_name</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span><span class="n">day</span><span class="p">,</span><span class="n">hour</span><span class="p">,</span>
                                     <span class="nb">type</span><span class="o">=</span><span class="nb">type</span><span class="p">,</span><span class="n">fc_init</span><span class="o">=</span><span class="n">fc_init</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">file_name</span><span class="p">):</span>
@@ -151,21 +171,21 @@
     <span class="n">hslice</span><span class="o">.</span><span class="n">dim_coords</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s1">&#39;member&#39;</span><span class="p">)</span> <span class="c1"># Consistency with 20CR</span>
     <span class="k">return</span> <span class="n">hslice</span>
 
-<div class="viewcode-block" id="load"><a class="viewcode-back" href="../../../../datasources/cera20c.html#Meteorographica.data.cera20c.load">[docs]</a><span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span><span class="n">day</span><span class="p">,</span><span class="n">hour</span><span class="p">,</span><span class="n">fc_init</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="load"><a class="viewcode-back" href="../../../../subdata/data_cera20c.html#Meteorographica.data.cera20c.load">[docs]</a><span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span><span class="n">day</span><span class="p">,</span><span class="n">hour</span><span class="p">,</span><span class="n">fc_init</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Load requested data from disc, interpolating if necessary.</span>
 
-<span class="sd">     Data must be available in directory $SCRATCH/CERA-20C, previously retrieved by :func:`cera20c.fetch`.</span>
+<span class="sd">    Data must be available in directory $SCRATCH/CERA-20C, previously retrieved by :func:`fetch`.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        variable (str): Variable to fetch (e.g. &#39;prmsl&#39;)</span>
-<span class="sd">        year (int): Year to get data for.</span>
-<span class="sd">        month (int): Month to get data for (1-12).</span>
-<span class="sd">        day (int): Day to get data for (1-31).</span>
-<span class="sd">        hour (float): Hour to get data for (0-23.99). Note that this isn&#39;t an integer, for  minutes and seconds, use fractions of an hour.</span>
-<span class="sd">        fc_init (string): See below</span>
+<span class="sd">        variable (:obj:`str`): Variable to fetch (e.g. &#39;prmsl&#39;)</span>
+<span class="sd">        year (:obj:`int`): Year to get data for.</span>
+<span class="sd">        month (:obj:`int`): Month to get data for (1-12).</span>
+<span class="sd">        day (:obj:`int`): Day to get data for (1-31).</span>
+<span class="sd">        hour (:obj:`float`): Hour to get data for (0-23.99). Note that this isn&#39;t an integer, for  minutes and seconds, use fractions of an hour.</span>
+<span class="sd">        fc_init (:obj:`str`): See below</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        :class:`iris.cube.Cube`: Global field of variable at time.</span>
+<span class="sd">        :obj:`iris.cube.Cube`: Global field of variable at time.</span>
 
 <span class="sd">    Note that CERA-20C data is only output every 3 hours, so if hour%3!=0, the result will be linearly interpolated in time. If you want data after 21:00 on the last day of a month, you will need to fetch the next month&#39;s data too, as it will be used in the interpolation.</span>
 
@@ -174,6 +194,7 @@
 <span class="sd">    Raises:</span>
 <span class="sd">        StandardError: Data not on disc - see :func:`fetch`</span>
 
+<span class="sd">    |</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">_is_in_file</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span><span class="n">day</span><span class="p">,</span><span class="n">hour</span><span class="p">):</span>
         <span class="k">return</span><span class="p">(</span><span class="n">_get_slice_at_hour_at_timestep</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span>

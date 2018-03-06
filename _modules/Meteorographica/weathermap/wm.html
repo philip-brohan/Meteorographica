@@ -1,30 +1,34 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
     <title>Meteorographica.weathermap.wm &#8212; Meteorographica: a personal library for weather data</title>
+    
     <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
         VERSION:     '0.0.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
+        HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
-    <link rel="search" title="Search" href="../../../search.html" /> 
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="top" title="Meteorographica: a personal library for weather data" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
-  <body>
+  <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -88,10 +92,10 @@
 
 <span class="kn">import</span> <span class="nn">matplotlib</span>
 <span class="kn">import</span> <span class="nn">matplotlib.colors</span>
-<span class="kn">from</span> <span class="nn">matplotlib.patches</span> <span class="k">import</span> <span class="n">Circle</span>
+<span class="kn">import</span> <span class="nn">matplotlib.patches</span>
 
 <span class="kn">import</span> <span class="nn">iris</span>
-<span class="kn">from</span> <span class="nn">iris.analysis.cartography</span> <span class="k">import</span> <span class="n">rotate_winds</span>
+<span class="kn">import</span> <span class="nn">iris.analysis.cartography</span>
 
 <span class="kn">import</span> <span class="nn">cartopy</span>
 <span class="kn">import</span> <span class="nn">cartopy.crs</span> <span class="k">as</span> <span class="nn">ccrs</span>
@@ -120,14 +124,15 @@
 <span class="sd">        linestyle (:obj:`str`, optional): See :meth:`matplotlib.lines.Line2D.set_linestyle`. Defaults to &#39;-&#39;.</span>
 <span class="sd">        linewidth_minor (:obj:`float`, optional): Line width for minor grid. Defaults to 0.2.</span>
 <span class="sd">        linewidth_major (:obj:`float`, optional): Line width for major grid. Defaults to 0.5.</span>
-<span class="sd">        color (see :mod:`matplotlib.colors`, optional): Grid colour. Defaults to ((0,0.30,0,0.3).</span>
+<span class="sd">        color (see :mod:`matplotlib.colors`, optional): Grid colour. Defaults to (0,0.30,0,0.3).</span>
 <span class="sd">        sep_minor (:obj:`float`, optional): Separation, in degrees, of the minor grid lines. Defaults to 0.5.</span>
-<span class="sd">        sep_major (:obj:`float`, optional): Separation, in degrees, of the miajor grid lines. Defaults to 2.0.</span>
+<span class="sd">        sep_major (:obj:`float`, optional): Separation, in degrees, of the major grid lines. Defaults to 2.0.</span>
 <span class="sd">        zorder (:obj:`float`, optional): Standard matplotlib parameter determining which things are plotted on top (high zorder), and which underneath (low zorder), Defaults to 0 - at the bottom.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Nothing - adds the grid to the plot as a side effect.</span>
 
+<span class="sd">    |</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">gl_minor</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">gridlines</span><span class="p">(</span><span class="n">linestyle</span><span class="o">=</span><span class="n">linestyle</span><span class="p">,</span>
@@ -218,6 +223,7 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        See :meth:`matplotlib.axes.Axes.pcolorfast` - also adds the image to the plot.</span>
 
+<span class="sd">    |</span>
 <span class="sd">    &quot;&quot;&quot;</span>   
     <span class="n">plot_cube</span><span class="o">=</span><span class="n">_make_dummy</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">resolution</span><span class="p">)</span>
     <span class="n">cmesh_p</span> <span class="o">=</span> <span class="n">pe</span><span class="o">.</span><span class="n">regrid</span><span class="p">(</span><span class="n">plot_cube</span><span class="p">,</span><span class="n">iris</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">Linear</span><span class="p">())</span>
@@ -251,6 +257,8 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        See :meth:`matplotlib.axes.Axes.contour` - also adds the lines to the plot.</span>
+
+<span class="sd">    |</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">plot_cube</span><span class="o">=</span><span class="n">_make_dummy</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">resolution</span><span class="p">)</span>
     <span class="n">contour_p</span> <span class="o">=</span> <span class="n">pe</span><span class="o">.</span><span class="n">regrid</span><span class="p">(</span><span class="n">plot_cube</span><span class="p">,</span><span class="n">iris</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">Linear</span><span class="p">())</span>
@@ -294,13 +302,15 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        See :meth:`matplotlib.axes.Axes.quiver` - also adds the vectors to the plot.</span>
+
+<span class="sd">    |</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">pole_latitude</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">projection</span><span class="o">.</span><span class="n">proj4_params</span><span class="p">[</span><span class="s1">&#39;o_lat_p&#39;</span><span class="p">]</span>
     <span class="n">pole_longitude</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">projection</span><span class="o">.</span><span class="n">proj4_params</span><span class="p">[</span><span class="s1">&#39;lon_0&#39;</span><span class="p">]</span><span class="o">-</span><span class="mi">180</span>
     <span class="n">projection_iris</span><span class="o">=</span><span class="n">iris</span><span class="o">.</span><span class="n">coord_systems</span><span class="o">.</span><span class="n">RotatedGeogCS</span><span class="p">(</span><span class="n">pole_latitude</span><span class="p">,</span>
                                                      <span class="n">pole_longitude</span><span class="p">)</span>
-    <span class="n">rw</span><span class="o">=</span><span class="n">rotate_winds</span><span class="p">(</span><span class="n">ue</span><span class="p">,</span><span class="n">ve</span><span class="p">,</span><span class="n">projection_iris</span><span class="p">)</span>
+    <span class="n">rw</span><span class="o">=</span><span class="n">iris</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">cartography</span><span class="o">.</span><span class="n">rotate_winds</span><span class="p">(</span><span class="n">ue</span><span class="p">,</span><span class="n">ve</span><span class="p">,</span><span class="n">projection_iris</span><span class="p">)</span>
     <span class="n">plot_cube</span><span class="o">=</span><span class="n">_make_dummy</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">resolution</span><span class="p">)</span>
     <span class="n">u_p</span> <span class="o">=</span> <span class="n">rw</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">regrid</span><span class="p">(</span><span class="n">plot_cube</span><span class="p">,</span><span class="n">iris</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">Linear</span><span class="p">())</span>
     <span class="n">v_p</span> <span class="o">=</span> <span class="n">rw</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">regrid</span><span class="p">(</span><span class="n">plot_cube</span><span class="p">,</span><span class="n">iris</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">Linear</span><span class="p">())</span>
@@ -349,7 +359,7 @@
 <span class="sd">        ue (:obj:`iris.cube.Cube`): meridional value of variable to plot.</span>
 <span class="sd">        ve (:obj:`iris.cube.Cube`): zonal value of  variable to plot.</span>
 <span class="sd">        t2 (:obj:`iris.cube.Cube`): variable to use to select arrow colour.</span>
-<span class="sd">        resolution (:obj:`float&#39;, optional): What lat:lon resolution (in degrees) to interpolate [uv]e.data to before plotting. Defaults to 1.</span>
+<span class="sd">        resolution (:obj:`float`, optional): What lat:lon resolution (in degrees) to interpolate [uv]e.data to before plotting. Defaults to 1.</span>
 <span class="sd">        colors (see :mod:`matplotlib.colors`, optional) vector colour. Defaults to (0,0,0,0.25).</span>
 <span class="sd">        headwidth (:obj:`float`, optional): Controls arrow shape. Defaults to 1.</span>
 <span class="sd">        random_state (None|:obj:`int`|:obj:`numpy.random.RandomState`): Random number generation seed, see :func:`sklearn.utils.check_random_state`.</span>
@@ -358,6 +368,8 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        See :meth:`matplotlib.axes.Axes.quiver` - also adds the vectors to the plot.</span>
+
+<span class="sd">    |</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">pole_latitude</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">projection</span><span class="o">.</span><span class="n">proj4_params</span><span class="p">[</span><span class="s1">&#39;o_lat_p&#39;</span><span class="p">]</span>
     <span class="n">pole_longitude</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">projection</span><span class="o">.</span><span class="n">proj4_params</span><span class="p">[</span><span class="s1">&#39;lon_0&#39;</span><span class="p">]</span><span class="o">-</span><span class="mi">180</span>
@@ -421,6 +433,8 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Nothing - adds the obs. points to the plot.</span>
+
+<span class="sd">    |</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">rp</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">projection</span><span class="o">.</span><span class="n">transform_points</span><span class="p">(</span><span class="n">obs_projection</span><span class="p">,</span>
@@ -431,13 +445,13 @@
 
     <span class="c1"># Plot each ob as a circle</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">new_longitude</span><span class="p">)):</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">Circle</span><span class="p">((</span><span class="n">new_longitude</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
-                             <span class="n">new_latitude</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span>
-                            <span class="n">radius</span><span class="o">=</span><span class="n">radius</span><span class="p">,</span>
-                            <span class="n">facecolor</span><span class="o">=</span><span class="n">facecolor</span><span class="p">,</span>
-                            <span class="n">edgecolor</span><span class="o">=</span><span class="n">edgecolor</span><span class="p">,</span>
-                            <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span>
-                            <span class="n">zorder</span><span class="o">=</span><span class="n">zorder</span><span class="p">))</span></div>
+        <span class="n">ax</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">patches</span><span class="o">.</span><span class="n">Circle</span><span class="p">((</span><span class="n">new_longitude</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                                                <span class="n">new_latitude</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span>
+                                                <span class="n">radius</span><span class="o">=</span><span class="n">radius</span><span class="p">,</span>
+                                                <span class="n">facecolor</span><span class="o">=</span><span class="n">facecolor</span><span class="p">,</span>
+                                                <span class="n">edgecolor</span><span class="o">=</span><span class="n">edgecolor</span><span class="p">,</span>
+                                                <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span>
+                                                <span class="n">zorder</span><span class="o">=</span><span class="n">zorder</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="plot_label"><a class="viewcode-back" href="../../../weathermap.html#Meteorographica.weathermap.plot_label">[docs]</a><span class="k">def</span> <span class="nf">plot_label</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">label</span><span class="p">,</span>
                <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span>
@@ -462,6 +476,8 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Nothing - adds the label points to the plot.</span>
+
+<span class="sd">    |</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">extent</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">get_extent</span><span class="p">()</span>

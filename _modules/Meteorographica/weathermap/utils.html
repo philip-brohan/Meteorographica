@@ -1,30 +1,34 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
     <title>Meteorographica.weathermap.utils &#8212; Meteorographica: a personal library for weather data</title>
+    
     <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
         VERSION:     '0.0.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
+        HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
-    <link rel="search" title="Search" href="../../../search.html" /> 
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="top" title="Meteorographica: a personal library for weather data" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
-  <body>
+  <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -84,14 +88,16 @@
 <div class="viewcode-block" id="fetch_backgrounds"><a class="viewcode-back" href="../../../weathermap.html#Meteorographica.weathermap.fetch_backgrounds">[docs]</a><span class="k">def</span> <span class="nf">fetch_backgrounds</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;Fetch plot background data from Natural Earth.</span>
 
-<span class="sd">     `Cartopy &lt;http://scitools.org.uk/cartopy/docs/latest/index.html&gt;`_ uses background images from `Natural Earth &lt;http://www.naturalearthdata.com/&gt;`_ for things like continent outlines on world maps - Meteorographica folows it in this. This function downloads some Natural Earth data (continent backgrounds) and modifies it to make ocean regions transparent for easy use in map plots.</span>
+<span class="sd">    `Cartopy &lt;http://scitools.org.uk/cartopy/docs/latest/index.html&gt;`_ uses background images from `Natural Earth &lt;http://www.naturalearthdata.com/&gt;`_ for things like continent outlines on world maps - Meteorographica folows it in this. This function downloads some Natural Earth data (continent backgrounds) and modifies it to make ocean regions transparent for easy use in map plots.</span>
 
 <span class="sd">    You should only have to run this function once as part of the set-up of this module.</span>
 
-<span class="sd">    Requires three utility functions to be available: `wget &lt;https://www.gnu.org/software/wget/&gt;`_, `unzip &lt;http://www.info-zip.org/mans/unzip.html&gt;`_, and &#39;imagemagick convert &lt;https://www.imagemagick.org/script/convert.php&gt;`_. It will create map background files in the directory specified by the CARTOPY_USER_BACKGROUNDS environment variable which should have been set during the installation of `Cartopy &lt;http://scitools.org.uk/cartopy/docs/latest/index.html&gt;`_.</span>
+<span class="sd">    Requires three utility functions to be available: `wget &lt;https://www.gnu.org/software/wget/&gt;`_, `unzip &lt;http://www.info-zip.org/mans/unzip.html&gt;`_, and `imagemagick convert &lt;https://www.imagemagick.org/script/convert.php&gt;`_. It will create map background files in the directory specified by the CARTOPY_USER_BACKGROUNDS environment variable which should have been set during the installation of `Cartopy &lt;http://scitools.org.uk/cartopy/docs/latest/index.html&gt;`_.</span>
 
 <span class="sd">    Raises:</span>
 <span class="sd">        StandardError: Environment variable &#39;CARTOPY_USER_BACKGROUNDS&#39; is not set</span>
+
+<span class="sd">    |</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
     <span class="n">bgdir</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;CARTOPY_USER_BACKGROUNDS&#39;</span><span class="p">)</span>

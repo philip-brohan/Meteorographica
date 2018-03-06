@@ -1,30 +1,34 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
     <title>Meteorographica.utils.cube_operations &#8212; Meteorographica: a personal library for weather data</title>
+    
     <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
         VERSION:     '0.0.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
+        HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
-    <link rel="search" title="Search" href="../../../search.html" /> 
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="top" title="Meteorographica: a personal library for weather data" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
-  <body>
+  <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -74,16 +78,31 @@
 <span class="c1"># MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
 <span class="c1"># GNU Lesser General Public License for more details.</span>
 <span class="c1">#</span>
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Functions to process and manipulate iris cubes.</span>
 
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="c1"># Functions to process and manipulate iris cubes.</span>
 
 <span class="kn">import</span> <span class="nn">copy</span>
 
 <span class="c1"># Control the order of the vector dimensions of a cube, so the </span>
 <span class="c1">#  numpy array of data has the expected shape.</span>
-<div class="viewcode-block" id="cube_order_dimensions"><a class="viewcode-back" href="../../../source/Meteorographica.utils.html#Meteorographica.utils.cube_operations.cube_order_dimensions">[docs]</a><span class="k">def</span> <span class="nf">cube_order_dimensions</span><span class="p">(</span><span class="n">cube</span><span class="p">,</span><span class="n">dims_list</span><span class="p">):</span>
+<div class="viewcode-block" id="cube_order_dimensions"><a class="viewcode-back" href="../../../oddments.html#Meteorographica.utils.cube_order_dimensions">[docs]</a><span class="k">def</span> <span class="nf">cube_order_dimensions</span><span class="p">(</span><span class="n">cube</span><span class="p">,</span><span class="n">dims_list</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Reshape the data in an :class:`iris.cube.Cube` by re-ordering the dimensions.</span>
+
+<span class="sd">    If the cube interface is not doing what I want, and I need to access the internal data array directly, then the exact shape of the array starts to matter, and a [latitude,longitude] array is not the same as a [longitude,latitude] one. This function sets the exact shape of the data array by specifying the order of the dimensions of the cube. Note that it does not modify the input cube, it returns a new one.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        cube (:obj:`iris.cube.Cube`): The cube to have its data re-ordered.</span>
+<span class="sd">        dims_list (:obj:`list` of :obj:`str`): Dimension names in desired order (e.g. &quot;(&#39;Latitude&#39;,&#39;Longitude&#39;,&#39;member&#39;)&quot;).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :obj:`iris.cube.Cube`: A new cube with the dimensions in the specified order.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        StandardError: Names in the dims_list do not match the names of the vector dimensions of the cube.</span>
+
+<span class="sd">    |</span>
+<span class="sd">    &quot;&quot;&quot;</span> 
+
     <span class="n">crds2</span><span class="o">=</span><span class="n">cube</span><span class="o">.</span><span class="n">coords</span><span class="p">()</span>
     <span class="n">crds</span><span class="o">=</span><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">crds2</span><span class="p">)</span>
     <span class="c1"># Keep only the vector dimensions</span>
