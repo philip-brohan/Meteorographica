@@ -15,8 +15,30 @@
 
 import version_2c
 
-def fetch(variable,year,month,version):
+def fetch(variable,year,month=1,day=1,version='none'):
+    """Get data for one variable, from the 20CR archive at NERSC.
+
+    Data wil be stored locally in directory $SCRATCH/20CR, to be retrieved by :func:`load`. If the local file that would be produced already exists, this function does nothing.
+
+    For 20CR version 2c, the data is retrieved in calendar year blocks, and the 'month' and 'day' arguments are ignored. 
+
+    Args:
+        variable (:obj:`str`): Variable to fetch (e.g. 'prmsl').
+        year (:obj:`int`): Year to get data for.
+        month (:obj:`int`, optional): Month to get data for (1-12).
+        day (:obj:`int`, optional): Day to get data for (1-31).
+        version (:obj:`str`): 20CR version to retrieve data for.
+
+    Raises:
+        StandardError: If variable is not a supported value.
+ 
+    |
+    """
+
+    if variable=='observations':
+        return fetch_observations(year,month=month,day=day,
+                                  version=version)
 
     if version=='2c':
-        return version_2.fetch(variable,year)
+        return version_2c.fetch(variable,year)
     raise StandardError("Unsupported version %s" % version)

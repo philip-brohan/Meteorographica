@@ -45,4 +45,7 @@ will then load the precipitation rates at quarter past 3pm on March 12 1987 from
 |
 """
 
-from version_2c import *
+from utils import *
+from load import *
+from fetch import *
+from observations import *

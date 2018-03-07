@@ -21,7 +21,7 @@ import datetime
 import numpy as np
 import pandas
 
-from utils import _hourly_get_file_name
+from utils import _get_data_file_name
 
 # Eliminate incomprehensible warning message
 iris.FUTURE.netcdf_promote='True'

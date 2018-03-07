@@ -33,35 +33,39 @@ def _get_remote_file_name(variable,year):
     |
     """
 
-    remote_dir=("http://portal.nersc.gov/pydap/"+
+    #remote_dir=("http://portal.nersc.gov/pydap/"+
+    #            "20C_Reanalysis_version2c_ensemble/")
+    remote_dir=("http://portal.nersc.gov/project/20C_Reanalysis/"+
                 "20C_Reanalysis_version2c_ensemble/")
     
     if variable=='observations':
-        raise StandardError("Observations download not yet supported")
+        remote_file=("http://portal.nersc.gov/m958/2c_observations/"+
+                     "%04d.zip") % year
+        return remote_file
 
     remote_file=None
     if variable=='prmsl':
-          remote_file="%s/analysis/prmsl/prmsl_%04d.nc" % (remote_dir,
-                                                                 ,year)
+        remote_file=("%s/analysis/prmsl/prmsl_%04d.nc" % (remote_dir,
+                                                                 year))
     if variable=='air.2m':
-          remote_file="%s/first_guess/t2m/t2m_%04d.nc" % (remote_dir,
-                                                                 ,year)
+        remote_file=("%s/first_guess/t2m/t2m_%04d.nc" % (remote_dir,
+                                                                 year))
     if variable=='uwnd.10m':
-          remote_file="%s/first_guess/u10m/u10m_%04d.nc" % (remote_dir,
-                                                                 ,year)
+        remote_file=("%s/first_guess/u10m/u10m_%04d.nc" % (remote_dir,
+                                                                 year))
     if variable=='vwnd.10m':
-          remote_file="%s/first_guess/v10m/v10m_%04d.nc" % (remote_dir,
-                                                                 ,year)
+        remote_file=("%s/first_guess/v10m/v10m_%04d.nc" % (remote_dir,
+                                                                 year))
     if variable=='prate':
-          remote_file="%s/first_guess/prate/prate_%04d.nc" % (remote_dir,
-                                                                 ,year)
+        remote_file=("%s/first_guess/prate/prate_%04d.nc" % (remote_dir,
+                                                                 year))
     if(remote_file is None):
         raise StandardError("Unsupported variable %s" % variable)
     return(remote_file)
 
 def fetch(variable,year):
     
-    local_file=get_data_file_name(variable,year)
+    local_file=_get_data_file_name(variable,year)
 
     if os.path.isfile(local_file): 
         # Got this data already
@@ -70,9 +74,11 @@ def fetch(variable,year):
     if not os.path.exists(os.path.dirname(local_file)):
         os.makedirs(os.path.dirname(local_file))
 
-    remote_file=get_remote_file_name(variable,year)
+    remote_file=_get_remote_file_name(variable,year)
 
-    cmd="wget %s %s" % (remote_file,local_file)
+    cmd="wget -O %s %s" % (local_file,remote_file)
+    print cmd
+    return
     wg_retvalue=subprocess.call(cmd,shell=True)
     if wg_retvalue!=0:
         raise StandardError("Failed to retrieve data")

@@ -22,4 +22,4 @@ def _hourly_get_file_name(variable,year,month=6,
     if vn=='2c':
         return version_2c.get_data_file_name(
                                  variable,year)
-   raise StandardError('Invalid version %s' % version)
+    raise StandardError('Invalid version %s' % version)

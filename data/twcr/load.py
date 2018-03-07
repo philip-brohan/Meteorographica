@@ -16,6 +16,28 @@
 import version_2c
 
 def load(variable,year,month,day,hour,version):
+    """Load requested data from disc, interpolating if necessary.
+
+    Data must be available in directory $SCRATCH/20CR, previously retrieved by :func:`fetch`.
+
+    Args:
+        variable (:obj:`str`): Variable to fetch (e.g. 'prmsl')
+        year (:obj:`int`): Year to get data for.
+        month (:obj:`int`): Month to get data for (1-12).
+        day (:obj:`int`): Day to get data for (1-31).
+        hour (:obj:`float`): Hour to get data for (0-23.99). Note that this isn't an integer, for minutes and seconds, use fractions of an hour.
+        version (:obj:`str`): 20CR version to load data from.
+
+    Returns:
+        :obj:`iris.cube.Cube`: Global field of variable at time.
+
+    Note that 20CR data is only output every 6 hours (prmsl) or 3 hours, so if hour%3!=0, the result may be linearly interpolated in time. If you want data after 18:00 on the last day of a month, you will need to fetch the next month's data too, as it will be used in the interpolation.
+
+    Raises:
+        StandardError: Version number not supported, or data not on disc - see :func:`fetch`
+
+    |
+    """
     if version=='2c':
         return version_2c.fetch(variable,year,month,
                                 day,hour)
