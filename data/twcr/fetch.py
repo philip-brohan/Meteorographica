@@ -14,6 +14,7 @@
 # Functions for getting data from NERSC.
 
 import version_2c
+import observations
 
 def fetch(variable,year,month=1,day=1,version='none'):
     """Get data for one variable, from the 20CR archive at NERSC.
@@ -36,7 +37,8 @@ def fetch(variable,year,month=1,day=1,version='none'):
     """
 
     if variable=='observations':
-        return fetch_observations(year,month=month,day=day,
+        return observations.fetch_observations(year,
+                                  month=month,day=day,
                                   version=version)
 
     if version=='2c':

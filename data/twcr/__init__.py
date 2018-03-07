@@ -11,7 +11,7 @@
 # GNU Lesser General Public License for more details.
 #
 """
-This package retrieves and loads data from the `Twentieth Century Reanalysis (20CR)<https://www.esrl.noaa.gov/psd/data/20thC_Rean/>`_.
+This package retrieves and loads data from the `Twentieth Century Reanalysis (20CR) <https://www.esrl.noaa.gov/psd/data/20thC_Rean/>`_.
 
 It retrieves the data from the `20CR portal <http://portal.nersc.gov/project/20C_Reanalysis/>`_ at `NERSC <http://www.nersc.gov>`_.
 
@@ -40,7 +40,29 @@ Will retrieve precipitation rate data for the whole of 1987, and
 
     pr=twcr.load('prate',1987,3,12,15.25,version='2c')
 
-will then load the precipitation rates at quarter past 3pm on March 12 1987 from the retrieved dataset as a :class:`iris.cube.Cube`. Note that as 20CR only provides data at 6-hourly or 3-hourly intervals, the value for 15.25 will be interpolated between the outputs. Also, as 20CR is an ensemble dataset, the result will include all 56 ensemble members.
+will then load the precipitation rates at quarter past 3pm on March 12 1987 from the retrieved dataset as an :obj:`iris.cube.Cube`. Note that as 20CR only provides data at 6-hourly or 3-hourly intervals, the value for 15.25 will be interpolated between the outputs. Also, as 20CR is an ensemble dataset, the result will include all 56 ensemble members.
+
+Observations files are also available. They can be fetched with:
+
+.. code-block:: python
+
+    twcr.fetch_observations(1987,version='2c')
+
+There is one observations file for each 6-hourly assimilation run. Load all the observations available to the assimilation run for 12 noon on March 12 1987 (as a :obj:`pandas.DataFrame`) with:
+
+.. code-block:: python
+
+    o=twcr.load_observations_1file(1987,3,12,12,version='2c')
+
+or just load all the observations valid between 6am and 6pm that day with:
+
+.. code-block:: python
+
+    import datetime
+    o=twcr.load_observations(datetime.datetime(1987,3,12,6),
+                             datetime.datetime(1987,3,12,18),
+                             version='2c')
+
 
 |
 """

@@ -77,8 +77,6 @@ def fetch(variable,year):
     remote_file=_get_remote_file_name(variable,year)
 
     cmd="wget -O %s %s" % (local_file,remote_file)
-    print cmd
-    return
     wg_retvalue=subprocess.call(cmd,shell=True)
     if wg_retvalue!=0:
         raise StandardError("Failed to retrieve data")

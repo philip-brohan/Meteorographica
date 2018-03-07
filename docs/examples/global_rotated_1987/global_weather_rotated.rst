@@ -1,7 +1,7 @@
 `Meteographica examples main page <../examples.html>`_
 
-Meteorographica examples: Global weathermap
-===========================================
+Meteorographica examples: Global weathermap (CERA-20C version)
+==============================================================
 
 .. raw:: html
 

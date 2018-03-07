@@ -55,9 +55,9 @@ def _get_next_field_time(variable,year,month,day,hour):
 def _get_slice_at_hour_at_timestep(variable,year,month,day,hour):
     """Get the cube with the data, given that the specified time
        matches a data timestep."""
-    if not _is_in_file(variable,version,hour):
+    if not _is_in_file(variable,hour):
         raise ValueError("Invalid hour - data not in file")
-    file_name=_get_data_file_name(variable,year,month,day,hour)
+    file_name=_get_data_file_name(variable,year)
     time_constraint=iris.Constraint(time=iris.time.PartialDateTime(
                                     year=year,
                                     month=month,
@@ -74,8 +74,7 @@ def _get_slice_at_hour_at_timestep(variable,year,month,day,hour):
     # Enhance the names and metadata for iris/cartopy
     hslice.coord('latitude').coord_system=coord_s
     hslice.coord('longitude').coord_system=coord_s
-    if type=='ensemble':
-        hslice.dim_coords[0].rename('member') # Remove spaces in name
+    hslice.dim_coords[0].rename('member') # Remove spaces in name
     return hslice
 
 def load(variable,year,month,day,hour):
@@ -100,14 +99,14 @@ def load(variable,year,month,day,hour):
 
     |
     """
-    if _is_in_file(variable,version,hour):
+    if _is_in_file(variable,hour):
         return(_get_slice_at_hour_at_timestep(variable,year,
                                               month,day,
                                               hour))
     previous_step=_get_previous_field_time(variable,year,month,
                                            day,hour)
     next_step=_get_next_field_time(variable,year,month,
-                                   day,hour,version)
+                                   day,hour)
     dt_current=datetime.datetime(year,month,day,int(hour),int((hour%1)*60))
     dt_previous=datetime.datetime(previous_step['year'],
                                   previous_step['month'],

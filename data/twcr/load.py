@@ -39,7 +39,7 @@ def load(variable,year,month,day,hour,version):
     |
     """
     if version=='2c':
-        return version_2c.fetch(variable,year,month,
+        return version_2c.load(variable,year,month,
                                 day,hour)
     raise StandardError('Invalid version number %s' % version)
 
