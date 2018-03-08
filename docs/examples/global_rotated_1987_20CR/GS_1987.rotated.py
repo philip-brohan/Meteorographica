@@ -91,7 +91,7 @@ qv=wm.plot_quiver(ax,ue,ve,scale=1,resolution=1,
                                max_points=100000)
 
 # Add the observations
-obs=twcr.load_observations_1file(year,month,day,hour,'3.5.1')
+obs=twcr.load_observations_1file(year,month,day,hour,'2c')
 # Filter to those assimilated
 obs_s=obs.loc[(obs['Assimilation.indicator']==1)].copy()
 wm.plot_obs(ax,obs_s,radius=0.3)
