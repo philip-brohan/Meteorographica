@@ -1,0 +1,181 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Meteorographica.data.twcr.observations &#8212; Meteorographica: a personal library for weather data</title>
+    
+    <link rel="stylesheet" href="../../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="top" title="Meteorographica: a personal library for weather data" href="../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">Meteorographica</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../../index.html">
+              <img class="logo" src="../../../../_static/UK.GS1987.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for Meteorographica.data.twcr.observations</h1><div class="highlight"><pre>
+<span></span><span class="c1"># (C) British Crown Copyright 2017, Met Office</span>
+<span class="c1">#</span>
+<span class="c1"># This code is free software: you can redistribute it and/or modify it under</span>
+<span class="c1"># the terms of the GNU Lesser General Public License as published by the</span>
+<span class="c1"># Free Software Foundation, either version 3 of the License, or</span>
+<span class="c1"># (at your option) any later version.</span>
+<span class="c1">#</span>
+<span class="c1"># This code is distributed in the hope that it will be useful,</span>
+<span class="c1"># but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="c1"># MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="c1"># GNU Lesser General Public License for more details.</span>
+<span class="c1">#</span>
+
+<span class="c1"># Functions for handling observations.</span>
+
+<span class="kn">import</span> <span class="nn">version_2c</span>
+
+<div class="viewcode-block" id="fetch_observations"><a class="viewcode-back" href="../../../../subdata/data_20CR.html#Meteorographica.data.twcr.fetch_observations">[docs]</a><span class="k">def</span> <span class="nf">fetch_observations</span><span class="p">(</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">day</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">version</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get observations from the 20CR archive at NERSC.</span>
+
+<span class="sd">    Data wil be stored locally in directory $SCRATCH/20CR, to be retrieved by :func:`load_observations`. If the local files that would be produced already exists, this function does nothing.</span>
+
+<span class="sd">    For 20CR version 2c, the data is retrieved in calendar year blocks, and the &#39;month&#39; and &#39;day&#39; arguments are ignored. </span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        year (:obj:`int`): Year to get data for.</span>
+<span class="sd">        month (:obj:`int`, optional): Month to get data for (1-12).</span>
+<span class="sd">        day (:obj:`int`, optional): Day to get data for (1-31).</span>
+<span class="sd">        version (:obj:`str`): 20CR version to retrieve data for.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        StandardError: If variable is not a supported value.</span>
+<span class="sd"> </span>
+<span class="sd">    |</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">version</span><span class="o">==</span><span class="s1">&#39;2c&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">version_2c</span><span class="o">.</span><span class="n">fetch_observations</span><span class="p">(</span><span class="n">year</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="n">StandardError</span><span class="p">(</span><span class="s2">&quot;Unsupported version </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">version</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="load_observations_1file"><a class="viewcode-back" href="../../../../subdata/data_20CR.html#Meteorographica.data.twcr.load_observations_1file">[docs]</a><span class="k">def</span> <span class="nf">load_observations_1file</span><span class="p">(</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span><span class="n">day</span><span class="p">,</span><span class="n">hour</span><span class="p">,</span><span class="n">version</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Load observations from disc, that were used in the assimilation run at the time specified.</span>
+
+<span class="sd">    Data must be available in directory $SCRATCH/20CR, previously retrieved by :func:`fetch_observations`.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        year (:obj:`int`): Year of assimilation run.</span>
+<span class="sd">        month (:obj:`int`): Month of assimilation run (1-12)</span>
+<span class="sd">        day (:obj:`int`): Day of assimilation run (1-31).</span>
+<span class="sd">        hour (:obj:`int`): Hour of assimilation run (0-23).</span>
+<span class="sd">        version (:obj:`str`): 20CR version to load data from.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :obj:`pandas.DataFrame`: Dataframe of observations.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        StandardError: Version number not supported, or data not on disc - see :func:`fetch_observations`</span>
+
+<span class="sd">    |</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">version</span><span class="o">==</span><span class="s1">&#39;2c&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">version_2c</span><span class="o">.</span><span class="n">load_observations_1file</span><span class="p">(</span>
+                                 <span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span><span class="n">day</span><span class="p">,</span><span class="n">hour</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="n">StandardError</span><span class="p">(</span><span class="s2">&quot;Unsupported version </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">version</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="load_observations"><a class="viewcode-back" href="../../../../subdata/data_20CR.html#Meteorographica.data.twcr.load_observations">[docs]</a><span class="k">def</span> <span class="nf">load_observations</span><span class="p">(</span><span class="n">start</span><span class="p">,</span><span class="n">end</span><span class="p">,</span><span class="n">version</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Load observations from disc, for the selected period</span>
+
+<span class="sd">    Data must be available in directory $SCRATCH/20CR, previously retrieved by :func:`fetch`.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        start (:obj:`datetime.datetime`): Get observations at or after this time.</span>
+<span class="sd">        end (:obj:`datetime.datetime`): Get observations before this time.</span>
+<span class="sd">        version (:obj:`str`): 20CR version to load data from.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :obj:`pandas.DataFrame`: Dataframe of observations.</span>
+
+
+<span class="sd">    Raises:</span>
+<span class="sd">        StandardError: Version number not supported, or data not on disc - see :func:`fetch_observations`</span>
+
+<span class="sd">    |</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">version</span><span class="o">==</span><span class="s1">&#39;2c&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">version_2c</span><span class="o">.</span><span class="n">load_observations</span><span class="p">(</span><span class="n">start</span><span class="p">,</span><span class="n">end</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="n">StandardError</span><span class="p">(</span><span class="s2">&quot;Unsupported version </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">version</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">Meteorographica</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    </div>
+  </body>
+</html>

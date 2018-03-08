@@ -78,48 +78,39 @@
 <span class="c1"># MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
 <span class="c1"># GNU Lesser General Public License for more details.</span>
 <span class="c1">#</span>
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">The functions in this module provide the main way to load</span>
-<span class="sd">20CR data.</span>
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">version_2</span>
-<span class="kn">import</span> <span class="nn">version_3</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">get_version_from_ensda</span>
 
-<div class="viewcode-block" id="get_slice_at_hour"><a class="viewcode-back" href="../../../../source/Meteorographica.data.twcr.html#Meteorographica.data.twcr.load.get_slice_at_hour">[docs]</a><span class="k">def</span> <span class="nf">get_slice_at_hour</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span><span class="n">day</span><span class="p">,</span><span class="n">hour</span><span class="p">,</span><span class="n">version</span><span class="p">,</span>
-                      <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;ensemble&#39;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Get the cube with the data, interpolating between timesteps</span>
-<span class="sd">       if necessary.&quot;&quot;&quot;</span>
-    <span class="n">vn</span><span class="o">=</span><span class="n">get_version_from_ensda</span><span class="p">(</span><span class="n">version</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">vn</span><span class="o">==</span><span class="mi">2</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">version_2</span><span class="o">.</span><span class="n">get_slice_at_hour</span><span class="p">(</span>
-                              <span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span>
-                              <span class="n">day</span><span class="p">,</span><span class="n">hour</span><span class="p">,</span><span class="nb">type</span><span class="o">=</span><span class="nb">type</span><span class="p">,</span>
-                              <span class="n">version</span><span class="o">=</span><span class="n">version</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">vn</span><span class="o">==</span><span class="mi">3</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">version_3</span><span class="o">.</span><span class="n">get_slice_at_hour</span><span class="p">(</span>
-                              <span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span>
-                              <span class="n">day</span><span class="p">,</span><span class="n">hour</span><span class="p">,</span><span class="nb">type</span><span class="o">=</span><span class="nb">type</span><span class="p">,</span>
-                              <span class="n">version</span><span class="o">=</span><span class="n">version</span><span class="p">)</span>
+<span class="c1"># Load 20CR data from local files.</span>
+
+<span class="kn">import</span> <span class="nn">version_2c</span>
+
+<div class="viewcode-block" id="load"><a class="viewcode-back" href="../../../../subdata/data_20CR.html#Meteorographica.data.twcr.load">[docs]</a><span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span><span class="n">day</span><span class="p">,</span><span class="n">hour</span><span class="p">,</span><span class="n">version</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Load requested data from disc, interpolating if necessary.</span>
+
+<span class="sd">    Data must be available in directory $SCRATCH/20CR, previously retrieved by :func:`fetch`.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        variable (:obj:`str`): Variable to fetch (e.g. &#39;prmsl&#39;)</span>
+<span class="sd">        year (:obj:`int`): Year to get data for.</span>
+<span class="sd">        month (:obj:`int`): Month to get data for (1-12).</span>
+<span class="sd">        day (:obj:`int`): Day to get data for (1-31).</span>
+<span class="sd">        hour (:obj:`float`): Hour to get data for (0-23.99). Note that this isn&#39;t an integer, for minutes and seconds, use fractions of an hour.</span>
+<span class="sd">        version (:obj:`str`): 20CR version to load data from.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :obj:`iris.cube.Cube`: Global field of variable at time.</span>
+
+<span class="sd">    Note that 20CR data is only output every 6 hours (prmsl) or 3 hours, so if hour%3!=0, the result may be linearly interpolated in time. If you want data after 18:00 on the last day of a month, you will need to fetch the next month&#39;s data too, as it will be used in the interpolation.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        StandardError: Version number not supported, or data not on disc - see :func:`fetch`</span>
+
+<span class="sd">    |</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">version</span><span class="o">==</span><span class="s1">&#39;2c&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">version_2c</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span>
+                                <span class="n">day</span><span class="p">,</span><span class="n">hour</span><span class="p">)</span>
     <span class="k">raise</span> <span class="n">StandardError</span><span class="p">(</span><span class="s1">&#39;Invalid version number </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">version</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="get_obs_1file"><a class="viewcode-back" href="../../../../source/Meteorographica.data.twcr.html#Meteorographica.data.twcr.load.get_obs_1file">[docs]</a><span class="k">def</span> <span class="nf">get_obs_1file</span><span class="p">(</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span><span class="n">day</span><span class="p">,</span><span class="n">hour</span><span class="p">,</span><span class="n">version</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Retrieve all the observations for an individual assimilation run&quot;&quot;&quot;</span>
-    <span class="n">vn</span><span class="o">=</span><span class="n">get_version_from_ensda</span><span class="p">(</span><span class="n">version</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">vn</span><span class="o">==</span><span class="mi">2</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">version_2</span><span class="o">.</span><span class="n">get_obs_1file</span><span class="p">(</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span><span class="n">day</span><span class="p">,</span><span class="n">hour</span><span class="p">,</span><span class="n">version</span><span class="o">=</span><span class="n">version</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">vn</span><span class="o">==</span><span class="mi">3</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">version_3</span><span class="o">.</span><span class="n">get_obs_1file</span><span class="p">(</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span><span class="n">day</span><span class="p">,</span><span class="n">hour</span><span class="p">,</span><span class="n">version</span><span class="o">=</span><span class="n">version</span><span class="p">)</span>
-    <span class="k">raise</span> <span class="n">StandardError</span><span class="p">(</span><span class="s1">&#39;Invalid version number </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">version</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="get_obs"><a class="viewcode-back" href="../../../../source/Meteorographica.data.twcr.html#Meteorographica.data.twcr.load.get_obs">[docs]</a><span class="k">def</span> <span class="nf">get_obs</span><span class="p">(</span><span class="n">start</span><span class="p">,</span><span class="n">end</span><span class="p">,</span><span class="n">version</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Retrieve all the observations between start and end&quot;&quot;&quot;</span>
-    <span class="n">vn</span><span class="o">=</span><span class="n">get_version_from_ensda</span><span class="p">(</span><span class="n">version</span><span class="p">)</span>
-    <span class="k">if</span><span class="p">(</span><span class="n">vn</span><span class="o">==</span><span class="mi">2</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">version_2</span><span class="o">.</span><span class="n">get_obs</span><span class="p">(</span><span class="n">start</span><span class="p">,</span><span class="n">end</span><span class="p">,</span><span class="n">version</span><span class="p">)</span>
-    <span class="k">if</span><span class="p">(</span><span class="n">vn</span><span class="o">==</span><span class="mi">3</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">version_3</span><span class="o">.</span><span class="n">get_obs</span><span class="p">(</span><span class="n">start</span><span class="p">,</span><span class="n">end</span><span class="p">,</span><span class="n">version</span><span class="p">)</span>
-    <span class="k">raise</span> <span class="n">StandardError</span><span class="p">(</span><span class="s1">&#39;Invalid version number </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">version</span><span class="p">)</span></div>
 </pre></div>
 
           </div>

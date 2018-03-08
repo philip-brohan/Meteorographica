@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Meteorographica examples: Global weathermap (CERA-20C version) &#8212; Meteorographica: a personal library for weather data</title>
+    <title>Meteorographica examples: Global weathermap (20CR version) &#8212; Meteorographica: a personal library for weather data</title>
     
     <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -27,8 +27,7 @@
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="top" title="Meteorographica: a personal library for weather data" href="../../index.html" />
     <link rel="up" title="Examples" href="../examples.html" />
-    <link rel="next" title="Meteorographica examples: Global weathermap (20CR version)" href="../global_rotated_1987_20CR/global_weather_rotated.html" />
-    <link rel="prev" title="Examples" href="../examples.html" /> 
+    <link rel="prev" title="Meteorographica examples: Global weathermap (CERA-20C version)" href="../global_rotated_1987/global_weather_rotated.html" /> 
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
@@ -41,10 +40,7 @@
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../global_rotated_1987_20CR/global_weather_rotated.html" title="Meteorographica examples: Global weathermap (20CR version)"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="../examples.html" title="Examples"
+          <a href="../global_rotated_1987/global_weather_rotated.html" title="Meteorographica examples: Global weathermap (CERA-20C version)"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../../index.html">Meteorographica</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../examples.html" accesskey="U">Examples</a> &#187;</li> 
@@ -56,15 +52,12 @@
               <img class="logo" src="../../_static/UK.GS1987.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="../examples.html"
-                        title="previous chapter">Examples</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="../global_rotated_1987_20CR/global_weather_rotated.html"
-                        title="next chapter">Meteorographica examples: Global weathermap (20CR version)</a></p>
+  <p class="topless"><a href="../global_rotated_1987/global_weather_rotated.html"
+                        title="previous chapter">Meteorographica examples: Global weathermap (CERA-20C version)</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../../_sources/examples/global_rotated_1987/global_weather_rotated.txt"
+      <li><a href="../../_sources/examples/global_rotated_1987_20CR/global_weather_rotated.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -87,22 +80,24 @@
           <div class="body" role="main">
             
   <p><a class="reference external" href="../examples.html">Meteographica examples main page</a></p>
-<div class="section" id="meteorographica-examples-global-weathermap-cera-20c-version">
-<h1>Meteorographica examples: Global weathermap (CERA-20C version)<a class="headerlink" href="#meteorographica-examples-global-weathermap-cera-20c-version" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="meteorographica-examples-global-weathermap-20cr-version">
+<h1>Meteorographica examples: Global weathermap (20CR version)<a class="headerlink" href="#meteorographica-examples-global-weathermap-20cr-version" title="Permalink to this headline">¶</a></h1>
 <center>
 <table><tr><td>
-<a href="https://github.com/philip-brohan/Meteorographica/raw/master/docs/examples/global_rotated_1987/global.rotated.1987-10-16:06.png"><img src="https://github.com/philip-brohan/Meteorographica/raw/master/docs/examples/global_rotated_1987/global.rotated.1987-10-16:06.png"></a></td></tr>
-<tr><td>Global weather map for 16 October 1987, at 6am UTC, as reconstructed by the CERA-20C reanalysis (ensemble member 1 is shown). Contours show mean-sea-level pressure, vectors 10m wind, and green shading precipitation rate.</td></tr>
+<a href="https://github.com/philip-brohan/Meteorographica/raw/master/docs/examples/global_rotated_1987_20CR/global.rotated.1987-10-16:06.png"><img src="https://github.com/philip-brohan/Meteorographica/raw/master/docs/examples/global_rotated_1987_20CR/global.rotated.1987-10-16:06.png"></a></td></tr>
+<tr><td>Global weather map for 16 October 1987, at 6am UTC, as reconstructed by the 20CR2c reanalysis (ensemble member 1 is shown). Contours show mean-sea-level pressure, vectors 10m wind, green shading precipitation rate, and yellow dots observations assimilated.</td></tr>
 </table>
-</center><p>Collect the data (sea-level pressure, precipitation and 10m-wind ensembles from CERA20C for October 1987):</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">Meteorographica.data.cera20c</span> <span class="kn">as</span> <span class="nn">cera20c</span>
+</center><p>Collect the data (observations, sea-level pressure, precipitation and 10m-wind ensembles from 20CR2c for October 1987):</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">Meteorographica.data.twcr</span> <span class="kn">as</span> <span class="nn">twcr</span>
+<span class="n">twcr</span><span class="o">.</span><span class="n">fetch_observations</span><span class="p">(</span><span class="mi">1987</span><span class="p">,</span><span class="n">version</span><span class="o">=</span><span class="s1">&#39;2c&#39;</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;prmsl&#39;</span><span class="p">,</span><span class="s1">&#39;prate&#39;</span><span class="p">,</span><span class="s1">&#39;uwnd.10m&#39;</span><span class="p">,</span><span class="s1">&#39;vwnd.10m&#39;</span><span class="p">):</span>
-    <span class="n">cera20c</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="n">var</span><span class="p">,</span><span class="mi">1987</span><span class="p">,</span><span class="mi">10</span><span class="p">)</span>
+    <span class="n">twcr</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="n">var</span><span class="p">,</span><span class="mi">1987</span><span class="p">,</span><span class="n">version</span><span class="o">=</span><span class="s1">&#39;2c&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Make the figure:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Global weather plot from 20CR2C - rotated pole</span>
 <span class="c1"># Use Meteorographica weathermap functions</span>
+<span class="c1"># This version uses 20CR data</span>
 
 <span class="kn">import</span> <span class="nn">matplotlib</span>
 
@@ -112,7 +107,7 @@
 <span class="kn">import</span> <span class="nn">iris</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">numpy</span>
-<span class="kn">import</span> <span class="nn">Meteorographica.data.cera20c</span> <span class="k">as</span> <span class="nn">cera20c</span>
+<span class="kn">import</span> <span class="nn">Meteorographica.data.twcr</span> <span class="k">as</span> <span class="nn">twcr</span>
 <span class="kn">import</span> <span class="nn">cartopy</span>
 <span class="kn">import</span> <span class="nn">cartopy.crs</span> <span class="k">as</span> <span class="nn">ccrs</span>
 <span class="kn">import</span> <span class="nn">math</span>
@@ -171,12 +166,12 @@
 <span class="n">wm</span><span class="o">.</span><span class="n">add_grid</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">sep_major</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span><span class="n">sep_minor</span><span class="o">=</span><span class="mf">2.5</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mf">0.3</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mf">0.2</span><span class="p">))</span>
 
 <span class="c1"># Plot the precip</span>
-<span class="n">prate</span><span class="o">=</span><span class="n">cera20c</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;prate&#39;</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span><span class="n">day</span><span class="p">,</span><span class="n">hour</span><span class="p">)</span>
+<span class="n">prate</span><span class="o">=</span><span class="n">twcr</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;prate&#39;</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span><span class="n">day</span><span class="p">,</span><span class="n">hour</span><span class="p">,</span><span class="n">version</span><span class="o">=</span><span class="s1">&#39;2c&#39;</span><span class="p">)</span>
 <span class="n">pe</span><span class="o">=</span><span class="n">prate</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">iris</span><span class="o">.</span><span class="n">Constraint</span><span class="p">(</span><span class="n">member</span><span class="o">=</span><span class="n">member</span><span class="p">))</span>
 <span class="n">prate_img</span><span class="o">=</span><span class="n">wm</span><span class="o">.</span><span class="n">plot_cmesh</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">pe</span><span class="p">)</span>
 
 <span class="c1"># Overplot the pressure as a contour plot</span>
-<span class="n">prmsl</span><span class="o">=</span><span class="n">cera20c</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;prmsl&#39;</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span><span class="n">day</span><span class="p">,</span><span class="n">hour</span><span class="p">)</span>
+<span class="n">prmsl</span><span class="o">=</span><span class="n">twcr</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;prmsl&#39;</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span><span class="n">day</span><span class="p">,</span><span class="n">hour</span><span class="p">,</span><span class="n">version</span><span class="o">=</span><span class="s1">&#39;2c&#39;</span><span class="p">)</span>
 <span class="n">pe</span><span class="o">=</span><span class="n">prmsl</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">iris</span><span class="o">.</span><span class="n">Constraint</span><span class="p">(</span><span class="n">member</span><span class="o">=</span><span class="n">member</span><span class="p">))</span>
 <span class="n">pe</span><span class="o">.</span><span class="n">data</span><span class="o">=</span><span class="n">pe</span><span class="o">.</span><span class="n">data</span><span class="o">/</span><span class="mi">100</span> <span class="c1"># To hPa for labels</span>
 <span class="n">CS</span><span class="o">=</span><span class="n">wm</span><span class="o">.</span><span class="n">plot_contour</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">pe</span><span class="p">,</span>
@@ -185,12 +180,18 @@
                    <span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <span class="c1"># Overplot the wind vectors as a quiver plot</span>
-<span class="n">u</span><span class="o">=</span><span class="n">cera20c</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;uwnd.10m&#39;</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span><span class="n">day</span><span class="p">,</span><span class="n">hour</span><span class="p">)</span>
+<span class="n">u</span><span class="o">=</span><span class="n">twcr</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;uwnd.10m&#39;</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span><span class="n">day</span><span class="p">,</span><span class="n">hour</span><span class="p">,</span><span class="n">version</span><span class="o">=</span><span class="s1">&#39;2c&#39;</span><span class="p">)</span>
 <span class="n">ue</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">iris</span><span class="o">.</span><span class="n">Constraint</span><span class="p">(</span><span class="n">member</span><span class="o">=</span><span class="n">member</span><span class="p">))</span>
-<span class="n">v</span><span class="o">=</span><span class="n">cera20c</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;vwnd.10m&#39;</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span><span class="n">day</span><span class="p">,</span><span class="n">hour</span><span class="p">)</span>
+<span class="n">v</span><span class="o">=</span><span class="n">twcr</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;vwnd.10m&#39;</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span><span class="n">day</span><span class="p">,</span><span class="n">hour</span><span class="p">,</span><span class="n">version</span><span class="o">=</span><span class="s1">&#39;2c&#39;</span><span class="p">)</span>
 <span class="n">ve</span><span class="o">=</span><span class="n">v</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">iris</span><span class="o">.</span><span class="n">Constraint</span><span class="p">(</span><span class="n">member</span><span class="o">=</span><span class="n">member</span><span class="p">))</span>
 <span class="n">qv</span><span class="o">=</span><span class="n">wm</span><span class="o">.</span><span class="n">plot_quiver</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">ue</span><span class="p">,</span><span class="n">ve</span><span class="p">,</span><span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">resolution</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
                                <span class="n">max_points</span><span class="o">=</span><span class="mi">100000</span><span class="p">)</span>
+
+<span class="c1"># Add the observations</span>
+<span class="n">obs</span><span class="o">=</span><span class="n">twcr</span><span class="o">.</span><span class="n">load_observations_1file</span><span class="p">(</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span><span class="n">day</span><span class="p">,</span><span class="n">hour</span><span class="p">,</span><span class="s1">&#39;2c&#39;</span><span class="p">)</span>
+<span class="c1"># Filter to those assimilated</span>
+<span class="n">obs_s</span><span class="o">=</span><span class="n">obs</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">obs</span><span class="p">[</span><span class="s1">&#39;Assimilation.indicator&#39;</span><span class="p">]</span><span class="o">==</span><span class="mi">1</span><span class="p">)]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">wm</span><span class="o">.</span><span class="n">plot_obs</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">obs_s</span><span class="p">,</span><span class="n">radius</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
 
 <span class="c1"># Label the plot with a date</span>
 <span class="n">label</span><span class="o">=</span><span class="n">dte</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%A </span><span class="si">%-d</span><span class="s2"> %B %Y at %-H GMT&quot;</span><span class="p">)</span>
@@ -219,10 +220,7 @@
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../global_rotated_1987_20CR/global_weather_rotated.html" title="Meteorographica examples: Global weathermap (20CR version)"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="../examples.html" title="Examples"
+          <a href="../global_rotated_1987/global_weather_rotated.html" title="Meteorographica examples: Global weathermap (CERA-20C version)"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../../index.html">Meteorographica</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../examples.html" >Examples</a> &#187;</li> 
