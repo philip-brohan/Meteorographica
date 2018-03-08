@@ -47,7 +47,8 @@ def cube_order_dimensions(cube,dims_list):
     for dim_i in range(0,len(dims_list)):
         try:
             odr[dim_i]=[index for index in range(len(crds)) 
-                      if crds[index].long_name==dims_list[dim_i]][0]
+                      if (crds[index].long_name==dims_list[dim_i] or
+                          crds[index].standard_name==dims_list[dim_i])][0]
         except IndexError:
             raise StandardError("Cube does not have vector dimension %s" %
                                  dims_list[dim_i])
