@@ -90,7 +90,7 @@
 <span id="meteorographica-data-twcr"></span><h1>Meteorographica.data.twcr<a class="headerlink" href="#module-Meteorographica.data.twcr" title="Permalink to this headline">¶</a></h1>
 <p>This package retrieves and loads data from the <a class="reference external" href="https://www.esrl.noaa.gov/psd/data/20thC_Rean/">Twentieth Century Reanalysis (20CR)</a>.</p>
 <p>It retrieves the data from the <a class="reference external" href="http://portal.nersc.gov/project/20C_Reanalysis/">20CR portal</a> at <a class="reference external" href="http://www.nersc.gov">NERSC</a>.</p>
-<p>At the moment, only version &#8216;2c&#8217; of 20CR is supported.</p>
+<p>At the moment, only version &#8216;2c&#8217; of 20CR is supported for public use.</p>
 <p>Only hourly data is supported (no daily or monthly averages) for 5 surface variables:</p>
 <ul class="simple">
 <li>Mean-sea-level pressure: &#8216;mslp&#8217;</li>
@@ -139,11 +139,11 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>variable</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a>) &#8211; Variable to fetch (e.g. &#8216;prmsl&#8217;).</li>
-<li><strong>year</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">int</span></code></a>) &#8211; Year to get data for.</li>
-<li><strong>month</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">int</span></code></a>, optional) &#8211; Month to get data for (1-12).</li>
-<li><strong>day</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">int</span></code></a>, optional) &#8211; Day to get data for (1-31).</li>
-<li><strong>version</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a>) &#8211; 20CR version to retrieve data for.</li>
+<li><strong>variable</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a>) &#8211; Variable to fetch (e.g. &#8216;prmsl&#8217;).</li>
+<li><strong>year</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">int</span></code></a>) &#8211; Year to get data for.</li>
+<li><strong>month</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">int</span></code></a>, optional) &#8211; Month to get data for (1-12).</li>
+<li><strong>day</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">int</span></code></a>, optional) &#8211; Day to get data for (1-31).</li>
+<li><strong>version</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a>) &#8211; 20CR version to retrieve data for.</li>
 </ul>
 </td>
 </tr>
@@ -159,7 +159,7 @@
 
 <dl class="function">
 <dt id="Meteorographica.data.twcr.fetch_observations">
-<code class="descclassname">Meteorographica.data.twcr.</code><code class="descname">fetch_observations</code><span class="sig-paren">(</span><em>year</em>, <em>month=1</em>, <em>day=1</em>, <em>version='none'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Meteorographica/data/twcr/observations.html#fetch_observations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Meteorographica.data.twcr.fetch_observations" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Meteorographica.data.twcr.</code><code class="descname">fetch_observations</code><span class="sig-paren">(</span><em>year</em>, <em>month=None</em>, <em>day=None</em>, <em>version='none'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Meteorographica/data/twcr/observations.html#fetch_observations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Meteorographica.data.twcr.fetch_observations" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get observations from the 20CR archive at NERSC.</p>
 <p>Data wil be stored locally in directory $SCRATCH/20CR, to be retrieved by <a class="reference internal" href="#Meteorographica.data.twcr.load_observations" title="Meteorographica.data.twcr.load_observations"><code class="xref py py-func docutils literal"><span class="pre">load_observations()</span></code></a>. If the local files that would be produced already exists, this function does nothing.</p>
 <p>For 20CR version 2c, the data is retrieved in calendar year blocks, and the &#8216;month&#8217; and &#8216;day&#8217; arguments are ignored.</p>
@@ -168,10 +168,10 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>year</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">int</span></code></a>) &#8211; Year to get data for.</li>
-<li><strong>month</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">int</span></code></a>, optional) &#8211; Month to get data for (1-12).</li>
-<li><strong>day</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">int</span></code></a>, optional) &#8211; Day to get data for (1-31).</li>
-<li><strong>version</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a>) &#8211; 20CR version to retrieve data for.</li>
+<li><strong>year</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">int</span></code></a>) &#8211; Year to get data for.</li>
+<li><strong>month</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">int</span></code></a>, optional) &#8211; Month to get data for (1-12).</li>
+<li><strong>day</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">int</span></code></a>, optional) &#8211; Day to get data for (1-31).</li>
+<li><strong>version</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a>) &#8211; 20CR version to retrieve data for.</li>
 </ul>
 </td>
 </tr>
@@ -195,12 +195,12 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>variable</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a>) &#8211; Variable to fetch (e.g. &#8216;prmsl&#8217;)</li>
-<li><strong>year</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">int</span></code></a>) &#8211; Year to get data for.</li>
-<li><strong>month</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">int</span></code></a>) &#8211; Month to get data for (1-12).</li>
-<li><strong>day</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">int</span></code></a>) &#8211; Day to get data for (1-31).</li>
-<li><strong>hour</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">float</span></code></a>) &#8211; Hour to get data for (0-23.99). Note that this isn&#8217;t an integer, for minutes and seconds, use fractions of an hour.</li>
-<li><strong>version</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a>) &#8211; 20CR version to load data from.</li>
+<li><strong>variable</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a>) &#8211; Variable to fetch (e.g. &#8216;prmsl&#8217;)</li>
+<li><strong>year</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">int</span></code></a>) &#8211; Year to get data for.</li>
+<li><strong>month</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">int</span></code></a>) &#8211; Month to get data for (1-12).</li>
+<li><strong>day</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">int</span></code></a>) &#8211; Day to get data for (1-31).</li>
+<li><strong>hour</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">float</span></code></a>) &#8211; Hour to get data for (0-23.99). Note that this isn&#8217;t an integer, for minutes and seconds, use fractions of an hour.</li>
+<li><strong>version</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a>) &#8211; 20CR version to load data from.</li>
 </ul>
 </td>
 </tr>
@@ -236,9 +236,9 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>start</strong> (<a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">datetime.datetime</span></code></a>) &#8211; Get observations at or after this time.</li>
-<li><strong>end</strong> (<a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">datetime.datetime</span></code></a>) &#8211; Get observations before this time.</li>
-<li><strong>version</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a>) &#8211; 20CR version to load data from.</li>
+<li><strong>start</strong> (<a class="reference external" href="https://docs.python.org/2/library/datetime.html#datetime.datetime" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">datetime.datetime</span></code></a>) &#8211; Get observations at or after this time.</li>
+<li><strong>end</strong> (<a class="reference external" href="https://docs.python.org/2/library/datetime.html#datetime.datetime" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">datetime.datetime</span></code></a>) &#8211; Get observations before this time.</li>
+<li><strong>version</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a>) &#8211; 20CR version to load data from.</li>
 </ul>
 </td>
 </tr>
@@ -268,11 +268,11 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>year</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">int</span></code></a>) &#8211; Year of assimilation run.</li>
-<li><strong>month</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">int</span></code></a>) &#8211; Month of assimilation run (1-12)</li>
-<li><strong>day</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">int</span></code></a>) &#8211; Day of assimilation run (1-31).</li>
-<li><strong>hour</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">int</span></code></a>) &#8211; Hour of assimilation run (0-23).</li>
-<li><strong>version</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a>) &#8211; 20CR version to load data from.</li>
+<li><strong>year</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">int</span></code></a>) &#8211; Year of assimilation run.</li>
+<li><strong>month</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">int</span></code></a>) &#8211; Month of assimilation run (1-12)</li>
+<li><strong>day</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">int</span></code></a>) &#8211; Day of assimilation run (1-31).</li>
+<li><strong>hour</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">int</span></code></a>) &#8211; Hour of assimilation run (0-23).</li>
+<li><strong>version</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a>) &#8211; 20CR version to load data from.</li>
 </ul>
 </td>
 </tr>

@@ -82,6 +82,8 @@
 <span class="c1"># Functions for getting data from NERSC.</span>
 
 <span class="kn">import</span> <span class="nn">version_2c</span>
+<span class="kn">import</span> <span class="nn">version_3</span>
+<span class="kn">import</span> <span class="nn">observations</span>
 
 <div class="viewcode-block" id="fetch"><a class="viewcode-back" href="../../../../subdata/data_20CR.html#Meteorographica.data.twcr.fetch">[docs]</a><span class="k">def</span> <span class="nf">fetch</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">day</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">version</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Get data for one variable, from the 20CR archive at NERSC.</span>
@@ -104,11 +106,15 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="n">variable</span><span class="o">==</span><span class="s1">&#39;observations&#39;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">fetch_observations</span><span class="p">(</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="o">=</span><span class="n">month</span><span class="p">,</span><span class="n">day</span><span class="o">=</span><span class="n">day</span><span class="p">,</span>
+        <span class="k">return</span> <span class="n">observations</span><span class="o">.</span><span class="n">fetch_observations</span><span class="p">(</span><span class="n">year</span><span class="p">,</span>
+                                  <span class="n">month</span><span class="o">=</span><span class="n">month</span><span class="p">,</span><span class="n">day</span><span class="o">=</span><span class="n">day</span><span class="p">,</span>
                                   <span class="n">version</span><span class="o">=</span><span class="n">version</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">version</span><span class="o">==</span><span class="s1">&#39;2c&#39;</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">version_2c</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">version</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;4.5.1&#39;</span><span class="p">,</span><span class="s1">&#39;4.5.2&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">version_3</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">month</span><span class="p">,</span><span class="n">version</span><span class="p">)</span>
+
     <span class="k">raise</span> <span class="n">StandardError</span><span class="p">(</span><span class="s2">&quot;Unsupported version </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">version</span><span class="p">)</span></div>
 </pre></div>
 
