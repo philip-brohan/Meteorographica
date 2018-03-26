@@ -14,6 +14,7 @@
 # Functions for getting data from NERSC.
 
 import version_2c
+import version_3
 import observations
 
 def fetch(variable,year,month=1,day=1,version='none'):
@@ -43,4 +44,7 @@ def fetch(variable,year,month=1,day=1,version='none'):
 
     if version=='2c':
         return version_2c.fetch(variable,year)
+    if version in ('4.5.1','4.5.2'):
+        return version_3.fetch(variable,year,month,version)
+
     raise StandardError("Unsupported version %s" % version)

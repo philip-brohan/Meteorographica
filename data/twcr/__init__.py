@@ -15,7 +15,7 @@ This package retrieves and loads data from the `Twentieth Century Reanalysis (20
 
 It retrieves the data from the `20CR portal <http://portal.nersc.gov/project/20C_Reanalysis/>`_ at `NERSC <http://www.nersc.gov>`_.
 
-At the moment, only version '2c' of 20CR is supported.
+At the moment, only version '2c' of 20CR is supported for public use.
 
 Only hourly data is supported (no daily or monthly averages) for 5 surface variables:
 

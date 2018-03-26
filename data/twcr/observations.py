@@ -14,8 +14,9 @@
 # Functions for handling observations.
 
 import version_2c
+import version_3
 
-def fetch_observations(year,month=1,day=1,version='none'):
+def fetch_observations(year,month=None,day=None,version='none'):
     """Get observations from the 20CR archive at NERSC.
 
     Data wil be stored locally in directory $SCRATCH/20CR, to be retrieved by :func:`load_observations`. If the local files that would be produced already exists, this function does nothing.
@@ -36,6 +37,8 @@ def fetch_observations(year,month=1,day=1,version='none'):
 
     if version=='2c':
         return version_2c.fetch_observations(year)
+    if version in ('4.5.1','4.5.2'):
+        return version_3.fetch_observations(year,month,version)
     raise StandardError("Unsupported version %s" % version)
 
 def load_observations_1file(year,month,day,hour,version='none'):
@@ -62,6 +65,8 @@ def load_observations_1file(year,month,day,hour,version='none'):
     if version=='2c':
         return version_2c.load_observations_1file(
                                  year,month,day,hour)
+    if version in ('4.5.1','4.5.2'):
+        return version_3.load_observations_1file(year,month,day,hour,version)
     raise StandardError("Unsupported version %s" % version)
 
 def load_observations(start,end,version='none'):
@@ -86,4 +91,6 @@ def load_observations(start,end,version='none'):
 
     if version=='2c':
         return version_2c.load_observations(start,end)
+    if version in ('4.5.1','4.5.2'):
+        return version_3.load_observations(start,end,version)
     raise StandardError("Unsupported version %s" % version)

@@ -14,6 +14,7 @@
 # Load 20CR data from local files.
 
 import version_2c
+import version_3
 
 def load(variable,year,month,day,hour,version):
     """Load requested data from disc, interpolating if necessary.
@@ -41,5 +42,8 @@ def load(variable,year,month,day,hour,version):
     if version=='2c':
         return version_2c.load(variable,year,month,
                                 day,hour)
+    if version in ('4.5.1','4.5.2'):
+        return version_3.load(variable,year,month,
+                                day,hour,version)
     raise StandardError('Invalid version number %s' % version)
 
