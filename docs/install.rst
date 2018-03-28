@@ -25,7 +25,7 @@ Finally, run the package setup function to produce the plot backgrounds:
 
 .. code-block:: python
 
-    import Meteorographica.data.weathermap as wm
+    import Meteorographica.weathermap as wm
     wm.fetch_backgrounds()
 
 You should then be able to reproduce `the examples <examples/examples.html>`_.
