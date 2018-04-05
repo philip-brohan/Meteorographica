@@ -145,6 +145,8 @@ def load(variable,year,month,day,hour,version='4.5.1'):
                                           next_step['day'],
                                           next_step['hour'],
                                           version)
+    # Iris won't merge cubes with different attributes
+    s_previous.attributes=s_next.attributes
     s_next=iris.cube.CubeList((s_previous,s_next)).merge_cube()
     s_next=s_next.interpolate([('time',dt_current)],iris.analysis.Linear())
     return s_next
