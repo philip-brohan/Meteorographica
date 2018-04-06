@@ -360,7 +360,7 @@ def plot_obs(ax,obs,
         radius (:obj:`float`, optional): Radius of circle marking each ob. (degrees). Defaults to 1.
         facecolor (see :mod:`matplotlib.colors`, optional): Main colour of the circle to be plotted for each ob. Defaults to 'yellow'.
         edgecolor (see :mod:`matplotlib.colors`, optional): Border colour of the circle to be plotted for each ob. Defaults to 'black'.
-        alpha (:obj:`float`, optional): Alpha value for facecolor and edgecolor. Defaults to 0.85.
+        alpha (:obj:`float`, optional): Alpha value for facecolor and edgecolor. Defaults to 0.85. Will be multiplied by the observation weight if present.
         zorder (:obj:`float`, optional): Standard matplotlib parameter determining which things are plotted on top (high zorder), and which underneath (low zorder), Defaults to 2.5.
 
     Returns:
@@ -377,12 +377,14 @@ def plot_obs(ax,obs,
 
     # Plot each ob as a circle
     for i in range(0,len(new_longitude)):
+        weight=1.0
+        if 'weight' in obs.columns: weight=obs['weight'].values[i]
         ax.add_patch(matplotlib.patches.Circle((new_longitude[i],
                                                 new_latitude[i]),
                                                 radius=radius,
                                                 facecolor=facecolor,
                                                 edgecolor=edgecolor,
-                                                alpha=alpha,
+                                                alpha=alpha*weight,
                                                 zorder=zorder))
 
 def plot_label(ax,label,

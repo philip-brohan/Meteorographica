@@ -94,3 +94,29 @@ def load_observations(start,end,version='none'):
     if version in ('4.5.1','4.5.2'):
         return version_3.load_observations(start,end,version)
     raise StandardError("Unsupported version %s" % version)
+
+def load_observations_fortime(v_time,version='none'):
+    """Load observations from disc, that contribute to fields ata given time
+
+    Data must be available in directory $SCRATCH/20CR, previously retrieved by :func:`fetch`.
+
+    At the times when assimilation takes place, all the observations used at that time are provided by :func:`load_observations_1file` - this function serves the same function, but for intermediate times, where fields are obtained by interpolation. It gets all the observations from each field used in the interpolation, and assigns a weight to each one - the same as the weight used in interpolating the fields.
+
+    Args:
+        v_time (:obj:`datetime.datetime`): Get observations associated with this time.
+        version (:obj:`str`): 20CR version to load data from.
+
+    Returns:
+        :obj:`pandas.DataFrame`: same as from :func:`load_observations`, except with aded column 'weight' giving the weight of each observation at the given time.
+
+    Raises:
+        StandardError: Version number not supported, or data not on disc - see :func:`fetch_observations`
+
+    |
+    """
+
+    if version=='2c':
+        return version_2c.load_observations_fortime(v_time)
+    if version in ('4.5.1','4.5.2'):
+        return version_3.load_observations_fortime(v_time,version)
+    raise StandardError("Unsupported version %s" % version)

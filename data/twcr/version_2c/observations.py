@@ -19,8 +19,11 @@ import os.path
 import subprocess
 import zipfile
 import pandas
+import numpy
 
 from utils import _get_data_dir
+from load import _get_previous_field_time
+from load import _get_next_field_time
 
 def _observations_remote_file(year):
     return ("http://portal.nersc.gov/project/m958/2c_observations/"+
@@ -129,3 +132,23 @@ def load_observations(start,end):
             result=pandas.concat([result,o2])
         ct=ct+datetime.timedelta(hours=1)
     return(result)
+
+def load_observations_fortime(v_time):
+    result=None
+    if v_time.hour%6==0:
+        result=load_observations_1file(v_time.year,v_time.month,
+                                       v_time.day,v_time.hour)
+        result['weight']=numpy.repeat(1,len(result.index))
+        return result
+    prev_time=v_time-datetime.timedelta(hours=v_time.hour%6)
+    prev_weight=(6-v_time.hour%6)/6.0
+    result=load_observations_1file(prev_time.year,prev_time.month,
+                                   prev_time.day,prev_time.hour)
+    result['weight']=numpy.repeat(prev_weight,len(result.index))
+    next_time=prev_time+datetime.timedelta(hours=6)
+    next_weight=1-prev_weight
+    result2=load_observations_1file(next_time.year,next_time.month,
+                                    next_time.day,next_time.hour)
+    result2['weight']=numpy.repeat(next_weight,len(result2.index))
+    result=pandas.concat([result,result2])
+    return result
