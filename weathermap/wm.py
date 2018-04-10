@@ -74,7 +74,7 @@ def add_grid(ax,
     gl_minor.xlocator = matplotlib.ticker.FixedLocator(
                        numpy.arange(-180,180+sep_minor,sep_minor))
     gl_minor.ylocator = matplotlib.ticker.FixedLocator(
-                         numpy.arange(-85,58+sep_minor,sep_minor))
+                         numpy.arange(-85,85+sep_minor,sep_minor))
     gl_major=ax.gridlines(linestyle=linestyle,
                           linewidth=linewidth_major,
                           color=color,
