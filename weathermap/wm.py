@@ -171,6 +171,7 @@ def plot_contour(ax,pe,
                  resolution=0.25,
                  levels=None,
                  colors='black',linewidths=0.5,
+                 alpha=1,
                  fontsize=12,
                  zorder=4,label=False):
     """Plots a variable as a contour plot.
@@ -183,6 +184,7 @@ def plot_contour(ax,pe,
         resolution (`float`, optional): What lat:lon resolution (in degrees) to interpolate pe.data to before plotting. Defaults to 0.25.
         colors (see :mod:`matplotlib.colors`, optional) contour line colour. Defaults to 'black'.
         linewidths (:obj:`float`, optional): Line width for contour lines. Defaults to 0.5.
+        alpha (:obj:`float`, optional): Colour alpha blend. Defaults to 1 (opaque).
         fontsize (:obj:`int`, optional): Font size for contour labels. Defaults to 12.
         zorder (:obj:`float`, optional): Standard matplotlib parameter determining which things are plotted on top (high zorder), and which underneath (low zorder), Defaults to 4.
         label (:obj:`bool`, optional): Label contour lines? Defaults to False.
@@ -200,6 +202,7 @@ def plot_contour(ax,pe,
     CS=ax.contour(lons, lats, contour_p.data,
                                colors=colors,
                                linewidths=linewidths,
+                               alpha=alpha,
                                levels=levels,
                                zorder=zorder)
 

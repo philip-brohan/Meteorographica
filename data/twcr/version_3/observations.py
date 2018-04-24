@@ -62,7 +62,7 @@ def load_observations_1file(year,month,day,hour,version):
 
     o=pandas.read_fwf(of_name,
                        colspecs=[(0,19),(20,23),(24,25),(26,33),(34,40),(41,46),
-                                 (47,53),(54,61),(62,70),(71,80),(81,86),
+                                 (47,53),(54,61),(62,69),(70,80),(81,86),
                                  (87,117),(118,131)],
                        usecols=[0,1,2,3,4,5,6,7,8,9,10,11],
                        header=None,
@@ -75,7 +75,7 @@ def load_observations_1file(year,month,day,hour,version):
                                    'Un5': float, 'Un6': float, 'Name': str},
                        na_values=['NA','*','***','*****','*******','**********',
                                           '-99','9999','-999','9999.99','10000.0',
-                                          '-9.99','999999999999999999999999999999',
+                                          '-9.99',
                                           '999999999999','9'],
                        comment=None)
     return(o)
