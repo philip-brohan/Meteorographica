@@ -44,7 +44,7 @@ def fetch_backgrounds():
         if not os.path.isfile("GRAY_50M_SR_W.tif"):
             if not os.path.isfile("GRAY_50M_SR_W.zip"):
                 os.system("wget http://www.naturalearthdata.com/http//www.naturalearthdata.com/"
-                          + "download/50m/raster/GRAY_50M_SR_W.zip .")
+                          + "download/50m/raster/GRAY_50M_SR_W.zip")
             os.system("unzip GRAY_50M_SR_W.zip")
         os.system("convert GRAY_50M_SR_W/GRAY_50M_SR_W.tif "
                   + "-transparent '#6a6a6a' "
@@ -54,7 +54,7 @@ def fetch_backgrounds():
         if not os.path.isfile("GRAY_LR_SR_W.tif"):
             if not os.path.isfile("GRAY_LR_SR_W.zip"):
                 os.system("wget http://www.naturalearthdata.com/http//www.naturalearthdata.com/"
-                          + "download/10m/raster/GRAY_LR_SR_W.zip .")
+                          + "download/10m/raster/GRAY_LR_SR_W.zip")
             os.system("unzip GRAY_LR_SR_W.zip")
         os.system("convert GRAY_LR_SR_W/GRAY_LR_SR_W.tif "
                   + "-transparent '#6a6a6a' "
@@ -64,7 +64,7 @@ def fetch_backgrounds():
         if not os.path.isfile("GRAY_HR_SR_W.tif"):
             if not os.path.isfile("GRAY_HR_SR_W.zip"):
                 os.system("wget http://www.naturalearthdata.com/http//www.naturalearthdata.com/"
-                          + "download/10m/raster/GRAY_HR_SR_W.zip .")
+                          + "download/10m/raster/GRAY_HR_SR_W.zip")
             os.system("unzip GRAY_HR_SR_W.zip")
         os.system("convert GRAY_HR_SR_W/GRAY_HR_SR_W.tif "
                   + "-transparent '#6a6a6a' "
