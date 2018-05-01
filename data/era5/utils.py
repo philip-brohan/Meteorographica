@@ -73,7 +73,7 @@ def _hourly_get_file_name(variable,year,month,
                          day=15,hour=12,
                          fc_init=None,
                          stream='enda'):
-    base_dir=get_data_dir()
+    base_dir=_get_data_dir()
     if type=='normal':
         file_name="%s/normals/%s/hourly/%02d/%s.nc" % (base_dir,stream,
                                                     month,variable)
