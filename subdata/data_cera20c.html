@@ -1,36 +1,23 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+        <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
     <title>Meteorographica.data.cera20c &#8212; Meteorographica: a personal library for weather data</title>
-    
     <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '0.0.1',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="top" title="Meteorographica: a personal library for weather data" href="../index.html" />
-    <link rel="up" title="Meteorographica.data" href="../data.html" />
     <link rel="next" title="Meteorographica.data.era5" href="data_era5.html" />
     <link rel="prev" title="Meteorographica.data" href="../data.html" /> 
-  </head>
-  <body role="document">
+  </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -64,18 +51,20 @@
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../_sources/subdata/data_cera20c.txt"
+      <li><a href="../_sources/subdata/data_cera20c.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -92,45 +81,45 @@
 <p>To retrieve the data, it uses the <a class="reference external" href="https://software.ecmwf.int/wiki/display/WEBAPI/ECMWF+Web+API+Home">ECMWF Public data API</a>. You will need to install a key and the client libraries as described in <a class="reference external" href="https://software.ecmwf.int/wiki/display/WEBAPI/Access+ECMWF+Public+Datasets">the API documentation</a>. Note that this is the same system used by <cite>Meteographica.data.era5</cite> - the same key and libraries will let you use that as well.</p>
 <p>Only hourly data is supported (no daily or monthly averages) for 7 surface variables:</p>
 <ul class="simple">
-<li>Mean-sea-level pressure: &#8216;mslp&#8217;</li>
-<li>2m air temperature: &#8216;air.2m&#8217;</li>
-<li>Precipitation rate: &#8216;prate&#8217;</li>
-<li>10m meridional wind: &#8216;uwnd.10m&#8217;</li>
-<li>10m zonal wind: &#8216;vwnd.10m&#8217;</li>
-<li>Sea-surface temperature: &#8216;sst&#8217;</li>
-<li>Sea-ice coverage: &#8216;icec&#8217;</li>
+<li>Mean-sea-level pressure: ‘mslp’</li>
+<li>2m air temperature: ‘air.2m’</li>
+<li>Precipitation rate: ‘prate’</li>
+<li>10m meridional wind: ‘uwnd.10m’</li>
+<li>10m zonal wind: ‘vwnd.10m’</li>
+<li>Sea-surface temperature: ‘sst’</li>
+<li>Sea-ice coverage: ‘icec’</li>
 </ul>
-<p>Data retrieved is stored in directory $SCRATCH/CERA_20C - the &#8216;SCRATCH&#8217; environment variable must be set. Data is retrieved in 1-month batches:</p>
+<p>Data retrieved is stored in directory $SCRATCH/CERA_20C - the ‘SCRATCH’ environment variable must be set. Data is retrieved in 1-month batches:</p>
 <p>For example:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">Meteorographica.data.cera20c</span> <span class="kn">as</span> <span class="nn">cera20c</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">Meteorographica.data.cera20c</span> <span class="kn">as</span> <span class="nn">cera20c</span>
 <span class="n">cera20c</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="s1">&#39;prate&#39;</span><span class="p">,</span><span class="mi">1969</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Will retrieve precipitation rate data for the whole of March 1969, and</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">pr</span><span class="o">=</span><span class="n">cera20c</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;prate&#39;</span><span class="p">,</span><span class="mi">1969</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="mf">15.25</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pr</span><span class="o">=</span><span class="n">cera20c</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;prate&#39;</span><span class="p">,</span><span class="mi">1969</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="mf">15.25</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>will then load the precipitation rates at quarter past 3pm on March 12 1969 from the retrieved dataset as a <a class="reference external" href="http://scitools.org.uk/iris/docs/latest/iris/iris/cube.html#iris.cube.Cube" title="(in Iris v2.0)"><code class="xref py py-class docutils literal"><span class="pre">iris.cube.Cube</span></code></a>. Note that as CERA only provides data at 3-hourly intervals, the value for 15.25 will be interpolated between the 15:00 and 18:00 outputs. Also, as CERA is an ensemble dataset, the result will include all 10 ensemble members.</p>
+<p>will then load the precipitation rates at quarter past 3pm on March 12 1969 from the retrieved dataset as a <a class="reference external" href="https://scitools.org.uk/iris/docs/latest/iris/iris/cube.html#iris.cube.Cube" title="(in Iris v2.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">iris.cube.Cube</span></code></a>. Note that as CERA only provides data at 3-hourly intervals, the value for 15.25 will be interpolated between the 15:00 and 18:00 outputs. Also, as CERA is an ensemble dataset, the result will include all 10 ensemble members.</p>
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
 <dl class="function">
 <dt id="Meteorographica.data.cera20c.fetch">
 <code class="descclassname">Meteorographica.data.cera20c.</code><code class="descname">fetch</code><span class="sig-paren">(</span><em>variable</em>, <em>year</em>, <em>month</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Meteorographica/data/cera20c/fetch.html#fetch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Meteorographica.data.cera20c.fetch" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get all data for one variable, for one month, from ECMWF&#8217;s archive.</p>
-<p>Data wil be stored locally in directory $SCRATCH/CERA-20C, to be retrieved by <a class="reference internal" href="#Meteorographica.data.cera20c.load" title="Meteorographica.data.cera20c.load"><code class="xref py py-func docutils literal"><span class="pre">load()</span></code></a>. If the local file that would be produced already exists, this function does nothing.</p>
+<dd><p>Get all data for one variable, for one month, from ECMWF’s archive.</p>
+<p>Data wil be stored locally in directory $SCRATCH/CERA-20C, to be retrieved by <a class="reference internal" href="#Meteorographica.data.cera20c.load" title="Meteorographica.data.cera20c.load"><code class="xref py py-func docutils literal notranslate"><span class="pre">load()</span></code></a>. If the local file that would be produced already exists, this function does nothing.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>variable</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a>) &#8211; Variable to fetch (e.g. &#8216;prmsl&#8217;)</li>
-<li><strong>year</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">int</span></code></a>) &#8211; Year to get data for.</li>
-<li><strong>month</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">int</span></code></a>) &#8211; Month to get data for (1-12).</li>
+<li><strong>variable</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>) – Variable to fetch (e.g. ‘prmsl’)</li>
+<li><strong>year</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>) – Year to get data for.</li>
+<li><strong>month</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>) – Month to get data for (1-12).</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">StandardError</span></code> &#8211; If Variable is not a supported value.</p>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal notranslate"><span class="pre">StandardError</span></code> – If Variable is not a supported value.</p>
 </td>
 </tr>
 </tbody>
@@ -144,36 +133,36 @@
 <dt id="Meteorographica.data.cera20c.load">
 <code class="descclassname">Meteorographica.data.cera20c.</code><code class="descname">load</code><span class="sig-paren">(</span><em>variable</em>, <em>year</em>, <em>month</em>, <em>day</em>, <em>hour</em>, <em>fc_init=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Meteorographica/data/cera20c/load.html#load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Meteorographica.data.cera20c.load" title="Permalink to this definition">¶</a></dt>
 <dd><p>Load requested data from disc, interpolating if necessary.</p>
-<p>Data must be available in directory $SCRATCH/CERA-20C, previously retrieved by <a class="reference internal" href="#Meteorographica.data.cera20c.fetch" title="Meteorographica.data.cera20c.fetch"><code class="xref py py-func docutils literal"><span class="pre">fetch()</span></code></a>.</p>
+<p>Data must be available in directory $SCRATCH/CERA-20C, previously retrieved by <a class="reference internal" href="#Meteorographica.data.cera20c.fetch" title="Meteorographica.data.cera20c.fetch"><code class="xref py py-func docutils literal notranslate"><span class="pre">fetch()</span></code></a>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>variable</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a>) &#8211; Variable to fetch (e.g. &#8216;prmsl&#8217;)</li>
-<li><strong>year</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">int</span></code></a>) &#8211; Year to get data for.</li>
-<li><strong>month</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">int</span></code></a>) &#8211; Month to get data for (1-12).</li>
-<li><strong>day</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">int</span></code></a>) &#8211; Day to get data for (1-31).</li>
-<li><strong>hour</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">float</span></code></a>) &#8211; Hour to get data for (0-23.99). Note that this isn&#8217;t an integer, for  minutes and seconds, use fractions of an hour.</li>
-<li><strong>fc_init</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a>) &#8211; See below</li>
+<li><strong>variable</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>) – Variable to fetch (e.g. ‘prmsl’)</li>
+<li><strong>year</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>) – Year to get data for.</li>
+<li><strong>month</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>) – Month to get data for (1-12).</li>
+<li><strong>day</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>) – Day to get data for (1-31).</li>
+<li><strong>hour</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>) – Hour to get data for (0-23.99). Note that this isn’t an integer, for  minutes and seconds, use fractions of an hour.</li>
+<li><strong>fc_init</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>) – See below</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Global field of variable at time.</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="http://scitools.org.uk/iris/docs/latest/iris/iris/cube.html#iris.cube.Cube" title="(in Iris v2.0)"><code class="xref py py-obj docutils literal"><span class="pre">iris.cube.Cube</span></code></a></p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://scitools.org.uk/iris/docs/latest/iris/iris/cube.html#iris.cube.Cube" title="(in Iris v2.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iris.cube.Cube</span></code></a></p>
 </td>
 </tr>
 </tbody>
 </table>
-<p>Note that CERA-20C data is only output every 3 hours, so if hour%3!=0, the result will be linearly interpolated in time. If you want data after 21:00 on the last day of a month, you will need to fetch the next month&#8217;s data too, as it will be used in the interpolation.</p>
-<p>Precipitation data in CERA is a forecast field:  once a day (at 18:00) 3-hourly forecast data is calculated for the next 27 hours. So at 21:00, there are 2 sets of precipitation available: a 3-hour forecast starting at 18 that day, and a 27-hour forecast starting at 18:00 the day before; and there is a discontinuity in the fields at that time. This function will always load the shortest lead-time forecast available unless fc_init is set to &#8216;last&#8217;. You will only need this if you are making videos, or otherwise needxtime-continuous forecast fields, in which case you will need to be clever in smoothing over the discontinuity. For analysis fields (everything except prate), this issue does not arise and fc_init is ignored.</p>
+<p>Note that CERA-20C data is only output every 3 hours, so if hour%3!=0, the result will be linearly interpolated in time. If you want data after 21:00 on the last day of a month, you will need to fetch the next month’s data too, as it will be used in the interpolation.</p>
+<p>Precipitation data in CERA is a forecast field:  once a day (at 18:00) 3-hourly forecast data is calculated for the next 27 hours. So at 21:00, there are 2 sets of precipitation available: a 3-hour forecast starting at 18 that day, and a 27-hour forecast starting at 18:00 the day before; and there is a discontinuity in the fields at that time. This function will always load the shortest lead-time forecast available unless fc_init is set to ‘last’. You will only need this if you are making videos, or otherwise need time-continuous forecast fields, in which case you will need to be clever in smoothing over the discontinuity. For analysis fields (everything except prate), this issue does not arise and fc_init is ignored.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">StandardError</span></code> &#8211; Data not on disc - see <a class="reference internal" href="#Meteorographica.data.cera20c.fetch" title="Meteorographica.data.cera20c.fetch"><code class="xref py py-func docutils literal"><span class="pre">fetch()</span></code></a></td>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal notranslate"><span class="pre">StandardError</span></code> – Data not on disc - see <a class="reference internal" href="#Meteorographica.data.cera20c.fetch" title="Meteorographica.data.cera20c.fetch"><code class="xref py py-func docutils literal notranslate"><span class="pre">fetch()</span></code></a></td>
 </tr>
 </tbody>
 </table>
