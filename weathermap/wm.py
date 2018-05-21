@@ -21,6 +21,7 @@ import datetime
 
 import numpy
 import pandas
+import scipy
 
 import matplotlib
 import matplotlib.colors
@@ -206,6 +207,89 @@ def plot_contour(ax,pe,
                                levels=levels,
                                zorder=zorder)
 
+    # Label the contours
+    if label:
+        cl=ax.clabel(CS, inline=1, fontsize=fontsize, fmt='%d',zorder=zorder+0.1)
+
+    return CS
+
+# Colour scheme for Contour uncertainty ranges.
+contour_colour_dict = {'red'   : ((0.0, 0.0, 0.0), 
+                                  (1.0, 0.0, 0.0)), 
+                       'blue'  : ((0.0, 0.45, 0.45), 
+                                  (1.0, 0.45, 0.45)), 
+                       'green' : ((0.0, 0.0, 0.0), 
+                                  (1.0, 0.0, 0.0)), 
+                       'alpha' : ((0.0, 0.0, 0.0),
+                                  (1.0, 0.25, 0.25)) 
+} 
+contour_cmap= matplotlib.colors.LinearSegmentedColormap('p_cmap',contour_colour_dict)
+
+def plot_contour_spread(ax,prmsl,
+                        resolution=0.25,
+                        cmap=contour_cmap,
+                        levels=numpy.arange(870,1050,10),
+                        scale=1,offset=0,
+                        threshold=0.05,
+                        line_threshold=None,
+                        colors='black',
+                        linewidths=0.5,
+                        alpha=1,
+                        fontsize=12,
+                        label=False,
+                        zorder=4):
+    """Plots a variable as a contour plot, but includes an uncertainty range.
+
+    Args:
+        ax (:obj:`cartopy.mpl.geoaxes.GeoAxes`): Axes on which to draw.
+        prmsl (:obj:`iris.cube.Cube`): Variable to plot.
+        resolution (`float`, optional): What lat:lon resolution (in degrees) to interpolate pe.data to before plotting. Defaults to 0.25.
+        cmap (:obj:`matplotlib.colors.LinearSegmentedColormap`): Colour for uncertainty ranges. Defaults to blue semi-transparent.
+        scale (:obj:`float`, optional): Scaling factor for variable standard deviation. Defaults to 1.
+        offset (:obj:`float`, optional): Offset for variable standard deviation. Defaults to 0.
+        threshold (:obj:`float`, optional): Ranges shown are regions where the probability that a contour line passes through the region is greater than this. Defaults to 0.05 (5%).
+        line_threshold (:obj:`float`, optional): Only draw contours where the local standard deviation is less than this. Defaults to None - draw contours everywhere.
+       colors (see :mod:`matplotlib.colors`, optional) contour line colour. Defaults to 'black'.
+        linewidths (:obj:`float`, optional): Line width for contour lines. Defaults to 0.5.
+        alpha (:obj:`float`, optional): Colour alpha blend. Defaults to 1 (opaque).
+        fontsize (:obj:`int`, optional): Font size for contour labels. Defaults to 12.
+        zorder (:obj:`float`, optional): Standard matplotlib parameter determining which things are plotted on top (high zorder), and which underneath (low zorder), Defaults to 4.
+        label (:obj:`bool`, optional): Label contour lines? Defaults to False.
+
+    Returns:
+        See :meth:`matplotlib.axes.Axes.contour` - also adds the lines to the plot.
+
+    |
+    """
+
+    prmsl_m=prmsl.collapsed('member', iris.analysis.MEAN)
+    prmsl_s=prmsl.collapsed('member', iris.analysis.STD_DEV)
+    plot_cube=_make_dummy(ax,0.1)
+    prmsl_mu = prmsl_m.regrid(plot_cube,iris.analysis.Linear())
+    prmsl_su = prmsl_s.regrid(plot_cube,iris.analysis.Linear())
+    prmsl_su.data=numpy.maximum(0.1,prmsl_su.data+offset) # fixups for reanalysis biases
+    prmsl_su.data=prmsl_su.data*scale
+    prmsl_u = prmsl_mu.copy()
+    prmsl_u.data=prmsl_u.data*0.0
+    prmsl_t = prmsl_mu.copy()
+    prmsl_t.data=prmsl_t.data*0.0
+    for level in levels:
+        prmsl_t.data=1-scipy.stats.norm.cdf(numpy.absolute(prmsl_mu.data-level)/prmsl_su.data)
+        prmsl_u.data=numpy.maximum(prmsl_u.data,prmsl_t.data)
+
+    lats = prmsl_u.coord('latitude').points
+    lons = prmsl_u.coord('longitude').points
+    u_img=ax.pcolorfast(lons, lats, prmsl_u.data, cmap=contour_cmap,
+                         vmin=threshold/2.0-0.01,vmax=threshold/2.0+0.01,zorder=zorder-1)
+    # Mask out mean where uncertainties large
+    if line_threshold is not None:
+        prmsl_mu.data[numpy.where(prmsl_su.data>line_threshold)]=numpy.nan
+    CS=ax.contour(lons, lats, prmsl_mu.data,
+                               colors=colors,
+                               linewidths=linewidths,
+                               alpha=alpha,
+                               levels=levels,
+                               zorder=zorder)
     # Label the contours
     if label:
         cl=ax.clabel(CS, inline=1, fontsize=fontsize, fmt='%d',zorder=zorder+0.1)
