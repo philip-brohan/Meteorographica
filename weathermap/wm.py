@@ -13,6 +13,8 @@
 
 # Weather map plotting functions.        
 
+import sys
+import pickle
 import os
 import math
 
@@ -216,9 +218,9 @@ def plot_contour(ax,pe,
 # Colour scheme for Contour uncertainty ranges.
 contour_colour_dict = {'red'   : ((0.0, 0.0, 0.0), 
                                   (1.0, 0.0, 0.0)), 
-                       'blue'  : ((0.0, 0.45, 0.45), 
-                                  (1.0, 0.45, 0.45)), 
-                       'green' : ((0.0, 0.0, 0.0), 
+                       'green' : ((0.0, 0.8, 0.8), 
+                                  (1.0, 0.8, 0.8)), 
+                       'blue'  : ((0.0, 0.0, 0.0), 
                                   (1.0, 0.0, 0.0)), 
                        'alpha' : ((0.0, 0.0, 0.0),
                                   (1.0, 0.25, 0.25)) 
@@ -232,7 +234,7 @@ def plot_contour_spread(ax,prmsl,
                         scale=1,offset=0,
                         threshold=0.05,
                         line_threshold=None,
-                        colors='black',
+                        colors='green',
                         linewidths=0.5,
                         alpha=1,
                         fontsize=12,
@@ -279,20 +281,53 @@ def plot_contour_spread(ax,prmsl,
 
     lats = prmsl_u.coord('latitude').points
     lons = prmsl_u.coord('longitude').points
-    u_img=ax.pcolorfast(lons, lats, prmsl_u.data, cmap=contour_cmap,
-                         vmin=threshold/2.0-0.01,vmax=threshold/2.0+0.01,zorder=zorder-1)
-    # Mask out mean where uncertainties large
-    if line_threshold is not None:
-        prmsl_mu.data[numpy.where(prmsl_su.data>line_threshold)]=numpy.nan
+    u_img=ax.pcolorfast(lons, lats, prmsl_u.data, cmap=cmap,
+                         vmin=threshold/2.0-0.01,vmax=0.4,zorder=zorder-1)
+
+    # Generate the mean contour lines, but don't draw them (linewidth=0)
     CS=ax.contour(lons, lats, prmsl_mu.data,
                                colors=colors,
-                               linewidths=linewidths,
+                               linewidths=0,
                                alpha=alpha,
                                levels=levels,
                                zorder=zorder)
-    # Label the contours
+
+    # Label the mean contours - transparenct dependent on spread
+    interpolator = iris.analysis.Linear().interpolator(prmsl_su, 
+                                   ['latitude', 'longitude'])
     if label:
         cl=ax.clabel(CS, inline=1, fontsize=fontsize, fmt='%d',zorder=zorder+0.1)
+        if line_threshold is not None:
+            for label in cl:
+                pos=label.get_position()
+                local_spread=interpolator([pos[1],pos[0]]).data
+                alpha_s=numpy.sqrt(max(0.04,1-local_spread/line_threshold))
+                label.set_alpha(alpha*alpha_s)
+
+    # Draw the mean contours, with transparency dependent on spread
+    base_col=matplotlib.colors.colorConverter.to_rgb(colors)
+    for collection in CS.collections: 
+        segments=collection.get_segments()
+        for segment in segments:  
+            for idx in range(segment.shape[0]-1):
+                alpha_s=1
+                if line_threshold is not None:
+                    local_spread=interpolator(
+                          [(segment[idx,1]+segment[idx+1,1])/2.0,
+                          (segment[idx,0]+segment[idx+1,0])/2.0]).data
+                    alpha_s=numpy.sqrt(max(0.04,1-local_spread/line_threshold))
+                clr=(base_col[0],
+                     base_col[1],
+                     base_col[2],alpha*alpha_s)
+                ax.add_line(matplotlib.lines.Line2D(
+                                xdata=segment[idx:(idx+2),0],
+                                ydata=segment[idx:(idx+2),1],
+                                linestyle='solid',
+                                linewidth=1,
+                                color=clr,
+                                zorder=1))      
+
+
 
     return CS
 
