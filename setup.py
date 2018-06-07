@@ -42,8 +42,8 @@ setup(
     packages=find_packages(),
 
     # Other packages that your project depends on.
+    # iris>2 - does not work - can't find any iris?
     install_requires=[
-        'iris>1.12,<2.0',
         'cartopy>0.15',
         'numpy>1.13',
         'scipy>0.18',
