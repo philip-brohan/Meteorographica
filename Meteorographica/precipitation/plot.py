@@ -1,7 +1,22 @@
+# (C) British Crown Copyright 2017, Met Office
+#
+# This code is free software: you can redistribute it and/or modify it under
+# the terms of the GNU Lesser General Public License as published by the
+# Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This code is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
+#
+
 import numpy
 import iris
 import matplotlib
 import matplotlib.colors
+
+import Meteorographica.utils as utils
 
 # Define a colour map appropriate for precip plots
 # Dark green with varying transparency
@@ -17,7 +32,7 @@ precip_cmap = matplotlib.colors.LinearSegmentedColormap('p_cmap',
                                         (1.0, 0.95, 0.95)) })
 
 # Plot precip as a colour map
-def plot_precip_cmesh(ax,pe,**kwargs):
+def plot_cmesh(ax,pe,**kwargs):
     """Plots a variable as a colour map.
 
     This is the same as :meth:`matplotlib.axes.Axes.pcolorfast`, except that it takes an :class:`iris.cube.Cube` instead of an array of colour values, and its colour defaults are chosen for plots of precipitation rate.
@@ -55,7 +70,7 @@ def plot_precip_cmesh(ax,pe,**kwargs):
     if kwargs.get('raw'):
         cmesh_p=pe
     else:
-        plot_cube=_make_dummy(ax,resolution)
+        plot_cube=utils.dummy_cube(ax,kwargs.get('resolution'))
         cmesh_p = pe.regrid(plot_cube,iris.analysis.Linear())
 
     cmesh_p.data=cmesh_p.data*kwargs.get('scale')
@@ -75,7 +90,7 @@ def plot_precip_cmesh(ax,pe,**kwargs):
 
 
 # Plot precip 
-def plot_precip(ax,pe,**kwargs):
+def plot(ax,pe,**kwargs):
     """Plot precipitation.
 
     Generic function for plotting precipitation. Use the 'type' argument to choose the plot style.
@@ -86,7 +101,7 @@ def plot_precip(ax,pe,**kwargs):
 
 
     Kwargs:
-        type (:obj:`str`, optional): Style to plot. Default is 'cmap', which delegates plotting to :meth:`plot_precip_cmesh` and at the moment this is the only choice. 
+        type (:obj:`str`, optional): Style to plot. Default is 'cmap', which delegates plotting to :meth:`plot_cmesh` and at the moment this is the only choice. 
         Other keyword arguments are passed to the style-specific plotting function.
 
     |
@@ -95,7 +110,7 @@ def plot_precip(ax,pe,**kwargs):
     kwargs.setdefault('type','cmesh')
 
     if kwargs.get('type')=='cmesh':
-        return plot_precip_cmesh(ax,pe,**kwargs)
+        return plot_cmesh(ax,pe,**kwargs)
 
     raise StandardError('Unsupported precipitation plot type %s' %
                          kwargs.get('type'))

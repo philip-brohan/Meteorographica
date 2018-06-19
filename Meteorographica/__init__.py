@@ -10,9 +10,11 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Lesser General Public License for more details.
 #
-"""
-Tools, built on top of SciTools/Iris, for accessing, plotting and 
-analysing weather data.
 
-"""
+import utils
+import background
+import pressure
+import wind
+import precipitation
+import observations
 

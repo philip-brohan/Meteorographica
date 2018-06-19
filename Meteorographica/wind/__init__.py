@@ -10,10 +10,6 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Lesser General Public License for more details.
 #
-"""
-A package for handling data from the 20th Century Reanalysis V3.
 
-"""
-
-from load import *
-from fetch import *
+from plot import *
+from wind_vectors import *

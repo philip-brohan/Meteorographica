@@ -10,13 +10,5 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Lesser General Public License for more details.
 #
-"""
-A package for handling data from the 20th Century Reanalysis.
 
-"""
-
-import version_2
-import version_3
-from utils import *
-from load import *
-from fetch import *
+from plot import *

@@ -1,11 +1,26 @@
+# (C) British Crown Copyright 2017, Met Office
+#
+# This code is free software: you can redistribute it and/or modify it under
+# the terms of the GNU Lesser General Public License as published by the
+# Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This code is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
+#
+
 import numpy
 import iris
 import matplotlib
 import matplotlib.colors
 import scipy
 
+import Meteorographica.utils as utils
+
 # Plot a single field as a standard contour plot
-def plot_pressure_contour(ax,pe,**kwargs):
+def plot_contour(ax,pe,**kwargs):
     """Plots a variable as a contour plot.
 
     This is the same as :meth:`matplotlib.axes.Axes.contour`, except that it takes an :class:`iris.cube.Cube` instead of an array of values, and its defaults are chosen for plots of mean-sea-level pressure.
@@ -45,7 +60,7 @@ def plot_pressure_contour(ax,pe,**kwargs):
     if kwargs.get('raw'):
         contour_p=pe
     else:
-        plot_cube=_make_dummy(ax,resolution)
+        plot_cube=utils.dummy_cube(ax,kwargs.get('resolution'))
         contour_p = pe.regrid(plot_cube,iris.analysis.Linear())
 
     contour_p.data=contour_p.data*kwargs.get('scale')
@@ -68,7 +83,7 @@ def plot_pressure_contour(ax,pe,**kwargs):
 
 
 # Plot a set of fields as a spaghetti plot
-def plot_pressure_spaghetti_contour(ax,pe,**kwargs):
+def plot_spaghetti_contour(ax,pe,**kwargs):
     """Plots a multi-contour (spaghetti) plot.
 
     Calls :meth:`plot_pressure_contour` multiple times with sensible defaults colurs and styles
@@ -97,7 +112,7 @@ def plot_pressure_spaghetti_contour(ax,pe,**kwargs):
     CS=[]
     for m in prmsl.coord(kwargs.get('ensemble_dimension')).points:
         prmsl_e=prmsl.extract(iris.Constraint(member=m))
-        CS.append(plot_pressure_contour(ax,prmsl_e,**kwargs))
+        CS.append(plot_contour(ax,prmsl_e,**kwargs))
 
     return CS
 
@@ -112,7 +127,7 @@ mean_contour_cmap= matplotlib.colors.LinearSegmentedColormap('mc_cmap',
                                   (1.0, 0.25, 0.25))}) 
 
 # Plot ensemble mean contours, using transparency as an uncertainty indicator
-def plot_pressure_mean_spread(ax,pe,**kwargs):
+def plot_mean_spread(ax,pe,**kwargs):
     """Plots a variable as a contour plot.
 
     Plots contours of the mean of an ensemble, mark uncertainty by fading out the contours where the ensemble spread is large.
@@ -231,7 +246,7 @@ def plot_pressure_mean_spread(ax,pe,**kwargs):
     return CS
     
 # Plot pressure
-def plot_pressure(ax,pe,**kwargs):
+def plot(ax,pe,**kwargs):
     """Plot pressure.
 
     Generic function for plotting pressure. Use the 'type' argument to choose the plot style.
@@ -242,7 +257,10 @@ def plot_pressure(ax,pe,**kwargs):
 
 
     Kwargs:
-        type (:obj:`str`, optional): Style to plot. Default is 'cmap', which delegates plotting to :meth:`plot_precip_cmesh` and at the moment this is the only choice. 
+        type (:obj:`str`, optional): Style to plot. Options are: 
+            * 'contour', (default) which delegates plotting to :meth:`plot_contour`,
+            * 'spaghetti',  which delegates plotting to :meth:`plot_spaghetti_contour`,
+            * 'spread', which delegates plotting to :meth:`plot_mean_spread.
         Other keyword arguments are passed to the style-specific plotting function.
 
     Returns:
@@ -250,12 +268,16 @@ def plot_pressure(ax,pe,**kwargs):
     |
     """  
 
-    kwargs.setdefault('type','cmesh')
+    kwargs.setdefault('type','contour')
 
-    if kwargs.get('type')=='cmesh':
-        return plot_precip_cmesh(ax,pe,**kwargs)
+    if kwargs.get('type')=='contour':
+        return plot_contour(ax,pe,**kwargs)
+    if kwargs.get('type')=='spaghetti':
+        return plot_spaghetti_contour(ax,pe,**kwargs)
+    if kwargs.get('type')=='spread':
+        return plot_mean_spread(ax,pe,**kwargs)
 
-    raise StandardError('Unsupported precipitation plot type %s' %
+    raise StandardError('Unsupported pressure plot type %s' %
                          kwargs.get('type'))
 
 

@@ -10,10 +10,6 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Lesser General Public License for more details.
 #
-"""
-This is the 'miscellaneous' section - a collection of useful functions that don't fit anywhere else.
 
-|
-"""
-
-from cube_operations import *
+from dummy_cube import *
+from label import *

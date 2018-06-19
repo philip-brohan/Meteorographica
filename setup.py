@@ -15,7 +15,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 setup(
     name='Meteorographica',
     version='0.0.1',
-    description='A personal library for weather data',
+    description='Functions for plotting weathermaps',
 
     # From README - see above
     long_description=long_description,
@@ -37,7 +37,7 @@ setup(
     ],
 
     # Keywords for your project. What does your project relate to?
-    keywords='weather map reanalysis 20cr cera20c era5',
+    keywords='weather map',
 
     # Automatically find the software to be included
     packages=find_packages(),

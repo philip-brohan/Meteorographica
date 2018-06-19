@@ -11,11 +11,4 @@
 # GNU Lesser General Public License for more details.
 #
 
-# v3-preliminary-specific data handling functions
-# Gets data via scp from NERSC - fetch won't work
-#  unless you have an account there.
-
-from utils import *
-from load import *
-from fetch import *
-from observations import *
+from plot import *
