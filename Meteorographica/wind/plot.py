@@ -33,7 +33,7 @@ def plot_quiver(ax,ue,ve,**kwargs):
         colors (see :mod:`matplotlib.colors`, optional) vector colour. Defaults to (0,0,0,0.25).
         headwidth (:obj:`float`, optional): Controls arrow shape. Defaults to 1.
         random_state (None|:obj:`int`|:obj:`numpy.random.RandomState`): Random number generation seed, see :func:`sklearn.utils.check_random_state`.
-        max_points (:obj:`int`, optional): Maximum number of vectors to allocate, defaults to 10,000.
+        max_points (:obj:`int`, optional): Maximum number of vectors to allocate, defaults to 100,000.
         zorder (:obj:`float`, optional): Standard matplotlib parameter determining which things are plotted on top (high zorder), and which underneath (low zorder), Defaults to 50.
 
     Returns:
@@ -48,7 +48,7 @@ def plot_quiver(ax,ue,ve,**kwargs):
     kwargs.setdefault('color'       ,(0,0,0,0.25))
     kwargs.setdefault('headwidth'   ,1)
     kwargs.setdefault('random_state',None)
-    kwargs.setdefault('max_points'  ,10000)
+    kwargs.setdefault('max_points'  ,100000)
     kwargs.setdefault('zorder'      ,50)
 
     pole_latitude=ax.projection.proj4_params['o_lat_p']

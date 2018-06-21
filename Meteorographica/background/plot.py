@@ -27,11 +27,11 @@ def add_grid(ax,**kwargs):
 
     kwargs.setdefault('linestyle'      ,'-')
     kwargs.setdefault('linewidth_minor',0.2)
-    kwargs.setdefault('linewidth_major',0.5)
+    kwargs.setdefault('linewidth_major',0.4)
     kwargs.setdefault('color'          ,(0,0.30,0,0.3))
     kwargs.setdefault('sep_minor'      ,0.5)
     kwargs.setdefault('sep_major'      ,2.0)
-    kwargs.setdefault('zorder'         ,5)
+    kwargs.setdefault('zorder'         ,0)
 
     gl_minor=ax.gridlines(linestyle=kwargs.get('linestyle'),
                           linewidth=kwargs.get('linewidth_minor'),

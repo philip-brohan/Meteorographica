@@ -106,25 +106,25 @@ def plot_spaghetti_contour(ax,pe,**kwargs):
 
     kwargs.setdefault('ensemble_dimension','member')
     kwargs.setdefault('colors'            ,'blue')
-    kwargs.setdefault('linewidths'        ,0.2)
-    kwargs.setdefault('label'             ,'False')
+    kwargs.setdefault('linewidths'        ,0.1)
+    kwargs.setdefault('label'             ,False)
 
     CS=[]
-    for m in prmsl.coord(kwargs.get('ensemble_dimension')).points:
-        prmsl_e=prmsl.extract(iris.Constraint(member=m))
-        CS.append(plot_contour(ax,prmsl_e,**kwargs))
+    for m in pe.coord(kwargs.get('ensemble_dimension')).points:
+        pe_e=pe.extract(iris.Constraint(member=m))
+        CS.append(plot_contour(ax,pe_e,**kwargs))
 
     return CS
 
 mean_contour_cmap= matplotlib.colors.LinearSegmentedColormap('mc_cmap',
                       {'red'   : ((0.0, 0.0, 0.0), 
                                   (1.0, 0.0, 0.0)), 
-                       'green' : ((0.0, 0.8, 0.8), 
-                                  (1.0, 0.8, 0.8)), 
+                       'green' : ((0.0, 0.3, 0.3), 
+                                  (1.0, 0.3, 0.3)), 
                        'blue'  : ((0.0, 0.0, 0.0), 
                                   (1.0, 0.0, 0.0)), 
                        'alpha' : ((0.0, 0.0, 0.0),
-                                  (1.0, 0.25, 0.25))}) 
+                                  (1.0, 0.75, 0.75))}) 
 
 # Plot ensemble mean contours, using transparency as an uncertainty indicator
 def plot_mean_spread(ax,pe,**kwargs):
@@ -147,7 +147,7 @@ def plot_mean_spread(ax,pe,**kwargs):
         line_threshold (:obj:`float`, optional): Only draw contours where the local standard deviation is less than this. Defaults to None - draw contours everywhere.
         alpha (:obj:`float`, optional): Colour alpha blend. Defaults to 1 (opaque).
         fontsize (:obj:`int`, optional): Font size for contour labels. Defaults to 12.
-        zorder (:obj:`float`, optional): Standard matplotlib parameter determining which things are plotted on top (high zorder), and which underneath (low zorder), Defaults to 4.
+        zorder (:obj:`float`, optional): Standard matplotlib parameter determining which things are plotted on top (high zorder), and which underneath (low zorder), Defaults to 40.
         label (:obj:`bool`, optional): Label contour lines? Defaults to True.
 
     Returns:
@@ -161,7 +161,7 @@ def plot_mean_spread(ax,pe,**kwargs):
     kwargs.setdefault('ensemble_dimension','member')
     kwargs.setdefault('resolution'        ,0.25)
     kwargs.setdefault('scale'             ,1.0)
-    kwargs.setdefault('cmap'              ,mc_cmap)
+    kwargs.setdefault('cmap'              ,mean_contour_cmap)
     kwargs.setdefault('colors'            ,'black')
     kwargs.setdefault('alpha'             ,1.0)
     kwargs.setdefault('linewidths'        ,0.5)
@@ -170,12 +170,14 @@ def plot_mean_spread(ax,pe,**kwargs):
     kwargs.setdefault('threshold'         ,0.05)
     kwargs.setdefault('vmax'              ,0.4)
     kwargs.setdefault('line_threshold'    ,None)
+    kwargs.setdefault('zorder'            ,40)
 
+    pe.data=pe.data*kwargs.get('scale')
     pe_m=pe.collapsed(kwargs.get('ensemble_dimension'), iris.analysis.MEAN)
     pe_s=pe.collapsed(kwargs.get('ensemble_dimension'), iris.analysis.STD_DEV)
 
     if not kwargs.get('raw'):
-        plot_cube=_make_dummy(ax,kwargs.get('resolution'))
+        plot_cube=utils.dummy_cube(ax,kwargs.get('resolution'))
         pe_m=pe_m.regrid(plot_cube,iris.analysis.Linear())
         pe_s=pe_s.regrid(plot_cube,iris.analysis.Linear())
 
@@ -183,17 +185,17 @@ def plot_mean_spread(ax,pe,**kwargs):
     pe_u = pe_m.copy()
     pe_u.data=pe_m.data*0.0
     pe_t = pe_u.copy()
-    for level in levels:
+    for level in kwargs.get('levels'):
         pe_t.data=1-scipy.stats.norm.cdf(numpy.absolute(pe_m.data-level)/pe_s.data)
         pe_u.data=numpy.maximum(pe_u.data,pe_t.data)
     # Plot this probability as a colormap
-    lats = prmsl_u.coord('latitude').points
-    lons = prmsl_u.coord('longitude').points
-    u_img=ax.pcolorfast(lons, lats, prmsl_u.data, 
+    lats = pe_u.coord('latitude').points
+    lons = pe_u.coord('longitude').points
+    u_img=ax.pcolorfast(lons, lats, pe_u.data, 
                          cmap=kwargs.get('cmap'),
                          vmin=kwargs.get('threshold')/2.0-0.01,
                          vmax=kwargs.get('vmax'),
-                         zorder=kwargs.get(zorder)-1)
+                         zorder=kwargs.get('zorder')-1)
 
     # Generate the mean contour lines, but don't draw them (linewidth=0)
     CS=ax.contour(lons, lats, pe_m.data,
@@ -206,7 +208,7 @@ def plot_mean_spread(ax,pe,**kwargs):
     # Label the mean contours - transparency dependent on spread
     interpolator = iris.analysis.Linear().interpolator(pe_s, 
                                    ['latitude', 'longitude'])
-    if label:
+    if kwargs.get('label'):
         cl=ax.clabel(CS, inline=1, 
                      fontsize=kwargs.get('fontsize'),
                      fmt='%d',

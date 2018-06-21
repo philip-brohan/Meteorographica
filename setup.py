@@ -6,6 +6,7 @@
 from setuptools import setup, find_packages
 from os import path
 from io import open  # 2.7 only
+import glob
 
 # Get the long description from the README file
 here = path.abspath(path.dirname(__file__))
@@ -59,7 +60,11 @@ setup(
         'ecmwf-api-client>1.4',
     ],
 
-    # List additional groups of dependencies here (e.g. development
+    # Command line script to get the map backgrounds
+    entry_points={'console_scripts': [
+        'Meteorographica.fetch_backgrounds = Meteorographica.scripts:fetch_backgrounds',
+    ]},
+   # List additional groups of dependencies here (e.g. development
     # dependencies). Users will be able to install these using the "extras"
     # syntax, for example:
     #
@@ -67,10 +72,15 @@ setup(
     #
     # Similar to `install_requires` above, these must be valid existing
     # projects.
-    extras_require={  # Optional
-        'dev': ['check-manifest'],
-        'test': ['coverage'],
-    },
+    #extras_require={  # Optional
+    #    'dev': ['check-manifest'],
+    #    'test': ['coverage'],
+    #},
+
+    # Data files for the examples
+    data_files=[('example_data',(glob.glob('examples/data/*.nc') +
+                                 glob.glob('examples/data/*.pklz')))]
+
 
     # Data files included in your package
     # Note - move the background files into this.
