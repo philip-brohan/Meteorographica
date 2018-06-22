@@ -1,23 +1,24 @@
 import cartopy
 import cartopy.crs as ccrs
 import matplotlib
+import pandas
 
 def plot_patches(ax,obs,**kwargs):
     """Plot observations as points.
 
     Args:
         ax (:obj:`cartopy.mpl.geoaxes.GeoAxes`): Axes on which to draw.
-        obs (:obj:`dict`): Dictionary containing obs positions.
+        obs (:obj:`pandas.DataFrame`): Data frame containing obs positions.
 
-    Kwargs:
-        obs_projection (:obj:`cartopy.crs.CRS`, optional): Projection in which observations latitudes and longitudes are defined. Default is :class:`cartopy.crs.PlateCarree`.
-        lat_label (:obj:`str`, optional): Key, in the obs dictionary, of the latitude data. Defaults to 'Latitude'.
-        lon_label (:obj:`str`, optional): Key, in the obs dictionary, of the longitude data. Defaults to 'Longitude'.
-        radius (:obj:`float`, optional): Radius of circle marking each ob. (degrees). Defaults to 1.
-        facecolor (see :mod:`matplotlib.colors`, optional): Main colour of the circle to be plotted for each ob. Defaults to 'yellow'.
-        edgecolor (see :mod:`matplotlib.colors`, optional): Border colour of the circle to be plotted for each ob. Defaults to 'black'.
-        alpha (:obj:`float`, optional): Alpha value for facecolor and edgecolor. Defaults to 0.85. Will be multiplied by the observation weight if present.
-        zorder (:obj:`float`, optional): Standard matplotlib parameter determining which things are plotted on top (high zorder), and which underneath (low zorder), Defaults to 25.
+    Keyword Args:
+        obs_projection (:obj:`cartopy.crs.CRS`): Projection in which observations latitudes and longitudes are defined. Default is :class:`cartopy.crs.PlateCarree`.
+        lat_label (:obj:`str`): Key, in the obs dataframe, of the latitude data. Defaults to 'Latitude'.
+        lon_label (:obj:`str`): Key, in the obs dataframe, of the longitude data. Defaults to 'Longitude'.
+        radius (:obj:`float`): Radius of circle marking each ob. (degrees). Defaults to 1.
+        facecolor (see :mod:`matplotlib.colors`): Main colour of the circle to be plotted for each ob. Defaults to 'yellow'.
+        edgecolor (see :mod:`matplotlib.colors`): Border colour of the circle to be plotted for each ob. Defaults to 'black'.
+        alpha (:obj:`float`): Alpha value for facecolor and edgecolor. Defaults to 0.85. Will be multiplied by the observation weight if present.
+        zorder (:obj:`float`): Standard matplotlib parameter determining which things are plotted on top (high zorder), and which underneath (low zorder), Defaults to 25.
 
     Returns:
         Nothing - adds the obs. points to the plot.
@@ -61,12 +62,12 @@ def plot(ax,obs,**kwargs):
 
     Args:
         ax (:obj:`cartopy.mpl.geoaxes.GeoAxes`): Axes on which to draw.
-        obs (:obj:`dict`): Dictionary containing obs positions.
+        obs (:obj:`pandas.DataFrame`): Dataframe containing obs positions.
 
 
     Kwargs:
-        type (:obj:`str`, optional): Style to plot. Options are: 
-            * 'patches', (default) which delegates plotting to :meth:`plot_patches`,
+        type (:obj:`str`, optional): Style to plot. Only option is: 'patches', (default) which delegates plotting to :meth:`plot_patches`.
+
         Other keyword arguments are passed to the style-specific plotting function.
 
     Returns:

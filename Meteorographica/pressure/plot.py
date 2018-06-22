@@ -29,16 +29,15 @@ def plot_contour(ax,pe,**kwargs):
         ax (:obj:`cartopy.mpl.geoaxes.GeoAxes`): Axes on which to draw.
         pe (:obj:`iris.cube.Cube`): Variable to plot - must have dimensions 'latitude' and 'longitude'.
 
-    Kwargs:
-        raw (:obj:`bool`): If True, plot the colourmap on the native data resolution. If False (default), regrid the data to the given resolution before plotting.
-        label (:obj:`bool`, optional): Label contour lines? Defaults to False.
-        resolution (:obj:`float`, optional): What lat:lon resolution (in degrees) to interpolate pe.data to before plotting. Defaults to 0.25.
-        scale (:obj:`float`, optional): This function is tuned for data in hPa. For data in Pa, set this to 0.01. Defaults to 1.
-        colors (see :mod:`matplotlib.colors`, optional) contour line colour. Defaults to 'black'.
-        linewidths (:obj:`float`, optional): Line width for contour lines. Defaults to 0.5.
-        alpha (:obj:`float`, optional): Colour alpha blend. Defaults to 1 (opaque).
-        fontsize (:obj:`int`, optional): Font size for contour labels. Defaults to 12.
-        zorder (:obj:`float`, optional): Standard matplotlib parameter determining which things are plotted on top (high zorder), and which underneath (low zorder), Defaults to 30.
+    Keyword Args:
+        label (:obj:`bool`): Label contour lines? Defaults to False.
+        resolution (:obj:`float`): What lat:lon resolution (in degrees) to interpolate pe.data to before plotting. Defaults to None - use original resolution.
+        scale (:obj:`float`): This function is tuned for data in hPa. For data in Pa, set this to 0.01. Defaults to 1.
+        colors (see :mod:`matplotlib.colors`) contour line colour. Defaults to 'black'.
+        linewidths (:obj:`float`): Line width for contour lines. Defaults to 0.5.
+        alpha (:obj:`float`): Colour alpha blend. Defaults to 1 (opaque).
+        fontsize (:obj:`int`): Font size for contour labels. Defaults to 12.
+        zorder (:obj:`float`): Standard matplotlib parameter determining which things are plotted on top (high zorder), and which underneath (low zorder), Defaults to 30.
 
     Returns:
         See :meth:`matplotlib.axes.Axes.contour` - also adds the lines to the plot.
@@ -48,7 +47,7 @@ def plot_contour(ax,pe,**kwargs):
 
     kwargs.setdefault('raw'        ,False)
     kwargs.setdefault('label'      ,True)
-    kwargs.setdefault('resolution' ,0.25)
+    kwargs.setdefault('resolution' ,None)
     kwargs.setdefault('scale'      ,1.0)
     kwargs.setdefault('colors'     ,'black')
     kwargs.setdefault('alpha'      ,1.0)
@@ -57,7 +56,7 @@ def plot_contour(ax,pe,**kwargs):
     kwargs.setdefault('levels'     ,numpy.arange(870,1050,10))
     kwargs.setdefault('zorder'     ,30)
 
-    if kwargs.get('raw'):
+    if kwargs.get('resolution') is None:
         contour_p=pe
     else:
         plot_cube=utils.dummy_cube(ax,kwargs.get('resolution'))
@@ -92,15 +91,16 @@ def plot_spaghetti_contour(ax,pe,**kwargs):
         ax (:obj:`cartopy.mpl.geoaxes.GeoAxes`): Axes on which to draw.
         pe (:obj:`iris.cube.Cube`): Variable to plot.- must have dimensions <ensemble_dimension>, 'latitude' and 'longitude'.
 
-    Kwargs:
-        ensemble_dimension (:obj:`float`, optional): name of the ensemble dimension. Defaults to 'member'.
-        colors (see :mod:`matplotlib.colors`, optional) contour line colour. Defaults to 'blue'.
-        linewidths (:obj:`float`, optional): Line width for contour lines. Defaults to 0.2.
-        label (:obj:`bool`, optional): Label contour lines? Defaults to False.
+    Keyword Args:
+        ensemble_dimension (:obj:`float`): name of the ensemble dimension. Defaults to 'member'.
+        colors (see :mod:`matplotlib.colors`) contour line colour. Defaults to 'blue'.
+        linewidths (:obj:`float`): Line width for contour lines. Defaults to 0.2.
+        label (:obj:`bool`): Label contour lines? Defaults to False.
         Other keyword arguments are passed to :meth:`plot_pressure_contour`
 
     Returns:
         See :meth:`matplotlib.axes.Axes.contour` - except it's an array, one for each member. Also adds the lines to the plot.
+
     |
     """  
 
@@ -136,19 +136,20 @@ def plot_mean_spread(ax,pe,**kwargs):
         ax (:obj:`cartopy.mpl.geoaxes.GeoAxes`): Axes on which to draw.
         pe (:obj:`iris.cube.Cube`): Variable to plot.- must have dimensions <ensemble_dimension>, 'latitude' and 'longitude'.
 
-    Kwargs:
-        ensemble_dimension (:obj:`float`, optional): name of the ensemble dimension. Defaults to 'member'.
-        colors (see :mod:`matplotlib.colors`, optional) contour line colour. Defaults to 'black'.
-        linewidths (:obj:`float`, optional): Line width for contour lines. Defaults to 0.2.
-        label (:obj:`bool`, optional): Label contour lines? Defaults to False.
+    Keyword Args:
+        ensemble_dimension (:obj:`float`): name of the ensemble dimension. Defaults to 'member'.
+        resolution (:obj:`float`): What lat:lon resolution (in degrees) to interpolate pe.data to before plotting. Defaults to None - use original resolution.
+        colors (see :mod:`matplotlib.colors`) contour line colour. Defaults to 'black'.
+        linewidths (:obj:`float`): Line width for contour lines. Defaults to 0.2.
+        label (:obj:`bool`): Label contour lines? Defaults to False.
         cmap (:obj:`matplotlib.colors.LinearSegmentedColormap`): Mapping of pe.data to plot colour. Defaults to blackblack semi-transparent.
-        threshold (:obj:`float`, optional): Ranges shown are regions where the probability that a contour line passes through the region is greater than this. Defaults to 0.05 (5%).
-        vmax (:obj:`float`, optional): Show as 'most likely', regions where the prob of a contour is greater than this Defaults to 0.4 (40%).
-        line_threshold (:obj:`float`, optional): Only draw contours where the local standard deviation is less than this. Defaults to None - draw contours everywhere.
-        alpha (:obj:`float`, optional): Colour alpha blend. Defaults to 1 (opaque).
-        fontsize (:obj:`int`, optional): Font size for contour labels. Defaults to 12.
-        zorder (:obj:`float`, optional): Standard matplotlib parameter determining which things are plotted on top (high zorder), and which underneath (low zorder), Defaults to 40.
-        label (:obj:`bool`, optional): Label contour lines? Defaults to True.
+        threshold (:obj:`float`): Ranges shown are regions where the probability that a contour line passes through the region is greater than this. Defaults to 0.05 (5%).
+        vmax (:obj:`float`): Show as 'most likely', regions where the prob of a contour is greater than this Defaults to 0.4 (40%).
+        line_threshold (:obj:`float`): Only draw contours where the local standard deviation is less than this. Defaults to None - draw contours everywhere.
+        alpha (:obj:`float`): Colour alpha blend. Defaults to 1 (opaque).
+        fontsize (:obj:`int`): Font size for contour labels. Defaults to 12.
+        zorder (:obj:`float`): Standard matplotlib parameter determining which things are plotted on top (high zorder), and which underneath (low zorder), Defaults to 40.
+        label (:obj:`bool`): Label contour lines? Defaults to True.
 
     Returns:
         See :meth:`matplotlib.axes.Axes.contour` - also adds the lines to the plot.
@@ -156,10 +157,9 @@ def plot_mean_spread(ax,pe,**kwargs):
     |
     """
 
-    kwargs.setdefault('raw'               ,False)
     kwargs.setdefault('label'             ,True)
     kwargs.setdefault('ensemble_dimension','member')
-    kwargs.setdefault('resolution'        ,0.25)
+    kwargs.setdefault('resolution'        ,None)
     kwargs.setdefault('scale'             ,1.0)
     kwargs.setdefault('cmap'              ,mean_contour_cmap)
     kwargs.setdefault('colors'            ,'black')
@@ -176,7 +176,7 @@ def plot_mean_spread(ax,pe,**kwargs):
     pe_m=pe.collapsed(kwargs.get('ensemble_dimension'), iris.analysis.MEAN)
     pe_s=pe.collapsed(kwargs.get('ensemble_dimension'), iris.analysis.STD_DEV)
 
-    if not kwargs.get('raw'):
+    if kwargs.get('resolution') is not None:
         plot_cube=utils.dummy_cube(ax,kwargs.get('resolution'))
         pe_m=pe_m.regrid(plot_cube,iris.analysis.Linear())
         pe_s=pe_s.regrid(plot_cube,iris.analysis.Linear())
@@ -258,12 +258,10 @@ def plot(ax,pe,**kwargs):
         pe (:obj:`iris.cube.Cube`): Variable to plot - must have dimensions 'latitude' and 'longitude'.
 
 
-    Kwargs:
-        type (:obj:`str`, optional): Style to plot. Options are: 
-            * 'contour', (default) which delegates plotting to :meth:`plot_contour`,
-            * 'spaghetti',  which delegates plotting to :meth:`plot_spaghetti_contour`,
-            * 'spread', which delegates plotting to :meth:`plot_mean_spread.
-        Other keyword arguments are passed to the style-specific plotting function.
+    Keyword Args:
+        type (:obj:`str`): Style to plot. Options are:'contour' (default), which delegates plotting to :meth:`plot_contour`, 'spaghetti',  which delegates plotting to :meth:`plot_spaghetti_contour`, 'spread', which delegates plotting to :meth:`plot_mean_spread`.
+
+    Other keyword arguments are passed to the style-specific plotting function.
 
     Returns:
         See :meth:`matplotlib.axes.Axes.contour` - Also adds the lines to the plot.

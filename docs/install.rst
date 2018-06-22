@@ -5,9 +5,8 @@ Known to work on with Python 2.7 on modern Linux and OS X systems. Not tested on
 
 Relies on `SciTools <http://scitools.org.uk/>`_. So first install `Iris <http://scitools.org.uk/iris/docs/latest/index.html>`_ and `Cartopy <http://scitools.org.uk/cartopy/docs/latest/index.html>`_
 
-Two environment variables must be set:
+One environment variable must be set:
 
-* SCRATCH - the name of a directory to download weather data to.
 * CARTOPY_USER_BACKGROUNDS (may be set during Cartopy installation) - the name of a directory to put plot background images in.
 
 Also requires:
@@ -17,15 +16,13 @@ Also requires:
 * `wget <https://www.gnu.org/software/wget/>`_: To download background data.
 * `unzip <http://www.info-zip.org/mans/unzip.html>`_: To unpack the background data.
 * `imagemagick convert <https://www.imagemagick.org/script/convert.php>`_. To make optimised backgrounds.
-* The ECMWF api: `ecmwfapi <https://software.ecmwf.int/wiki/display/WEBAPI/Access+ECMWF+Public+Datasets>`_ - only needed if you want to use CERA-20C or ERA5 data.
 
 Then install the package from the source in `<https://github.com/philip-brohan/Meteorographica>`_.
 
-Finally, run the package setup function to produce the plot backgrounds:
+Finally, run the package setup script to produce the plot backgrounds:
 
-.. code-block:: python
+.. code-block:: sh
 
-    import Meteorographica.weathermap as wm
-    wm.fetch_backgrounds()
+    Meteorographica.fetch_backgrounds
 
 You should then be able to reproduce `the examples <examples/examples.html>`_.

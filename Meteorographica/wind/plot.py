@@ -12,6 +12,8 @@
 #
 
 import iris
+import matplotlib
+import numpy
 
 import Meteorographica.utils as utils
 from wind_vectors import *
@@ -28,13 +30,13 @@ def plot_quiver(ax,ue,ve,**kwargs):
         ue (:obj:`iris.cube.Cube`): meridional value of variable to plot.
         ve (:obj:`iris.cube.Cube`): zonal value of  variable to plot.
 
-    Kwargs:
-        resolution (:obj:`float`, optional): What lat:lon resolution (in degrees) to interpolate [uv]e.data to before plotting. Defaults to 1.
-        colors (see :mod:`matplotlib.colors`, optional) vector colour. Defaults to (0,0,0,0.25).
-        headwidth (:obj:`float`, optional): Controls arrow shape. Defaults to 1.
+    Keyword Args:
+        resolution (:obj:`float`): What lat:lon resolution (in degrees) to interpolate [uv]e.data to before plotting. Defaults to 1 degree.
+        colors (see :mod:`matplotlib.colors`) vector colour. Defaults to (0,0,0,0.25).
+        headwidth (:obj:`float`): Controls arrow shape. Defaults to 1.
         random_state (None|:obj:`int`|:obj:`numpy.random.RandomState`): Random number generation seed, see :func:`sklearn.utils.check_random_state`.
-        max_points (:obj:`int`, optional): Maximum number of vectors to allocate, defaults to 100,000.
-        zorder (:obj:`float`, optional): Standard matplotlib parameter determining which things are plotted on top (high zorder), and which underneath (low zorder), Defaults to 50.
+        max_points (:obj:`int`): Maximum number of vectors to allocate, defaults to 100,000.
+        zorder (:obj:`float`): Standard matplotlib parameter determining which things are plotted on top (high zorder), and which underneath (low zorder), Defaults to 50.
 
     Returns:
         See :meth:`matplotlib.axes.Axes.quiver` - also adds the vectors to the plot.

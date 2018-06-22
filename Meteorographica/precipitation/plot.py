@@ -41,15 +41,15 @@ def plot_cmesh(ax,pe,**kwargs):
         ax (:obj:`cartopy.mpl.geoaxes.GeoAxes`): Axes on which to draw.
         pe (:obj:`iris.cube.Cube`): Variable to plot - must be 2d, with dimensions latitude and longitude.
 
-    Kwargs:
+    Keyword Args:
         raw (:obj:`bool`): If True, plot the colourmap on the native data resolution. If False (default), regrid the data to the given resolution before plotting.
-        resolution (:obj:`float`, optional): What lat:lon resolution (in degrees) to interpolate pe.data to before plotting. Defaults to 0.25.
-        scale (:obj:`float`, optional): This function is tuned for 20CR precip data - rates in Kg*m-2*s-1. For accumulated precip it will be necessary to scale it to an equivalent range. For CERA-20C, try 10. For ERA5, try 10 for enda and 3.6 for oper. Defaults to 1.
+        resolution (:obj:`float`): What lat:lon resolution (in degrees) to interpolate pe.data to before plotting. Defaults to 0.25.
+        scale (:obj:`float`): This function is tuned for 20CR precip data - rates in Kg*m-2*s-1. For accumulated precip it will be necessary to scale it to an equivalent range. For CERA-20C, try 10. For ERA5, try 10 for enda and 3.6 for oper. Defaults to 1.
         sqrt (:obj:`bool`): Heavy precip (tropical) is so much bigger than light precip that it helps a lot to flatten the distribution before plotting. Apply a square-root filter to the data before plotting? Defaults to True.
         cmap (:obj:`matplotlib.colors.LinearSegmentedColormap`): Mapping of pe.data to plot colour. Defaults to green semi-transparent.
-        vmin (:obj:`float): Data value that is shown as 'no precip' (after scaling and filtering). Increase this to show low-previp as zero instead. Defaults to 0.
-        vmax (:obj:`float): Data value that is shown as 'heavy precip - darkest colour' (after scaling and filtering). Defaults to 0.025 Kg*m-2*s-1.
-        zorder (:obj:`float`, optional): Standard matplotlib parameter determining which things are plotted on top (high zorder), and which underneath (low zorder), Defaults to 40.
+        vmin (:obj:`float`): Data value that is shown as 'no precip' (after scaling and filtering). Increase this to show low-previp as zero instead. Defaults to 0.
+        vmax (:obj:`float`): Data value that is shown as 'heavy precip - darkest colour' (after scaling and filtering). Defaults to 0.025 Kg*m-2*s-1.
+        zorder (:obj:`float`): Standard matplotlib parameter determining which things are plotted on top (high zorder), and which underneath (low zorder), Defaults to 40.
 
     Returns:
         See :meth:`matplotlib.axes.Axes.pcolorfast` - also adds the image to the plot.
@@ -58,8 +58,7 @@ def plot_cmesh(ax,pe,**kwargs):
     """  
 
     # Set keyword argument defaults
-    kwargs.setdefault('raw'       ,False)
-    kwargs.setdefault('resolution',0.25)
+    kwargs.setdefault('resolution',None)
     kwargs.setdefault('scale'     ,1.0)
     kwargs.setdefault('sqrt'      ,True)
     kwargs.setdefault('cmap'      ,precip_cmap)
@@ -67,7 +66,7 @@ def plot_cmesh(ax,pe,**kwargs):
     kwargs.setdefault('vmax'      ,0.025)
     kwargs.setdefault('zorder'    ,40)
  
-    if kwargs.get('raw'):
+    if kwargs.get('resolution') is None:
         cmesh_p=pe
     else:
         plot_cube=utils.dummy_cube(ax,kwargs.get('resolution'))
@@ -100,8 +99,8 @@ def plot(ax,pe,**kwargs):
         pe (:obj:`iris.cube.Cube`): Variable to plot - must be 2d, with dimensions latitude and longitude.
 
 
-    Kwargs:
-        type (:obj:`str`, optional): Style to plot. Default is 'cmap', which delegates plotting to :meth:`plot_cmesh` and at the moment this is the only choice. 
+    Keyword Args:
+        type (:obj:`str`): Style to plot. Default is 'cmap', which delegates plotting to :meth:`plot_cmesh` and at the moment this is the only choice. 
         Other keyword arguments are passed to the style-specific plotting function.
 
     |

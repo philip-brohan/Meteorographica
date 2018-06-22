@@ -10,14 +10,14 @@ def add_grid(ax,**kwargs):
     Args:
         ax (:obj:`cartopy.mpl.geoaxes.GeoAxes`): Axes on which to draw.
 
-    Kwargs:
-        linestyle (:obj:`str`, optional): See :meth:`matplotlib.lines.Line2D.set_linestyle`. Defaults to '-'.
-        linewidth_minor (:obj:`float`, optional): Line width for minor grid. Defaults to 0.2.
-        linewidth_major (:obj:`float`, optional): Line width for major grid. Defaults to 0.5.
-        color (see :mod:`matplotlib.colors`, optional): Grid colour. Defaults to (0,0.30,0,0.3).
-        sep_minor (:obj:`float`, optional): Separation, in degrees, of the minor grid lines. Defaults to 0.5.
-        sep_major (:obj:`float`, optional): Separation, in degrees, of the major grid lines. Defaults to 2.0.
-        zorder (:obj:`float`, optional): Standard matplotlib parameter determining which things are plotted on top (high zorder), and which underneath (low zorder), Defaults to 0 - at the bottom.
+    Keyword Args:
+        linestyle (:obj:`str`): See :meth:`matplotlib.lines.Line2D.set_linestyle`. Defaults to '-'.
+        linewidth_minor (:obj:`float`): Line width for minor grid. Defaults to 0.2.
+        linewidth_major (:obj:`float`): Line width for major grid. Defaults to 0.5.
+        color (see :mod:`matplotlib.colors`): Grid colour. Defaults to (0,0.30,0,0.3).
+        sep_minor (:obj:`float`): Separation, in degrees, of the minor grid lines. Defaults to 0.5.
+        sep_major (:obj:`float`): Separation, in degrees, of the major grid lines. Defaults to 2.0.
+        zorder (:obj:`float`): Standard matplotlib parameter determining which things are plotted on top (high zorder), and which underneath (low zorder), Defaults to 0 - at the bottom.
 
     Returns:
         Nothing - adds the grid to the plot as a side effect.
