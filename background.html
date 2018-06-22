@@ -1,0 +1,174 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+        <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Meteorographica.background &#8212; Meteorographica: python tools for making weather maps</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Examples" href="examples/examples.html" />
+    <link rel="prev" title="Meteorographica.observations" href="observations.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="examples/examples.html" title="Examples"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="observations.html" title="Meteorographica.observations"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Meteorographica</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/UK_spaghetti.png" alt="Logo"/>
+            </a></p>
+<h3><a href="index.html">Table Of Contents</a></h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="pressure.html">Meteorographica.pressure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wind.html">Meteorographica.wind</a></li>
+<li class="toctree-l1"><a class="reference internal" href="precipitation.html">Meteorographica.precipitation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="observations.html">Meteorographica.observations</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Meteorographica.background</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples.html">Examples</a></li>
+</ul>
+<h3><a href="https://github.com/philip-brohan/Meteorographica">Get the source code</a></h3>
+
+<a href="https://github.com/philip-brohan/Meteorographica"
+           rel="nofollow">Github source repository</a>
+
+<h3>Found a bug, or have a suggestion?</h3>
+
+Please <a href="https://github.com/philip-brohan/Meteorographica/issues/new">raise an issue</a>.
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="meteorographica-background">
+<h1>Meteorographica.background<a class="headerlink" href="#meteorographica-background" title="Permalink to this headline">¶</a></h1>
+<p>A weather-map should show the weather with as little distraction as possible. We need a map background to show where we are in the world, and also to indicate the local orography, which can be important, but it should be as unobtrusive as posible.</p>
+<p>This package two features to add background to plots. A function to draw a lat:lon grid, and a custom background image derived from <a class="reference external" href="https://www.naturalearthdata.com/">Natural Earth data</a>.</p>
+<p>The grid takes a <a class="reference external" href="https://scitools.org.uk/cartopy/docs/latest/matplotlib/geoaxes.html#cartopy.mpl.geoaxes.GeoAxes" title="(in cartopy v0.16.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cartopy.mpl.geoaxes.GeoAxes</span></code></a> to draw into</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Meteorographica</span><span class="o">.</span><span class="n">background</span><span class="o">.</span><span class="n">add_grid</span><span class="p">(</span><span class="n">geoaxes</span><span class="p">,</span><span class="o">**</span><span class="n">options</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The image is applied using an existing GeoAxes function:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ax</span><span class="o">.</span><span class="n">background_img</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;GreyT&#39;</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="s1">&#39;low&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>But we do have to make it - this should be done during <a class="reference internal" href="install.html"><span class="doc">installation</span></a>.</p>
+<p>See <a class="reference internal" href="examples/examples.html"><span class="doc">examples of use</span></a>.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<span class="target" id="module-Meteorographica.background"></span><dl class="function">
+<dt id="Meteorographica.background.add_grid">
+<code class="descclassname">Meteorographica.background.</code><code class="descname">add_grid</code><span class="sig-paren">(</span><em>ax</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Meteorographica/background/plot.html#add_grid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Meteorographica.background.add_grid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a lat-lon grid to the map.</p>
+<p>Actually plots two grids, a minor grid at a narrow spacing with thin lines, and a major grid at a wider spacing with thicker lines. Note that the grids only cover the latitude range -85 to 85, because the line spacings become too small very close to the poles on a rotated grid.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>ax</strong> (<a class="reference external" href="https://scitools.org.uk/cartopy/docs/latest/matplotlib/geoaxes.html#cartopy.mpl.geoaxes.GeoAxes" title="(in cartopy v0.16.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cartopy.mpl.geoaxes.GeoAxes</span></code></a>) – Axes on which to draw.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
+<li><strong>linestyle</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>) – See <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.lines.Line2D.html#matplotlib.lines.Line2D.set_linestyle" title="(in Matplotlib v2.2.2)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">matplotlib.lines.Line2D.set_linestyle()</span></code></a>. Defaults to ‘-‘.</li>
+<li><strong>linewidth_minor</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>) – Line width for minor grid. Defaults to 0.2.</li>
+<li><strong>linewidth_major</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>) – Line width for major grid. Defaults to 0.5.</li>
+<li><strong>color</strong> (see <a class="reference external" href="https://matplotlib.org/api/colors_api.html#module-matplotlib.colors" title="(in Matplotlib v2.2.2)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">matplotlib.colors</span></code></a>) – Grid colour. Defaults to (0,0.30,0,0.3).</li>
+<li><strong>sep_minor</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>) – Separation, in degrees, of the minor grid lines. Defaults to 0.5.</li>
+<li><strong>sep_major</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>) – Separation, in degrees, of the major grid lines. Defaults to 2.0.</li>
+<li><strong>zorder</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>) – Standard matplotlib parameter determining which things are plotted on top (high zorder), and which underneath (low zorder), Defaults to 0 - at the bottom.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Nothing - adds the grid to the plot as a side effect.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</dd></dl>
+
+<span class="target" id="module-Meteorographica.scripts.fetch_backgrounds"></span><dl class="function">
+<dt id="Meteorographica.scripts.fetch_backgrounds.fetch_backgrounds">
+<code class="descclassname">Meteorographica.scripts.fetch_backgrounds.</code><code class="descname">fetch_backgrounds</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Meteorographica/scripts/fetch_backgrounds.html#fetch_backgrounds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Meteorographica.scripts.fetch_backgrounds.fetch_backgrounds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fetch plot background data from Natural Earth.</p>
+<p><a class="reference external" href="http://scitools.org.uk/cartopy/docs/latest/index.html">Cartopy</a> uses background images from <a class="reference external" href="http://www.naturalearthdata.com/">Natural Earth</a> for things like continent outlines on world maps - Meteorographica folows it in this. This function downloads some Natural Earth data (continent backgrounds) and modifies it to make ocean regions transparent for easy use in map plots.</p>
+<p>You should only have to run this function once as part of the set-up of this module.</p>
+<p>Requires three utility functions to be available: <a class="reference external" href="https://www.gnu.org/software/wget/">wget</a>, <a class="reference external" href="http://www.info-zip.org/mans/unzip.html">unzip</a>, and <a class="reference external" href="https://www.imagemagick.org/script/convert.php">imagemagick convert</a>. It will create map background files in the directory specified by the CARTOPY_USER_BACKGROUNDS environment variable which should have been set during the installation of <a class="reference external" href="http://scitools.org.uk/cartopy/docs/latest/index.html">Cartopy</a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal notranslate"><span class="pre">StandardError</span></code> – Environment variable ‘CARTOPY_USER_BACKGROUNDS’ is not set</td>
+</tr>
+</tbody>
+</table>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="examples/examples.html" title="Examples"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="observations.html" title="Meteorographica.observations"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Meteorographica</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    </div>
+  </body>
+</html>

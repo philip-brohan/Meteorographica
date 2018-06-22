@@ -1,0 +1,184 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+        <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Meteorographica.scripts.fetch_backgrounds &#8212; Meteorographica: python tools for making weather maps</title>
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Meteorographica</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/UK_spaghetti.png" alt="Logo"/>
+            </a></p>
+<h3><a href="../../../index.html">Table Of Contents</a></h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../pressure.html">Meteorographica.pressure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../wind.html">Meteorographica.wind</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../precipitation.html">Meteorographica.precipitation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../observations.html">Meteorographica.observations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../background.html">Meteorographica.background</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/examples.html">Examples</a></li>
+</ul>
+<h3><a href="https://github.com/philip-brohan/Meteorographica">Get the source code</a></h3>
+
+<a href="https://github.com/philip-brohan/Meteorographica"
+           rel="nofollow">Github source repository</a>
+
+<h3>Found a bug, or have a suggestion?</h3>
+
+Please <a href="https://github.com/philip-brohan/Meteorographica/issues/new">raise an issue</a>.
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for Meteorographica.scripts.fetch_backgrounds</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin env python</span>
+
+<span class="c1"># (C) British Crown Copyright 2017, Met Office</span>
+<span class="c1">#</span>
+<span class="c1"># This code is free software: you can redistribute it and/or modify it under</span>
+<span class="c1"># the terms of the GNU Lesser General Public License as published by the</span>
+<span class="c1"># Free Software Foundation, either version 3 of the License, or</span>
+<span class="c1"># (at your option) any later version.</span>
+<span class="c1">#</span>
+<span class="c1"># This code is distributed in the hope that it will be useful,</span>
+<span class="c1"># but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="c1"># MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="c1"># GNU Lesser General Public License for more details.</span>
+<span class="c1">#</span>
+
+<span class="c1"># Utility functions for weather mapping.</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">os.path</span>
+
+<span class="c1"># Fetch the background data from Natural Earth</span>
+<div class="viewcode-block" id="fetch_backgrounds"><a class="viewcode-back" href="../../../background.html#Meteorographica.scripts.fetch_backgrounds.fetch_backgrounds">[docs]</a><span class="k">def</span> <span class="nf">fetch_backgrounds</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Fetch plot background data from Natural Earth.</span>
+
+<span class="sd">    `Cartopy &lt;http://scitools.org.uk/cartopy/docs/latest/index.html&gt;`_ uses background images from `Natural Earth &lt;http://www.naturalearthdata.com/&gt;`_ for things like continent outlines on world maps - Meteorographica folows it in this. This function downloads some Natural Earth data (continent backgrounds) and modifies it to make ocean regions transparent for easy use in map plots.</span>
+
+<span class="sd">    You should only have to run this function once as part of the set-up of this module.</span>
+
+<span class="sd">    Requires three utility functions to be available: `wget &lt;https://www.gnu.org/software/wget/&gt;`_, `unzip &lt;http://www.info-zip.org/mans/unzip.html&gt;`_, and `imagemagick convert &lt;https://www.imagemagick.org/script/convert.php&gt;`_. It will create map background files in the directory specified by the CARTOPY_USER_BACKGROUNDS environment variable which should have been set during the installation of `Cartopy &lt;http://scitools.org.uk/cartopy/docs/latest/index.html&gt;`_.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        StandardError: Environment variable &#39;CARTOPY_USER_BACKGROUNDS&#39; is not set</span>
+<span class="sd">    |</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">bgdir</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;CARTOPY_USER_BACKGROUNDS&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">bgdir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">StandardError</span><span class="p">(</span><span class="s2">&quot;CARTOPY_USER_BACKGROUNDS environment &quot;</span>
+                            <span class="o">+</span> <span class="s2">&quot;variable is undefined&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">bgdir</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">bgdir</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">bgdir</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="s2">&quot;GRAY_50M_SR_W_tpo.png&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="s2">&quot;GRAY_50M_SR_W.tif&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="s2">&quot;GRAY_50M_SR_W.zip&quot;</span><span class="p">):</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">&quot;wget http://www.naturalearthdata.com/http//www.naturalearthdata.com/&quot;</span>
+                          <span class="o">+</span> <span class="s2">&quot;download/50m/raster/GRAY_50M_SR_W.zip&quot;</span><span class="p">)</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">&quot;unzip GRAY_50M_SR_W.zip&quot;</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">&quot;convert GRAY_50M_SR_W/GRAY_50M_SR_W.tif &quot;</span>
+                  <span class="o">+</span> <span class="s2">&quot;-transparent &#39;#6a6a6a&#39; &quot;</span>
+                  <span class="o">+</span> <span class="s2">&quot;GRAY_50M_SR_W_tpo.png&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="s2">&quot;GRAY_LR_SR_W_tpo.png&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="s2">&quot;GRAY_LR_SR_W.tif&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="s2">&quot;GRAY_LR_SR_W.zip&quot;</span><span class="p">):</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">&quot;wget http://www.naturalearthdata.com/http//www.naturalearthdata.com/&quot;</span>
+                          <span class="o">+</span> <span class="s2">&quot;download/10m/raster/GRAY_LR_SR_W.zip&quot;</span><span class="p">)</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">&quot;unzip GRAY_LR_SR_W.zip&quot;</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">&quot;convert GRAY_LR_SR_W/GRAY_LR_SR_W.tif &quot;</span>
+                  <span class="o">+</span> <span class="s2">&quot;-transparent &#39;#6a6a6a&#39; &quot;</span>
+                  <span class="o">+</span> <span class="s2">&quot;GRAY_LR_SR_W_tpo.png&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="s2">&quot;GRAY_HR_SR_W_tpo.png&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="s2">&quot;GRAY_HR_SR_W.tif&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="s2">&quot;GRAY_HR_SR_W.zip&quot;</span><span class="p">):</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">&quot;wget http://www.naturalearthdata.com/http//www.naturalearthdata.com/&quot;</span>
+                          <span class="o">+</span> <span class="s2">&quot;download/10m/raster/GRAY_HR_SR_W.zip&quot;</span><span class="p">)</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">&quot;unzip GRAY_HR_SR_W.zip&quot;</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">&quot;convert GRAY_HR_SR_W/GRAY_HR_SR_W.tif &quot;</span>
+                  <span class="o">+</span> <span class="s2">&quot;-transparent &#39;#6a6a6a&#39; &quot;</span>
+                  <span class="o">+</span> <span class="s2">&quot;GRAY_HR_SR_W_tpo.png&quot;</span><span class="p">)</span>
+
+    <span class="n">idx_txt</span><span class="o">=</span><span class="s1">&#39;&#39;&#39;{&quot;__comment__&quot;: &quot;JSON file specifying the image to use for a given type/name and resolution. Read in by cartopy.mpl.geoaxes.read_user_background_images.&quot;,</span>
+<span class="s1">  &quot;GreyT&quot;: {</span>
+<span class="s1">    &quot;__comment__&quot;: &quot;Grey topography - land only &quot;,</span>
+<span class="s1">    &quot;__source__&quot;: &quot;http://www.naturalearthdata.com/downloads/10m-raster-data/10m-gray-earth/&quot;,</span>
+<span class="s1">    &quot;__projection__&quot;: &quot;PlateCarree&quot;,</span>
+<span class="s1">    &quot;low&quot;: &quot;GRAY_50M_SR_W_tpo.png&quot;,</span>
+<span class="s1">    &quot;50m&quot;: &quot;GRAY_50M_SR_W_tpo.png&quot;,</span>
+<span class="s1">    &quot;med&quot;: &quot;GRAY_LR_SR_W_tpo.png&quot;,</span>
+<span class="s1">    &quot;high&quot;: &quot;GRAY_HR_SR_W_tpo.png&quot;,</span>
+<span class="s1">    &quot;10m&quot;: &quot;GRAY_HR_SR_W_tpo.png&quot;</span>
+<span class="s1">   }</span>
+<span class="s1">}&#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="s2">&quot;images.json&quot;</span><span class="p">):</span>
+        <span class="n">jf</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;images.json&quot;</span><span class="p">,</span><span class="s2">&quot;w&quot;</span><span class="p">)</span>
+        <span class="n">jf</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">idx_txt</span><span class="p">)</span></div>
+        <span class="n">jf</span><span class="o">.</span><span class="n">close</span>
+
+<span class="c1"># Actually want to call this directly as a script</span>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">fetch_backgrounds</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Meteorographica</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    </div>
+  </body>
+</html>

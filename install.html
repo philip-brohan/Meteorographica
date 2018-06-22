@@ -6,7 +6,7 @@
   <head>
         <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Installation &#8212; Meteorographica: a personal library for weather data</title>
+    <title>Installation &#8212; Meteorographica: python tools for making weather maps</title>
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" src="_static/documentation_options.js"></script>
@@ -15,8 +15,8 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Meteorographica.data" href="data.html" />
-    <link rel="prev" title="Meteorographica: a personal library for weather data" href="index.html" /> 
+    <link rel="next" title="Meteorographica.pressure" href="pressure.html" />
+    <link rel="prev" title="Meteorographica: python code for plotting weathermaps" href="index.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
@@ -28,10 +28,10 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="data.html" title="Meteorographica.data"
+          <a href="pressure.html" title="Meteorographica.pressure"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="index.html" title="Meteorographica: a personal library for weather data"
+          <a href="index.html" title="Meteorographica: python code for plotting weathermaps"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">Meteorographica</a> &#187;</li> 
       </ul>
@@ -39,33 +39,30 @@
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="index.html">
-              <img class="logo" src="_static/UK.GS1987.png" alt="Logo"/>
+              <img class="logo" src="_static/UK_spaghetti.png" alt="Logo"/>
             </a></p>
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="index.html"
-                        title="previous chapter">Meteorographica: a personal library for weather data</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="data.html"
-                        title="next chapter">Meteorographica.data</a></p>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="_sources/install.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    </div>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<h3><a href="index.html">Table Of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="pressure.html">Meteorographica.pressure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wind.html">Meteorographica.wind</a></li>
+<li class="toctree-l1"><a class="reference internal" href="precipitation.html">Meteorographica.precipitation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="observations.html">Meteorographica.observations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="background.html">Meteorographica.background</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples.html">Examples</a></li>
+</ul>
+<h3><a href="https://github.com/philip-brohan/Meteorographica">Get the source code</a></h3>
+
+<a href="https://github.com/philip-brohan/Meteorographica"
+           rel="nofollow">Github source repository</a>
+
+<h3>Found a bug, or have a suggestion?</h3>
+
+Please <a href="https://github.com/philip-brohan/Meteorographica/issues/new">raise an issue</a>.
         </div>
       </div>
 
@@ -78,9 +75,8 @@
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
 <p>Known to work on with Python 2.7 on modern Linux and OS X systems. Not tested on anything else.</p>
 <p>Relies on <a class="reference external" href="http://scitools.org.uk/">SciTools</a>. So first install <a class="reference external" href="http://scitools.org.uk/iris/docs/latest/index.html">Iris</a> and <a class="reference external" href="http://scitools.org.uk/cartopy/docs/latest/index.html">Cartopy</a></p>
-<p>Two environment variables must be set:</p>
+<p>One environment variable must be set:</p>
 <ul class="simple">
-<li>SCRATCH - the name of a directory to download weather data to.</li>
 <li>CARTOPY_USER_BACKGROUNDS (may be set during Cartopy installation) - the name of a directory to put plot background images in.</li>
 </ul>
 <p>Also requires:</p>
@@ -90,12 +86,10 @@
 <li><a class="reference external" href="https://www.gnu.org/software/wget/">wget</a>: To download background data.</li>
 <li><a class="reference external" href="http://www.info-zip.org/mans/unzip.html">unzip</a>: To unpack the background data.</li>
 <li><a class="reference external" href="https://www.imagemagick.org/script/convert.php">imagemagick convert</a>. To make optimised backgrounds.</li>
-<li>The ECMWF api: <a class="reference external" href="https://software.ecmwf.int/wiki/display/WEBAPI/Access+ECMWF+Public+Datasets">ecmwfapi</a> - only needed if you want to use CERA-20C or ERA5 data.</li>
 </ul>
 <p>Then install the package from the source in <a class="reference external" href="https://github.com/philip-brohan/Meteorographica">https://github.com/philip-brohan/Meteorographica</a>.</p>
-<p>Finally, run the package setup function to produce the plot backgrounds:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">Meteorographica.weathermap</span> <span class="kn">as</span> <span class="nn">wm</span>
-<span class="n">wm</span><span class="o">.</span><span class="n">fetch_backgrounds</span><span class="p">()</span>
+<p>Finally, run the package setup script to produce the plot backgrounds:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>Meteorographica.fetch_backgrounds
 </pre></div>
 </div>
 <p>You should then be able to reproduce <a class="reference external" href="examples/examples.html">the examples</a>.</p>
@@ -117,10 +111,10 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="data.html" title="Meteorographica.data"
+          <a href="pressure.html" title="Meteorographica.pressure"
              >next</a> |</li>
         <li class="right" >
-          <a href="index.html" title="Meteorographica: a personal library for weather data"
+          <a href="index.html" title="Meteorographica: python code for plotting weathermaps"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">Meteorographica</a> &#187;</li> 
       </ul>

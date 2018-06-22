@@ -1,0 +1,210 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+        <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Meteorographica.precipitation.plot &#8212; Meteorographica: python tools for making weather maps</title>
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Meteorographica</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/UK_spaghetti.png" alt="Logo"/>
+            </a></p>
+<h3><a href="../../../index.html">Table Of Contents</a></h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../pressure.html">Meteorographica.pressure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../wind.html">Meteorographica.wind</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../precipitation.html">Meteorographica.precipitation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../observations.html">Meteorographica.observations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../background.html">Meteorographica.background</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/examples.html">Examples</a></li>
+</ul>
+<h3><a href="https://github.com/philip-brohan/Meteorographica">Get the source code</a></h3>
+
+<a href="https://github.com/philip-brohan/Meteorographica"
+           rel="nofollow">Github source repository</a>
+
+<h3>Found a bug, or have a suggestion?</h3>
+
+Please <a href="https://github.com/philip-brohan/Meteorographica/issues/new">raise an issue</a>.
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for Meteorographica.precipitation.plot</h1><div class="highlight"><pre>
+<span></span><span class="c1"># (C) British Crown Copyright 2017, Met Office</span>
+<span class="c1">#</span>
+<span class="c1"># This code is free software: you can redistribute it and/or modify it under</span>
+<span class="c1"># the terms of the GNU Lesser General Public License as published by the</span>
+<span class="c1"># Free Software Foundation, either version 3 of the License, or</span>
+<span class="c1"># (at your option) any later version.</span>
+<span class="c1">#</span>
+<span class="c1"># This code is distributed in the hope that it will be useful,</span>
+<span class="c1"># but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="c1"># MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="c1"># GNU Lesser General Public License for more details.</span>
+<span class="c1">#</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">import</span> <span class="nn">iris</span>
+<span class="kn">import</span> <span class="nn">matplotlib</span>
+<span class="kn">import</span> <span class="nn">matplotlib.colors</span>
+
+<span class="kn">import</span> <span class="nn">Meteorographica.utils</span> <span class="k">as</span> <span class="nn">utils</span>
+
+<span class="c1"># Define a colour map appropriate for precip plots</span>
+<span class="c1"># Dark green with varying transparency</span>
+<span class="n">precip_cmap</span> <span class="o">=</span> <span class="n">matplotlib</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">LinearSegmentedColormap</span><span class="p">(</span><span class="s1">&#39;p_cmap&#39;</span><span class="p">,</span>
+                             <span class="p">{</span><span class="s1">&#39;red&#39;</span>  <span class="p">:</span> <span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span> 
+                                        <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)),</span> 
+                              <span class="s1">&#39;green&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">),</span> 
+                                        <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">)),</span> 
+                              <span class="s1">&#39;blue&#39;</span> <span class="p">:</span> <span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span> 
+                                        <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)),</span> 
+                              <span class="s1">&#39;alpha&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+                                        <span class="p">(</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+                                        <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">))</span> <span class="p">})</span>
+
+<span class="c1"># Plot precip as a colour map</span>
+<div class="viewcode-block" id="plot_cmesh"><a class="viewcode-back" href="../../../precipitation.html#Meteorographica.precipitation.plot_cmesh">[docs]</a><span class="k">def</span> <span class="nf">plot_cmesh</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">pe</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Plots a variable as a colour map.</span>
+
+<span class="sd">    This is the same as :meth:`matplotlib.axes.Axes.pcolorfast`, except that it takes an :class:`iris.cube.Cube` instead of an array of colour values, and its colour defaults are chosen for plots of precipitation rate.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        ax (:obj:`cartopy.mpl.geoaxes.GeoAxes`): Axes on which to draw.</span>
+<span class="sd">        pe (:obj:`iris.cube.Cube`): Variable to plot - must be 2d, with dimensions latitude and longitude.</span>
+
+<span class="sd">    Keyword Args:</span>
+<span class="sd">        raw (:obj:`bool`): If True, plot the colourmap on the native data resolution. If False (default), regrid the data to the given resolution before plotting.</span>
+<span class="sd">        resolution (:obj:`float`): What lat:lon resolution (in degrees) to interpolate pe.data to before plotting. Defaults to 0.25.</span>
+<span class="sd">        scale (:obj:`float`): This function is tuned for 20CR precip data - rates in Kg*m-2*s-1. For accumulated precip it will be necessary to scale it to an equivalent range. For CERA-20C, try 10. For ERA5, try 10 for enda and 3.6 for oper. Defaults to 1.</span>
+<span class="sd">        sqrt (:obj:`bool`): Heavy precip (tropical) is so much bigger than light precip that it helps a lot to flatten the distribution before plotting. Apply a square-root filter to the data before plotting? Defaults to True.</span>
+<span class="sd">        cmap (:obj:`matplotlib.colors.LinearSegmentedColormap`): Mapping of pe.data to plot colour. Defaults to green semi-transparent.</span>
+<span class="sd">        vmin (:obj:`float`): Data value that is shown as &#39;no precip&#39; (after scaling and filtering). Increase this to show low-previp as zero instead. Defaults to 0.</span>
+<span class="sd">        vmax (:obj:`float`): Data value that is shown as &#39;heavy precip - darkest colour&#39; (after scaling and filtering). Defaults to 0.025 Kg*m-2*s-1.</span>
+<span class="sd">        zorder (:obj:`float`): Standard matplotlib parameter determining which things are plotted on top (high zorder), and which underneath (low zorder), Defaults to 40.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        See :meth:`matplotlib.axes.Axes.pcolorfast` - also adds the image to the plot.</span>
+
+<span class="sd">    |</span>
+<span class="sd">    &quot;&quot;&quot;</span>  
+
+    <span class="c1"># Set keyword argument defaults</span>
+    <span class="n">kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;resolution&#39;</span><span class="p">,</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;scale&#39;</span>     <span class="p">,</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;sqrt&#39;</span>      <span class="p">,</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;cmap&#39;</span>      <span class="p">,</span><span class="n">precip_cmap</span><span class="p">)</span>
+    <span class="n">kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;vmin&#39;</span>      <span class="p">,</span><span class="mf">0.0</span><span class="p">)</span>
+    <span class="n">kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;vmax&#39;</span>      <span class="p">,</span><span class="mf">0.025</span><span class="p">)</span>
+    <span class="n">kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;zorder&#39;</span>    <span class="p">,</span><span class="mi">40</span><span class="p">)</span>
+ 
+    <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;resolution&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">cmesh_p</span><span class="o">=</span><span class="n">pe</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">plot_cube</span><span class="o">=</span><span class="n">utils</span><span class="o">.</span><span class="n">dummy_cube</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;resolution&#39;</span><span class="p">))</span>
+        <span class="n">cmesh_p</span> <span class="o">=</span> <span class="n">pe</span><span class="o">.</span><span class="n">regrid</span><span class="p">(</span><span class="n">plot_cube</span><span class="p">,</span><span class="n">iris</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">Linear</span><span class="p">())</span>
+
+    <span class="n">cmesh_p</span><span class="o">.</span><span class="n">data</span><span class="o">=</span><span class="n">cmesh_p</span><span class="o">.</span><span class="n">data</span><span class="o">*</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;scale&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;sqrt&#39;</span><span class="p">):</span>
+        <span class="n">cmesh_p</span><span class="o">.</span><span class="n">data</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">cmesh_p</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="n">lats</span> <span class="o">=</span> <span class="n">cmesh_p</span><span class="o">.</span><span class="n">coord</span><span class="p">(</span><span class="s1">&#39;latitude&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">points</span>
+    <span class="n">lons</span> <span class="o">=</span> <span class="n">cmesh_p</span><span class="o">.</span><span class="n">coord</span><span class="p">(</span><span class="s1">&#39;longitude&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">points</span>
+    <span class="n">prate_img</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">pcolorfast</span><span class="p">(</span><span class="n">lons</span><span class="p">,</span> <span class="n">lats</span><span class="p">,</span> <span class="n">cmesh_p</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> 
+                            <span class="n">cmap</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;cmap&#39;</span><span class="p">),</span>
+                            <span class="n">vmin</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;vmin&#39;</span><span class="p">),</span>
+                            <span class="n">vmax</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;vmax&#39;</span><span class="p">),</span>
+                            <span class="n">zorder</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;zorder&#39;</span><span class="p">))</span></div>
+    <span class="k">return</span> <span class="n">prate_img</span>
+
+
+
+
+<span class="c1"># Plot precip </span>
+<div class="viewcode-block" id="plot"><a class="viewcode-back" href="../../../precipitation.html#Meteorographica.precipitation.plot">[docs]</a><span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">pe</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Plot precipitation.</span>
+
+<span class="sd">    Generic function for plotting precipitation. Use the &#39;type&#39; argument to choose the plot style.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        ax (:obj:`cartopy.mpl.geoaxes.GeoAxes`): Axes on which to draw.</span>
+<span class="sd">        pe (:obj:`iris.cube.Cube`): Variable to plot - must be 2d, with dimensions latitude and longitude.</span>
+
+
+<span class="sd">    Keyword Args:</span>
+<span class="sd">        type (:obj:`str`): Style to plot. Default is &#39;cmap&#39;, which delegates plotting to :meth:`plot_cmesh` and at the moment this is the only choice. </span>
+<span class="sd">        Other keyword arguments are passed to the style-specific plotting function.</span>
+
+<span class="sd">    |</span>
+<span class="sd">    &quot;&quot;&quot;</span>  
+
+    <span class="n">kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">,</span><span class="s1">&#39;cmesh&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">)</span><span class="o">==</span><span class="s1">&#39;cmesh&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">plot_cmesh</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">pe</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">raise</span> <span class="n">StandardError</span><span class="p">(</span><span class="s1">&#39;Unsupported precipitation plot type </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span></div>
+                         <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">))</span>
+
+
+
+
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Meteorographica</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    </div>
+  </body>
+</html>

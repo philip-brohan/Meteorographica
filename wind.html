@@ -1,0 +1,216 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+        <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Meteorographica.wind &#8212; Meteorographica: python tools for making weather maps</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Meteorographica.precipitation" href="precipitation.html" />
+    <link rel="prev" title="Meteorographica.pressure" href="pressure.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="precipitation.html" title="Meteorographica.precipitation"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="pressure.html" title="Meteorographica.pressure"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Meteorographica</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/UK_spaghetti.png" alt="Logo"/>
+            </a></p>
+<h3><a href="index.html">Table Of Contents</a></h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="pressure.html">Meteorographica.pressure</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Meteorographica.wind</a></li>
+<li class="toctree-l1"><a class="reference internal" href="precipitation.html">Meteorographica.precipitation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="observations.html">Meteorographica.observations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="background.html">Meteorographica.background</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples.html">Examples</a></li>
+</ul>
+<h3><a href="https://github.com/philip-brohan/Meteorographica">Get the source code</a></h3>
+
+<a href="https://github.com/philip-brohan/Meteorographica"
+           rel="nofollow">Github source repository</a>
+
+<h3>Found a bug, or have a suggestion?</h3>
+
+Please <a href="https://github.com/philip-brohan/Meteorographica/issues/new">raise an issue</a>.
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="meteorographica-wind">
+<h1>Meteorographica.wind<a class="headerlink" href="#meteorographica-wind" title="Permalink to this headline">¶</a></h1>
+<p>This module is designed to make plots of 10-metre wind,  the functions can be used for any 2-element vector variable (with appropriate scaling factors).</p>
+<p>It takes a <a class="reference external" href="https://scitools.org.uk/cartopy/docs/latest/matplotlib/geoaxes.html#cartopy.mpl.geoaxes.GeoAxes" title="(in cartopy v0.16.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cartopy.mpl.geoaxes.GeoAxes</span></code></a> to draw into, and two iris <a class="reference external" href="https://scitools.org.uk/iris/docs/latest/iris/iris/cube.html#iris.cube.Cube" title="(in Iris v2.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iris.cube.Cube</span></code></a> (each with ‘latitude’ and ‘longitude’ dimensions) as the zonal and meridional components to plot. Then it’s just:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Meteorographica</span><span class="o">.</span><span class="n">wind</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">geoaxes</span><span class="p">,</span><span class="n">zonal_cube</span><span class="p">,</span><span class="n">meridional_cube</span><span class="p">,</span><span class="o">**</span><span class="n">options</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>See <a class="reference internal" href="examples/examples.html"><span class="doc">examples of use</span></a>.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<span class="target" id="module-Meteorographica.wind"></span><dl class="function">
+<dt id="Meteorographica.wind.allocate_vector_points">
+<code class="descclassname">Meteorographica.wind.</code><code class="descname">allocate_vector_points</code><span class="sig-paren">(</span><em>initial_points=None</em>, <em>lat_range=(-90</em>, <em>90)</em>, <em>lon_range=(-180</em>, <em>180)</em>, <em>scale=5.0</em>, <em>random_state=None</em>, <em>max_points=10000</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Meteorographica/wind/wind_vectors.html#allocate_vector_points"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Meteorographica.wind.allocate_vector_points" title="Permalink to this definition">¶</a></dt>
+<dd><p>Allocate even coverage of points over a 2d space - for wind vectors.</p>
+<p><em>WARNING</em> This function is broken/unfinished - do not use.</p>
+<p>To plot wind vectors in a video, we need an even coverage that moves with the wind. So we need a function that will take a set of wind-vector locations and keep their coverage fairly even, by removing any that have got too close together, and seeding new ones to fill any holes in the coverage.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>points</strong> (<em>initial</em>) – None (default) or the output from a previous run of this function (see return value).</li>
+<li><strong>lat_range</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code>, optional) – The latitude range to cover with points. Defaults to (-90,90).</li>
+<li><strong>lon_range</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code>, optional) – The longitude range to cover with points. Defaults to (-180,180).</li>
+<li><strong>scale</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>) – Characteristic separation between points (in degrees).</li>
+<li><strong>random_state</strong> (None|:obj:<cite>int`|:obj:`numpy.random.RandomState</cite>) – Random number generation seed, see <a class="reference external" href="http://scikit-learn.org/stable/modules/generated/sklearn.utils.check_random_state.html#sklearn.utils.check_random_state" title="(in scikit-learn v0.19.1)"><code class="xref py py-func docutils literal notranslate"><span class="pre">sklearn.utils.check_random_state()</span></code></a>.</li>
+<li><strong>max_points</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional) – Maximum number of points to allocate, defaults to 10,000.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Dictionary with components ‘Longitude’, ‘Latitude’, (both arrays of float) and ‘Age’ (array of int). The first two give the positions of each point, and ther last counts how many times each point has been updated by this function.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal notranslate"><span class="pre">StandardError</span></code> – if max_points is too small - more points than this are needed to cover the region.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="Meteorographica.wind.plot">
+<code class="descclassname">Meteorographica.wind.</code><code class="descname">plot</code><span class="sig-paren">(</span><em>ax</em>, <em>ue</em>, <em>ve</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Meteorographica/wind/plot.html#plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Meteorographica.wind.plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot precipitation.</p>
+<p>Generic function for plotting wind. Use the ‘type’ argument to choose the plot style.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>ax</strong> (<a class="reference external" href="https://scitools.org.uk/cartopy/docs/latest/matplotlib/geoaxes.html#cartopy.mpl.geoaxes.GeoAxes" title="(in cartopy v0.16.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cartopy.mpl.geoaxes.GeoAxes</span></code></a>) – Axes on which to draw.</li>
+<li><strong>ue</strong> (<a class="reference external" href="https://scitools.org.uk/iris/docs/latest/iris/iris/cube.html#iris.cube.Cube" title="(in Iris v2.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iris.cube.Cube</span></code></a>) – Zonal wind to plot - must be 2d, with dimensions latitude and longitude.</li>
+<li><strong>ve</strong> (<a class="reference external" href="https://scitools.org.uk/iris/docs/latest/iris/iris/cube.html#iris.cube.Cube" title="(in Iris v2.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iris.cube.Cube</span></code></a>) – Meridional wind to plot - must be 2d, with dimensions latitude and longitude.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>Kwargs:</dt>
+<dd>type (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional): Style to plot. Default is ‘quiver’, which delegates plotting to <a class="reference internal" href="#Meteorographica.wind.plot_quiver" title="Meteorographica.wind.plot_quiver"><code class="xref py py-meth docutils literal notranslate"><span class="pre">plot_quiver()</span></code></a> and at the moment this is the only choice.
+Other keyword arguments are passed to the style-specific plotting function.</dd>
+</dl>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="Meteorographica.wind.plot_quiver">
+<code class="descclassname">Meteorographica.wind.</code><code class="descname">plot_quiver</code><span class="sig-paren">(</span><em>ax</em>, <em>ue</em>, <em>ve</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Meteorographica/wind/plot.html#plot_quiver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Meteorographica.wind.plot_quiver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots a pair of variables as a 2d field of arrows.</p>
+<p>This is the same as <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.quiver.html#matplotlib.axes.Axes.quiver" title="(in Matplotlib v2.2.2)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">matplotlib.axes.Axes.quiver()</span></code></a>, except that it takes <a class="reference external" href="https://scitools.org.uk/iris/docs/latest/iris/iris/cube.html#iris.cube.Cube" title="(in Iris v2.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">iris.cube.Cube</span></code></a> as arguments instead of a set of vectors, and its defaults are chosen for plots of 10m wind.</p>
+<p><em>WARNING</em> This function is under development - in particular the argument names are badly chosen and will need to be changed.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ax</strong> (<a class="reference external" href="https://scitools.org.uk/cartopy/docs/latest/matplotlib/geoaxes.html#cartopy.mpl.geoaxes.GeoAxes" title="(in cartopy v0.16.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cartopy.mpl.geoaxes.GeoAxes</span></code></a>) – Axes on which to draw.</li>
+<li><strong>ue</strong> (<a class="reference external" href="https://scitools.org.uk/iris/docs/latest/iris/iris/cube.html#iris.cube.Cube" title="(in Iris v2.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iris.cube.Cube</span></code></a>) – meridional value of variable to plot.</li>
+<li><strong>ve</strong> (<a class="reference external" href="https://scitools.org.uk/iris/docs/latest/iris/iris/cube.html#iris.cube.Cube" title="(in Iris v2.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iris.cube.Cube</span></code></a>) – zonal value of  variable to plot.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
+<li><strong>resolution</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>) – What lat:lon resolution (in degrees) to interpolate [uv]e.data to before plotting. Defaults to 1 degree.</li>
+<li><strong>colors</strong> (see <a class="reference external" href="https://matplotlib.org/api/colors_api.html#module-matplotlib.colors" title="(in Matplotlib v2.2.2)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">matplotlib.colors</span></code></a>) vector colour. Defaults to (0,0,0,0.25) – </li>
+<li><strong>headwidth</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>) – Controls arrow shape. Defaults to 1.</li>
+<li><strong>random_state</strong> (None|:obj:<cite>int`|:obj:`numpy.random.RandomState</cite>) – Random number generation seed, see <a class="reference external" href="http://scikit-learn.org/stable/modules/generated/sklearn.utils.check_random_state.html#sklearn.utils.check_random_state" title="(in scikit-learn v0.19.1)"><code class="xref py py-func docutils literal notranslate"><span class="pre">sklearn.utils.check_random_state()</span></code></a>.</li>
+<li><strong>max_points</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>) – Maximum number of vectors to allocate, defaults to 100,000.</li>
+<li><strong>zorder</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>) – Standard matplotlib parameter determining which things are plotted on top (high zorder), and which underneath (low zorder), Defaults to 50.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">See <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.quiver.html#matplotlib.axes.Axes.quiver" title="(in Matplotlib v2.2.2)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">matplotlib.axes.Axes.quiver()</span></code></a> - also adds the vectors to the plot.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="precipitation.html" title="Meteorographica.precipitation"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="pressure.html" title="Meteorographica.pressure"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Meteorographica</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    </div>
+  </body>
+</html>
