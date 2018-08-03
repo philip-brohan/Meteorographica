@@ -82,7 +82,7 @@ edf=pkg_resources.resource_filename(
                  'example_data/20CR2c.1987101606.prmsl.nc')
 prmsl=iris.load_cube(edf)
 prmsl=prmsl.extract(iris.Constraint(member=1))
-mg.pressure.plot(ax,prmsl,scale=0.01)
+mg.pressure.plot(ax,prmsl,scale=0.01,resolution=0.25)
 
 # Also precip
 edf=pkg_resources.resource_filename(
@@ -90,7 +90,7 @@ edf=pkg_resources.resource_filename(
                  'example_data/20CR2c.1987101606.prate.nc')
 prate=iris.load_cube(edf)
 prate=prate.extract(iris.Constraint(member=1))
-mg.precipitation.plot(ax,prate)
+mg.precipitation.plot(ax,prate,resolution=0.25)
 
 # Add the observations 
 edf=pkg_resources.resource_filename(

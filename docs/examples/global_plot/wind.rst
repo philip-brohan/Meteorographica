@@ -2,9 +2,9 @@ Meteorographica examples: 10m wind arrows
 =========================================
 
 .. figure:: ../../../examples/global_plot/wind.png
-   :width: 650px
+   :width: 95%
    :align: center
-   :figwidth: 700px
+   :figwidth: 95%
 
    Arrows indicating 10m wind.
 

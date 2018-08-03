@@ -2,9 +2,9 @@ Meteorographica examples: Precipitation
 =======================================
 
 .. figure:: ../../../examples/global_plot/precipitation.png
-   :width: 650px
+   :width: 95%
    :align: center
-   :figwidth: 700px
+   :figwidth: 95%
 
    Color-map of precipitation.
 

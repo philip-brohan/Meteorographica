@@ -2,9 +2,9 @@ Meteorographica examples: map background
 ========================================
 
 .. figure:: ../../../examples/background/background.png
-   :width: 650px
+   :width: 95%
    :align: center
-   :figwidth: 700px
+   :figwidth: 95%
 
    Background (continents and lat:lon grid) for weather plots.
 
