@@ -2,9 +2,9 @@ Meteorographica examples: MSLP spaghetti plot
 =============================================
 
 .. figure:: ../../../examples/pressure_uncertainties/spaghetti.png
-   :width: 650px
+   :width: 95%
    :align: center
-   :figwidth: 700px
+   :figwidth: 95%
 
    Spaghetti plot of mean-sea-level-pressure ensemble.
 

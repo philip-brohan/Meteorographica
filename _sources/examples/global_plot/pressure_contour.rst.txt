@@ -2,9 +2,9 @@ Meteorographica examples: MSLP contours
 =======================================
 
 .. figure:: ../../../examples/global_plot/pressure_contour.png
-   :width: 650px
+   :width: 95%
    :align: center
-   :figwidth: 700px
+   :figwidth: 95%
 
    Contours of mean-sea-level-pressure.
 

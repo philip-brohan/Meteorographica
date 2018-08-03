@@ -86,8 +86,8 @@ Please <a href="https://github.com/philip-brohan/Meteorographica/issues/new">rai
             
   <div class="section" id="meteorographica-examples-rotated-pole">
 <h1>Meteorographica examples: rotated pole<a class="headerlink" href="#meteorographica-examples-rotated-pole" title="Permalink to this headline">¶</a></h1>
-<div class="figure align-center" id="id1" style="width: 700px">
-<a class="reference internal image-reference" href="../../_images/multivariate1.png"><img alt="../../_images/multivariate1.png" src="../../_images/multivariate1.png" style="width: 650px;" /></a>
+<div class="figure align-center" id="id1" style="width: 95%">
+<a class="reference internal image-reference" href="../../_images/multivariate1.png"><img alt="../../_images/multivariate1.png" src="../../_images/multivariate1.png" style="width: 95%;" /></a>
 <p class="caption"><span class="caption-text">Surface weather: MSLP (contours), 10m wind (vectors), observations (points), and precipitation (green shading), with a rotated pole.</span></p>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Meteorographica example script</span>
@@ -174,7 +174,7 @@ Please <a href="https://github.com/philip-brohan/Meteorographica/issues/new">rai
                  <span class="s1">&#39;example_data/20CR2c.1987101606.prmsl.nc&#39;</span><span class="p">)</span>
 <span class="n">prmsl</span><span class="o">=</span><span class="n">iris</span><span class="o">.</span><span class="n">load_cube</span><span class="p">(</span><span class="n">edf</span><span class="p">)</span>
 <span class="n">prmsl</span><span class="o">=</span><span class="n">prmsl</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">iris</span><span class="o">.</span><span class="n">Constraint</span><span class="p">(</span><span class="n">member</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
-<span class="n">mg</span><span class="o">.</span><span class="n">pressure</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">prmsl</span><span class="p">,</span><span class="n">scale</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
+<span class="n">mg</span><span class="o">.</span><span class="n">pressure</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">prmsl</span><span class="p">,</span><span class="n">scale</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span><span class="n">resolution</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>
 
 <span class="c1"># Also precip</span>
 <span class="n">edf</span><span class="o">=</span><span class="n">pkg_resources</span><span class="o">.</span><span class="n">resource_filename</span><span class="p">(</span>
@@ -182,7 +182,7 @@ Please <a href="https://github.com/philip-brohan/Meteorographica/issues/new">rai
                  <span class="s1">&#39;example_data/20CR2c.1987101606.prate.nc&#39;</span><span class="p">)</span>
 <span class="n">prate</span><span class="o">=</span><span class="n">iris</span><span class="o">.</span><span class="n">load_cube</span><span class="p">(</span><span class="n">edf</span><span class="p">)</span>
 <span class="n">prate</span><span class="o">=</span><span class="n">prate</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">iris</span><span class="o">.</span><span class="n">Constraint</span><span class="p">(</span><span class="n">member</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
-<span class="n">mg</span><span class="o">.</span><span class="n">precipitation</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">prate</span><span class="p">)</span>
+<span class="n">mg</span><span class="o">.</span><span class="n">precipitation</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">prate</span><span class="p">,</span><span class="n">resolution</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>
 
 <span class="c1"># Add the observations </span>
 <span class="n">edf</span><span class="o">=</span><span class="n">pkg_resources</span><span class="o">.</span><span class="n">resource_filename</span><span class="p">(</span>

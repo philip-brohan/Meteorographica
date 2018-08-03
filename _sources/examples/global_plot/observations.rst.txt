@@ -2,9 +2,9 @@ Meteorographica examples: Observations
 ======================================
 
 .. figure:: ../../../examples/global_plot/observations.png
-   :width: 650px
+   :width: 95%
    :align: center
-   :figwidth: 700px
+   :figwidth: 95%
 
    Observations of surface-pressure.
 

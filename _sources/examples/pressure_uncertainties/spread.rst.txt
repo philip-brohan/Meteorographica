@@ -2,9 +2,9 @@ Meteorographica examples: MSLP contour spread plot
 ==================================================
 
 .. figure:: ../../../examples/pressure_uncertainties/spread.png
-   :width: 650px
+   :width: 95%
    :align: center
-   :figwidth: 700px
+   :figwidth: 95%
 
    Contour-spread plot of mean-sea-level-pressure ensemble.
 
