@@ -32,5 +32,12 @@ Use of the package is best illustrated by example:
 
 Note that this is one person's personal library: I have no resources for support or extension beyond what is necessary for my own research. You are welcome to re-use any part of it (subject to the license, see below), but you would almost certainly be better advised to copy any bits you like and incoporate them into your own codebase than to rely on the stability of this.
 
+
+.. toctree::
+   :maxdepth: 1
+
+   credits
+   uses
+
 The code in this library is licensed under the terms of the `GNU Lesser General Public License <https://www.gnu.org/licenses/lgpl.html>`_. The documentation under the terms of the `Open Government Licence <https://www.nationalarchives.gov.uk/doc/open-government-licence/version/2/>`_.
 

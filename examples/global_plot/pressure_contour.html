@@ -68,6 +68,10 @@
 </ul>
 </li>
 </ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../credits.html">Authors and acknowledgements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../uses.html">Uses of this package</a></li>
+</ul>
 <h3><a href="https://github.com/philip-brohan/Meteorographica">Get the source code</a></h3>
 
 <a href="https://github.com/philip-brohan/Meteorographica"
@@ -157,7 +161,7 @@ Please <a href="https://github.com/philip-brohan/Meteorographica/issues/new">rai
 <span class="n">prmsl</span><span class="o">=</span><span class="n">prmsl</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">iris</span><span class="o">.</span><span class="n">Constraint</span><span class="p">(</span><span class="n">member</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
 
 <span class="c1"># Plot the pressure contour</span>
-<span class="n">mg</span><span class="o">.</span><span class="n">pressure</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">prmsl</span><span class="p">,</span><span class="n">scale</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
+<span class="n">mg</span><span class="o">.</span><span class="n">pressure</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">prmsl</span><span class="p">,</span><span class="n">scale</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span><span class="n">resolution</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;video&#39;</span><span class="p">)</span>
 
 <span class="c1"># Add a label showing the date</span>
 <span class="n">label</span><span class="o">=</span><span class="s2">&quot;16th October 1987 at 06 GMT&quot;</span>

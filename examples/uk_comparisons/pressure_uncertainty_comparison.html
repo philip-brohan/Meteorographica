@@ -15,6 +15,7 @@
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Authors and acknowledgements" href="../../credits.html" />
     <link rel="prev" title="Meteorographica examples: MSLP contour spread plot" href="../pressure_uncertainties/spread.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
@@ -26,6 +27,9 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
+        <li class="right" >
+          <a href="../../credits.html" title="Authors and acknowledgements"
+             accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="../pressure_uncertainties/spread.html" title="Meteorographica examples: MSLP contour spread plot"
              accesskey="P">previous</a> |</li>
@@ -63,6 +67,10 @@
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Regional comparison</a></li>
 </ul>
 </li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../credits.html">Authors and acknowledgements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../uses.html">Uses of this package</a></li>
 </ul>
 <h3><a href="https://github.com/philip-brohan/Meteorographica">Get the source code</a></h3>
 
@@ -143,7 +151,7 @@ Please <a href="https://github.com/philip-brohan/Meteorographica/issues/new">rai
 <span class="c1"># Add the land</span>
 <span class="n">land_img</span><span class="o">=</span><span class="n">ax_l</span><span class="o">.</span><span class="n">background_img</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;GreyT&#39;</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="s1">&#39;low&#39;</span><span class="p">)</span>
 <span class="c1"># Add the spaghetti pressure plot</span>
-<span class="n">mg</span><span class="o">.</span><span class="n">pressure</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax_l</span><span class="p">,</span><span class="n">prmsl</span><span class="p">,</span><span class="n">scale</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span><span class="nb">type</span><span class="o">=</span><span class="s1">&#39;spaghetti&#39;</span><span class="p">)</span>
+<span class="n">mg</span><span class="o">.</span><span class="n">pressure</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax_l</span><span class="p">,</span><span class="n">prmsl</span><span class="p">,</span><span class="n">scale</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span><span class="nb">type</span><span class="o">=</span><span class="s1">&#39;spaghetti&#39;</span><span class="p">,</span><span class="n">resolution</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>
 
 <span class="c1"># Right hand side plot - spread</span>
 <span class="n">ax_r</span><span class="o">.</span><span class="n">set_axis_off</span><span class="p">()</span>
@@ -187,6 +195,9 @@ Please <a href="https://github.com/philip-brohan/Meteorographica/issues/new">rai
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
+        <li class="right" >
+          <a href="../../credits.html" title="Authors and acknowledgements"
+             >next</a> |</li>
         <li class="right" >
           <a href="../pressure_uncertainties/spread.html" title="Meteorographica examples: MSLP contour spread plot"
              >previous</a> |</li>
