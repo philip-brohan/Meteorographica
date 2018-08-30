@@ -65,7 +65,7 @@ prmsl=iris.load_cube(edf)
 prmsl=prmsl.extract(iris.Constraint(member=1))
 
 # Plot the pressure contour
-mg.pressure.plot(ax,prmsl,scale=0.01)
+mg.pressure.plot(ax,prmsl,scale=0.01,resolution=0.25,label='video')
 
 # Add a label showing the date
 label="16th October 1987 at 06 GMT"

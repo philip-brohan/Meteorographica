@@ -52,7 +52,7 @@ setup(
     # iris>2 - does not work - can't find any iris?
     #    'cartopy>0.15',
     install_requires=[
-        'iris>2.0',
+        'iris<2.0',
         'cartopy>0.15',
         'numpy>1.13',
         'scipy>0.18',

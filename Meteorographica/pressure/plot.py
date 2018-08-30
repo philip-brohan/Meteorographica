@@ -30,7 +30,7 @@ def plot_contour(ax,pe,**kwargs):
         pe (:obj:`iris.cube.Cube`): Variable to plot - must have dimensions 'latitude' and 'longitude'.
 
     Keyword Args:
-        label (:obj:`bool`): Label contour lines? Defaults to False.
+        label (:obj:`bool`): Label contour lines? Defaults to False. If it's 'video' use stablised label locations.
         resolution (:obj:`float`): What lat:lon resolution (in degrees) to interpolate pe.data to before plotting. Defaults to None - use original resolution.
         scale (:obj:`float`): This function is tuned for data in hPa. For data in Pa, set this to 0.01. Defaults to 1.
         colors (see :mod:`matplotlib.colors`) contour line colour. Defaults to 'black'.
@@ -74,7 +74,11 @@ def plot_contour(ax,pe,**kwargs):
                                zorder=kwargs.get('zorder'))
 
     # Label the contours
-    if kwargs.get('label'):
+    if kwargs.get('label')=='video':
+        cl=ax.clabel(CS, inline=1, fontsize=kwargs.get('fontsize'),
+                     manual=make_label_hints(ax,CS),
+                     fmt='%d',zorder=kwargs.get('zorder'))
+    elif kwargs.get('label'):
         cl=ax.clabel(CS, inline=1, fontsize=kwargs.get('fontsize'),
                      fmt='%d',zorder=kwargs.get('zorder'))
 
@@ -281,5 +285,106 @@ def plot(ax,pe,**kwargs):
                          kwargs.get('type'))
 
 
+def make_label_hints(ax,CS):
+    """Make hints for the contour label placement algorithm - these stabilise the positions of the contour labels between frames in videos. They don't eliminate the problem of jittery and flickering contour labels, but they do help.
 
+    Args:
+        ax (:obj:`cartopy.mpl.geoaxes.GeoAxes`): Axes on which to draw.
+        CS (:obj:`matplotlib.contour.ContourSet`): Contours to be labeled.
 
+    Returns:
+        iterable of (x,y) tuples - each a position hint for a label.
+    |
+    """
+
+    label_locations=[]
+    buffer=(ax.get_extent()[1]-ax.get_extent()[0])/20.0
+    for collection in CS.collections: 
+        segments=collection.get_segments()
+        for segment in segments:
+            left_edge=None
+            right_edge=None
+            bottom_edge=None
+            top_edge=None
+            bottom_point=None
+          # Find a suitable spot to label the segment
+            for si in range(len(segment)):
+                if (left_edge is None) and (si>0):
+                    if ((segment[si][0]>=(ax.get_extent()[0]+buffer)) and
+                        (segment[si-1][0]<(ax.get_extent()[0]+buffer))):
+                        weight=((segment[si][0]-(ax.get_extent()[0]+buffer))/
+                                            (segment[si][0]-segment[si-1][0]))
+                        left_edge=(ax.get_extent()[0]+buffer,
+                                   segment[si][1]+
+                                  (segment[si][1]-segment[si-1][1])*weight)
+                if (left_edge is None) and (si<(len(segment)-1)):
+                    if ((segment[si][0]>=(ax.get_extent()[0]+buffer)) and
+                        (segment[si+1][0]<(ax.get_extent()[0]+buffer))):
+                        weight=((segment[si][0]-(ax.get_extent()[0]+buffer))/
+                                            (segment[si][0]-segment[si+1][0]))
+                        left_edge=(ax.get_extent()[0]+buffer,
+                                   segment[si][1]+
+                                  (segment[si][1]-segment[si+1][1])*weight)
+                if (right_edge is None) and (si>0):
+                    if ((segment[si][0]>=(ax.get_extent()[1]-buffer)) and
+                        (segment[si-1][0]<(ax.get_extent()[1]-buffer))):
+                        weight=((segment[si][0]-(ax.get_extent()[1]-buffer))/
+                                            (segment[si][0]-segment[si-1][0]))
+                        right_edge=(ax.get_extent()[1]-buffer,
+                                   segment[si][1]+
+                                  (segment[si][1]-segment[si-1][1])*weight)
+                if (right_edge is None) and (si<(len(segment)-1)):
+                    if ((segment[si][0]>=(ax.get_extent()[1]-buffer)) and
+                        (segment[si+1][0]<(ax.get_extent()[1]-buffer))):
+                        weight=((segment[si][0]-(ax.get_extent()[1]-buffer))/
+                                            (segment[si][0]-segment[si+1][0]))
+                        right_edge=(ax.get_extent()[1]-buffer,
+                                   segment[si][1]+
+                                  (segment[si][1]-segment[si+1][1])*weight)
+                if (bottom_edge is None) and (si>0):
+                    if ((segment[si][1]>=(ax.get_extent()[2]+buffer)) and
+                        (segment[si-1][1]<(ax.get_extent()[2]+buffer))):
+                        weight=((segment[si][1]-(ax.get_extent()[2]+buffer))/
+                                            (segment[si][1]-segment[si-1][1]))
+                        bottom_edge=(segment[si][0]+
+                                     (segment[si][0]-segment[si-1][0])*weight,
+                                     ax.get_extent()[2]+buffer)
+                if (bottom_edge is None) and (si<(len(segment)-1)):
+                    if ((segment[si][1]>=(ax.get_extent()[2]+buffer)) and
+                        (segment[si+1][1]<(ax.get_extent()[2]+buffer))):
+                        weight=((segment[si][1]-(ax.get_extent()[2]+buffer))/
+                                            (segment[si][1]-segment[si+1][1]))
+                        bottom_edge=(segment[si][0]+
+                                     (segment[si][0]-segment[si+1][0])*weight,
+                                     ax.get_extent()[2]+buffer)
+                if (top_edge is None) and (si>0):
+                    if ((segment[si][1]>=(ax.get_extent()[3]-buffer)) and
+                        (segment[si-1][1]<(ax.get_extent()[3]-buffer))):
+                        weight=((segment[si][1]-(ax.get_extent()[3]-buffer))/
+                                            (segment[si][1]-segment[si-1][1]))
+                        top_edge=(segment[si][0]+
+                                     (segment[si][0]-segment[si-1][0])*weight,
+                                     ax.get_extent()[3]-buffer)
+                if (top_edge is None) and (si<(len(segment)-1)):
+                    if ((segment[si][1]>=(ax.get_extent()[3]-buffer)) and
+                        (segment[si+1][1]<(ax.get_extent()[3]-buffer))):
+                        weight=((segment[si][1]-(ax.get_extent()[3]-buffer))/
+                                            (segment[si][1]-segment[si+1][1]))
+                        top_edge=(segment[si][0]+
+                                     (segment[si][0]-segment[si+1][0])*weight,
+                                     ax.get_extent()[3]-buffer)
+                if bottom_point is None or segment[si][1]<bottom_point[1]:
+                        bottom_point=(segment[si][0],segment[si][1])
+            if left_edge is not None:
+                label_locations.append(left_edge)
+            if right_edge is not None:
+                label_locations.append(right_edge)
+            if left_edge is None and right_edge is None:
+                if bottom_edge is not None:
+                    label_locations.append(bottom_edge)
+                if top_edge is not None:
+                    label_locations.append(top_edge)
+                if bottom_edge is None and top_edge is None:
+                    label_locations.append(bottom_point)
+
+    return label_locations

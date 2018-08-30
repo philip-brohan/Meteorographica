@@ -55,7 +55,7 @@ mg.background.add_grid(ax_l,
 # Add the land
 land_img=ax_l.background_img(name='GreyT', resolution='low')
 # Add the spaghetti pressure plot
-mg.pressure.plot(ax_l,prmsl,scale=0.01,type='spaghetti')
+mg.pressure.plot(ax_l,prmsl,scale=0.01,type='spaghetti',resolution=0.25)
 
 # Right hand side plot - spread
 ax_r.set_axis_off()
