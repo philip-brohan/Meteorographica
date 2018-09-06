@@ -49,6 +49,7 @@ def plot_cmesh(ax,pe,**kwargs):
         cmap (:obj:`matplotlib.colors.LinearSegmentedColormap`): Mapping of pe.data to plot colour. Defaults to green semi-transparent.
         vmin (:obj:`float`): Data value that is shown as 'no precip' (after scaling and filtering). Increase this to show low-previp as zero instead. Defaults to 0.
         vmax (:obj:`float`): Data value that is shown as 'heavy precip - darkest colour' (after scaling and filtering). Defaults to 0.025 Kg*m-2*s-1.
+        alpha (:obj:`float`): transparency to plot at, defaults to 1 (opaque).
         zorder (:obj:`float`): Standard matplotlib parameter determining which things are plotted on top (high zorder), and which underneath (low zorder), Defaults to 40.
 
     Returns:
@@ -64,6 +65,7 @@ def plot_cmesh(ax,pe,**kwargs):
     kwargs.setdefault('cmap'      ,precip_cmap)
     kwargs.setdefault('vmin'      ,0.0)
     kwargs.setdefault('vmax'      ,0.025)
+    kwargs.setdefault('alpha'     ,1.0)
     kwargs.setdefault('zorder'    ,40)
  
     if kwargs.get('resolution') is None:
@@ -82,6 +84,7 @@ def plot_cmesh(ax,pe,**kwargs):
                             cmap=kwargs.get('cmap'),
                             vmin=kwargs.get('vmin'),
                             vmax=kwargs.get('vmax'),
+                            alpha=kwargs.get('alpha'),
                             zorder=kwargs.get('zorder'))
     return prate_img
 
