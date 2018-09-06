@@ -55,6 +55,10 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="examples/examples.html">Examples</a></li>
 </ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="credits.html">Authors and acknowledgements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="uses.html">Uses of this package</a></li>
+</ul>
 <h3><a href="https://github.com/philip-brohan/Meteorographica">Get the source code</a></h3>
 
 <a href="https://github.com/philip-brohan/Meteorographica"
@@ -97,7 +101,7 @@ Please <a href="https://github.com/philip-brohan/Meteorographica/issues/new">rai
 <li><strong>lat_range</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code>, optional) – The latitude range to cover with points. Defaults to (-90,90).</li>
 <li><strong>lon_range</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code>, optional) – The longitude range to cover with points. Defaults to (-180,180).</li>
 <li><strong>scale</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>) – Characteristic separation between points (in degrees).</li>
-<li><strong>random_state</strong> (None|:obj:<cite>int`|:obj:`numpy.random.RandomState</cite>) – Random number generation seed, see <a class="reference external" href="http://scikit-learn.org/stable/modules/generated/sklearn.utils.check_random_state.html#sklearn.utils.check_random_state" title="(in scikit-learn v0.19.1)"><code class="xref py py-func docutils literal notranslate"><span class="pre">sklearn.utils.check_random_state()</span></code></a>.</li>
+<li><strong>random_state</strong> (None|:obj:<cite>int`|:obj:`numpy.random.RandomState</cite>) – Random number generation seed, see <a class="reference external" href="http://scikit-learn.org/stable/modules/generated/sklearn.utils.check_random_state.html#sklearn.utils.check_random_state" title="(in scikit-learn v0.19.2)"><code class="xref py py-func docutils literal notranslate"><span class="pre">sklearn.utils.check_random_state()</span></code></a>.</li>
 <li><strong>max_points</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional) – Maximum number of points to allocate, defaults to 10,000.</li>
 </ul>
 </td>
@@ -150,7 +154,7 @@ Other keyword arguments are passed to the style-specific plotting function.</dd>
 <dt id="Meteorographica.wind.plot_quiver">
 <code class="descclassname">Meteorographica.wind.</code><code class="descname">plot_quiver</code><span class="sig-paren">(</span><em>ax</em>, <em>ue</em>, <em>ve</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Meteorographica/wind/plot.html#plot_quiver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Meteorographica.wind.plot_quiver" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plots a pair of variables as a 2d field of arrows.</p>
-<p>This is the same as <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.quiver.html#matplotlib.axes.Axes.quiver" title="(in Matplotlib v2.2.2)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">matplotlib.axes.Axes.quiver()</span></code></a>, except that it takes <a class="reference external" href="https://scitools.org.uk/iris/docs/latest/iris/iris/cube.html#iris.cube.Cube" title="(in Iris v2.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">iris.cube.Cube</span></code></a> as arguments instead of a set of vectors, and its defaults are chosen for plots of 10m wind.</p>
+<p>This is the same as <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.quiver.html#matplotlib.axes.Axes.quiver" title="(in Matplotlib v2.2.3)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">matplotlib.axes.Axes.quiver()</span></code></a>, except that it takes <a class="reference external" href="https://scitools.org.uk/iris/docs/latest/iris/iris/cube.html#iris.cube.Cube" title="(in Iris v2.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">iris.cube.Cube</span></code></a> as arguments instead of a set of vectors, and its defaults are chosen for plots of 10m wind.</p>
 <p><em>WARNING</em> This function is under development - in particular the argument names are badly chosen and will need to be changed.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -166,15 +170,15 @@ Other keyword arguments are passed to the style-specific plotting function.</dd>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
 <li><strong>resolution</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>) – What lat:lon resolution (in degrees) to interpolate [uv]e.data to before plotting. Defaults to 1 degree.</li>
-<li><strong>colors</strong> (see <a class="reference external" href="https://matplotlib.org/api/colors_api.html#module-matplotlib.colors" title="(in Matplotlib v2.2.2)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">matplotlib.colors</span></code></a>) vector colour. Defaults to (0,0,0,0.25) – </li>
+<li><strong>colors</strong> (see <a class="reference external" href="https://matplotlib.org/api/colors_api.html#module-matplotlib.colors" title="(in Matplotlib v2.2.3)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">matplotlib.colors</span></code></a>) vector colour. Defaults to (0,0,0,0.25) – </li>
 <li><strong>headwidth</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>) – Controls arrow shape. Defaults to 1.</li>
-<li><strong>random_state</strong> (None|:obj:<cite>int`|:obj:`numpy.random.RandomState</cite>) – Random number generation seed, see <a class="reference external" href="http://scikit-learn.org/stable/modules/generated/sklearn.utils.check_random_state.html#sklearn.utils.check_random_state" title="(in scikit-learn v0.19.1)"><code class="xref py py-func docutils literal notranslate"><span class="pre">sklearn.utils.check_random_state()</span></code></a>.</li>
+<li><strong>random_state</strong> (None|:obj:<cite>int`|:obj:`numpy.random.RandomState</cite>) – Random number generation seed, see <a class="reference external" href="http://scikit-learn.org/stable/modules/generated/sklearn.utils.check_random_state.html#sklearn.utils.check_random_state" title="(in scikit-learn v0.19.2)"><code class="xref py py-func docutils literal notranslate"><span class="pre">sklearn.utils.check_random_state()</span></code></a>.</li>
 <li><strong>max_points</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>) – Maximum number of vectors to allocate, defaults to 100,000.</li>
 <li><strong>zorder</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>) – Standard matplotlib parameter determining which things are plotted on top (high zorder), and which underneath (low zorder), Defaults to 50.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">See <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.quiver.html#matplotlib.axes.Axes.quiver" title="(in Matplotlib v2.2.2)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">matplotlib.axes.Axes.quiver()</span></code></a> - also adds the vectors to the plot.</p>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">See <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.quiver.html#matplotlib.axes.Axes.quiver" title="(in Matplotlib v2.2.3)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">matplotlib.axes.Axes.quiver()</span></code></a> - also adds the vectors to the plot.</p>
 </td>
 </tr>
 </tbody>

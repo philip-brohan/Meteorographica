@@ -120,6 +120,7 @@ Please <a href="https://github.com/philip-brohan/Meteorographica/issues/new">rai
 <span class="sd">        cmap (:obj:`matplotlib.colors.LinearSegmentedColormap`): Mapping of pe.data to plot colour. Defaults to green semi-transparent.</span>
 <span class="sd">        vmin (:obj:`float`): Data value that is shown as &#39;no precip&#39; (after scaling and filtering). Increase this to show low-previp as zero instead. Defaults to 0.</span>
 <span class="sd">        vmax (:obj:`float`): Data value that is shown as &#39;heavy precip - darkest colour&#39; (after scaling and filtering). Defaults to 0.025 Kg*m-2*s-1.</span>
+<span class="sd">        alpha (:obj:`float`): transparency to plot at, defaults to 1 (opaque).</span>
 <span class="sd">        zorder (:obj:`float`): Standard matplotlib parameter determining which things are plotted on top (high zorder), and which underneath (low zorder), Defaults to 40.</span>
 
 <span class="sd">    Returns:</span>
@@ -135,6 +136,7 @@ Please <a href="https://github.com/philip-brohan/Meteorographica/issues/new">rai
     <span class="n">kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;cmap&#39;</span>      <span class="p">,</span><span class="n">precip_cmap</span><span class="p">)</span>
     <span class="n">kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;vmin&#39;</span>      <span class="p">,</span><span class="mf">0.0</span><span class="p">)</span>
     <span class="n">kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;vmax&#39;</span>      <span class="p">,</span><span class="mf">0.025</span><span class="p">)</span>
+    <span class="n">kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;alpha&#39;</span>     <span class="p">,</span><span class="mf">1.0</span><span class="p">)</span>
     <span class="n">kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;zorder&#39;</span>    <span class="p">,</span><span class="mi">40</span><span class="p">)</span>
  
     <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;resolution&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -153,6 +155,7 @@ Please <a href="https://github.com/philip-brohan/Meteorographica/issues/new">rai
                             <span class="n">cmap</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;cmap&#39;</span><span class="p">),</span>
                             <span class="n">vmin</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;vmin&#39;</span><span class="p">),</span>
                             <span class="n">vmax</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;vmax&#39;</span><span class="p">),</span>
+                            <span class="n">alpha</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;alpha&#39;</span><span class="p">),</span>
                             <span class="n">zorder</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;zorder&#39;</span><span class="p">))</span></div>
     <span class="k">return</span> <span class="n">prate_img</span>
 
