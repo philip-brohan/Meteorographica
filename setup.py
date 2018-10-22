@@ -49,11 +49,9 @@ setup(
     test_suite="Meteorographica.tests",
 
     # Other packages that your project depends on.
-    # iris>2 - does not work - can't find any iris?
-    #    'cartopy>0.15',
     install_requires=[
-        'iris<2.0',
-        'cartopy>0.15',
+        'scitools-iris>=2.2',
+        'cartopy>=0.16',
         'numpy>1.13',
         'scipy>0.18',
         'pandas>0.20',
