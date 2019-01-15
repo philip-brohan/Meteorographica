@@ -88,14 +88,14 @@ edf=pkg_resources.resource_filename(
                  'example_data/20CR2c.1987101606.prate.nc')
 prate=iris.load_cube(edf)
 prate=prate.extract(iris.Constraint(member=1))
-mg.precipitation.plot(ax,prate)
+mg.precipitation.plot(ax,prate,resolution=0.25)
 
 # Add the observations 
 edf=pkg_resources.resource_filename(
       pkg_resources.Requirement.parse('Meteorographica'),
                  'example_data/20CR2c.1987101606.observations.pklz')
 of=gzip.open(edf,'rb')
-obs=pickle.load(of)
+obs=pickle.load(of,encoding='latin1')
 of.close()
 mg.observations.plot(ax,obs,radius=0.25)
 

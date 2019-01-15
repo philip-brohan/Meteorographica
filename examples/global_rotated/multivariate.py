@@ -97,7 +97,7 @@ edf=pkg_resources.resource_filename(
       pkg_resources.Requirement.parse('Meteorographica'),
                  'example_data/20CR2c.1987101606.observations.pklz')
 of=gzip.open(edf,'rb')
-obs=pickle.load(of)
+obs=pickle.load(of,encoding='latin1')
 of.close()
 mg.observations.plot(ax,obs,radius=0.25)
 

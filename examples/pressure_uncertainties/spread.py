@@ -63,7 +63,8 @@ edf=pkg_resources.resource_filename(
                  'example_data/20CR2c.1987101606.prmsl.nc')
 prmsl=iris.load_cube(edf)
 
-mg.pressure.plot(ax,prmsl,scale=0.01,type='spread',vmax=0.6)
+mg.pressure.plot(ax,prmsl,scale=0.01,type='spread',vmax=0.6,
+                 resolution=0.25)
 
 
 # Add a label showing the date

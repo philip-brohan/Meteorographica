@@ -269,6 +269,7 @@ def plot(ax,pe,**kwargs):
 
     Returns:
         See :meth:`matplotlib.axes.Axes.contour` - Also adds the lines to the plot.
+
     |
     """  
 
@@ -294,6 +295,7 @@ def make_label_hints(ax,CS):
 
     Returns:
         iterable of (x,y) tuples - each a position hint for a label.
+
     |
     """
 
