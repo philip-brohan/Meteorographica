@@ -114,7 +114,7 @@ def plot(ax,pe,**kwargs):
     if kwargs.get('type')=='cmesh':
         return plot_cmesh(ax,pe,**kwargs)
 
-    raise StandardError('Unsupported precipitation plot type %s' %
+    raise Exception('Unsupported precipitation plot type %s' %
                          kwargs.get('type'))
 
 

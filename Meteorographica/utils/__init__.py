@@ -11,5 +11,5 @@
 # GNU Lesser General Public License for more details.
 #
 
-from dummy_cube import *
-from label import *
+from .dummy_cube import *
+from .label import *

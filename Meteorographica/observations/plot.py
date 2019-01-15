@@ -80,5 +80,5 @@ def plot(ax,obs,**kwargs):
     if kwargs.get('type')=='patches':
         return plot_patches(ax,obs,**kwargs)
 
-    raise StandardError('Unsupported observations plot type %s' %
+    raise Exception('Unsupported observations plot type %s' %
                          kwargs.get('type'))

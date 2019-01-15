@@ -146,7 +146,7 @@ def allocate_vector_points(initial_points=None,
             active[n_allocated]=1 # Seed new points from this one
             n_allocated +=1
             if n_allocated>max_points:
-                raise StandardError("Insufficient wind points")
+                raise Exception("Insufficient wind points")
 
     # Add a seed point if there were no initial points
     if n_allocated==0:
@@ -176,7 +176,7 @@ def allocate_vector_points(initial_points=None,
         active[n_allocated]=1
         n_allocated +=1
         if n_allocated>max_points:
-            raise StandardError("Insufficient wind points")
+            raise Exception("Insufficient wind points")
 
     return {'Longitude': allocated['Longitude'][0:n_allocated],
             'Latitude':  allocated['Latitude'][0:n_allocated],

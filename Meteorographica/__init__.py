@@ -11,10 +11,10 @@
 # GNU Lesser General Public License for more details.
 #
 
-import utils
-import background
-import pressure
-import wind
-import precipitation
-import observations
+from . import utils
+from . import background
+from . import pressure
+from . import wind
+from . import precipitation
+from . import observations
 

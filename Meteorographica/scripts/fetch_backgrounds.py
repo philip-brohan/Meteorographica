@@ -35,7 +35,7 @@ def fetch_backgrounds():
     
     bgdir=os.getenv('CARTOPY_USER_BACKGROUNDS')
     if bgdir is None:
-        raise StandardError("CARTOPY_USER_BACKGROUNDS environment "
+        raise Exception("CARTOPY_USER_BACKGROUNDS environment "
                             + "variable is undefined")
     if not os.path.isdir(bgdir):
         os.makedirs(bgdir)

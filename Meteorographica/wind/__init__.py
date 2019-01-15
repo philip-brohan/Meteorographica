@@ -11,5 +11,5 @@
 # GNU Lesser General Public License for more details.
 #
 
-from plot import *
-from wind_vectors import *
+from .plot import *
+from .wind_vectors import *

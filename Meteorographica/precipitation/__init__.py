@@ -11,4 +11,4 @@
 # GNU Lesser General Public License for more details.
 #
 
-from plot import *
+from .plot import *

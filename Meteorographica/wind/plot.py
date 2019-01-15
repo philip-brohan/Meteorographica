@@ -16,7 +16,7 @@ import matplotlib
 import numpy
 
 import Meteorographica.utils as utils
-from wind_vectors import *
+from .wind_vectors import *
 
 def plot_quiver(ax,ue,ve,**kwargs):
     """Plots a pair of variables as a 2d field of arrows.
@@ -114,5 +114,5 @@ def plot(ax,ue,ve,**kwargs):
     if kwargs.get('type')=='quiver':
         return plot_quiver(ax,ue,ve,**kwargs)
 
-    raise StandardError('Unsupported wind plot type %s' %
+    raise Exception('Unsupported wind plot type %s' %
                          kwargs.get('type'))

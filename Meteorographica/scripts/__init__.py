@@ -11,4 +11,4 @@
 # GNU Lesser General Public License for more details.
 #
 
-from fetch_backgrounds import *
+from .fetch_backgrounds import *

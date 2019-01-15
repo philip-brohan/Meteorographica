@@ -281,7 +281,7 @@ def plot(ax,pe,**kwargs):
     if kwargs.get('type')=='spread':
         return plot_mean_spread(ax,pe,**kwargs)
 
-    raise StandardError('Unsupported pressure plot type %s' %
+    raise Exception('Unsupported pressure plot type %s' %
                          kwargs.get('type'))
 
 
