@@ -4,12 +4,12 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-        <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Meteorographica.pressure &#8212; Meteorographica: python tools for making weather maps</title>
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
@@ -41,7 +41,7 @@
             <p class="logo"><a href="index.html">
               <img class="logo" src="_static/UK_spaghetti.png" alt="Logo"/>
             </a></p>
-<h3><a href="index.html">Table Of Contents</a></h3>
+<h3><a href="index.html">Table of Contents</a></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
 </ul>
@@ -78,7 +78,7 @@ Please <a href="https://github.com/philip-brohan/Meteorographica/issues/new">rai
   <div class="section" id="meteorographica-pressure">
 <h1>Meteorographica.pressure<a class="headerlink" href="#meteorographica-pressure" title="Permalink to this headline">¶</a></h1>
 <p>This module is designed to make plots of mean-sea-level-pressure (mslp), but they are basically just contour plots, so the functions can be used for any (continuous) scalar variable (with appropriate specification of levels).</p>
-<p>It takes a <a class="reference external" href="https://scitools.org.uk/cartopy/docs/latest/matplotlib/geoaxes.html#cartopy.mpl.geoaxes.GeoAxes" title="(in cartopy v0.16.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cartopy.mpl.geoaxes.GeoAxes</span></code></a> to draw into, and an <a class="reference external" href="https://scitools.org.uk/iris/docs/latest/iris/iris/cube.html#iris.cube.Cube" title="(in Iris v2.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iris.cube.Cube</span></code></a> (with ‘latitude’ and ‘longitude’ dimensions) of data to plot. Then it’s just:</p>
+<p>It takes a <a class="reference external" href="https://scitools.org.uk/cartopy/docs/latest/matplotlib/geoaxes.html#cartopy.mpl.geoaxes.GeoAxes" title="(in cartopy v0.17.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cartopy.mpl.geoaxes.GeoAxes</span></code></a> to draw into, and an <a class="reference external" href="https://scitools.org.uk/iris/docs/latest/iris/iris/cube.html#iris.cube.Cube" title="(in Iris v2.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iris.cube.Cube</span></code></a> (with ‘latitude’ and ‘longitude’ dimensions) of data to plot. Then it’s just:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Meteorographica</span><span class="o">.</span><span class="n">pressure</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">geoaxes</span><span class="p">,</span><span class="n">cube</span><span class="p">,</span><span class="o">**</span><span class="n">options</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -101,8 +101,8 @@ Please <a href="https://github.com/philip-brohan/Meteorographica/issues/new">rai
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>ax</strong> (<a class="reference external" href="https://scitools.org.uk/cartopy/docs/latest/matplotlib/geoaxes.html#cartopy.mpl.geoaxes.GeoAxes" title="(in cartopy v0.16.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cartopy.mpl.geoaxes.GeoAxes</span></code></a>) – Axes on which to draw.</li>
-<li><strong>CS</strong> (<a class="reference external" href="https://matplotlib.org/api/contour_api.html#matplotlib.contour.ContourSet" title="(in Matplotlib v2.2.3)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">matplotlib.contour.ContourSet</span></code></a>) – Contours to be labeled.</li>
+<li><strong>ax</strong> (<a class="reference external" href="https://scitools.org.uk/cartopy/docs/latest/matplotlib/geoaxes.html#cartopy.mpl.geoaxes.GeoAxes" title="(in cartopy v0.17.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cartopy.mpl.geoaxes.GeoAxes</span></code></a>) – Axes on which to draw.</li>
+<li><strong>CS</strong> (<a class="reference external" href="https://matplotlib.org/api/contour_api.html#matplotlib.contour.ContourSet" title="(in Matplotlib v3.0.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">matplotlib.contour.ContourSet</span></code></a>) – Contours to be labeled.</li>
 </ul>
 </td>
 </tr>
@@ -126,8 +126,8 @@ Please <a href="https://github.com/philip-brohan/Meteorographica/issues/new">rai
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>ax</strong> (<a class="reference external" href="https://scitools.org.uk/cartopy/docs/latest/matplotlib/geoaxes.html#cartopy.mpl.geoaxes.GeoAxes" title="(in cartopy v0.16.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cartopy.mpl.geoaxes.GeoAxes</span></code></a>) – Axes on which to draw.</li>
-<li><strong>pe</strong> (<a class="reference external" href="https://scitools.org.uk/iris/docs/latest/iris/iris/cube.html#iris.cube.Cube" title="(in Iris v2.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iris.cube.Cube</span></code></a>) – Variable to plot - must have dimensions ‘latitude’ and ‘longitude’.</li>
+<li><strong>ax</strong> (<a class="reference external" href="https://scitools.org.uk/cartopy/docs/latest/matplotlib/geoaxes.html#cartopy.mpl.geoaxes.GeoAxes" title="(in cartopy v0.17.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cartopy.mpl.geoaxes.GeoAxes</span></code></a>) – Axes on which to draw.</li>
+<li><strong>pe</strong> (<a class="reference external" href="https://scitools.org.uk/iris/docs/latest/iris/iris/cube.html#iris.cube.Cube" title="(in Iris v2.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iris.cube.Cube</span></code></a>) – Variable to plot - must have dimensions ‘latitude’ and ‘longitude’.</li>
 </ul>
 </td>
 </tr>
@@ -142,7 +142,7 @@ Please <a href="https://github.com/philip-brohan/Meteorographica/issues/new">rai
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">See <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.contour.html#matplotlib.axes.Axes.contour" title="(in Matplotlib v2.2.3)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">matplotlib.axes.Axes.contour()</span></code></a> - Also adds the lines to the plot.</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">See <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.contour.html#matplotlib.axes.Axes.contour" title="(in Matplotlib v3.0.2)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">matplotlib.axes.Axes.contour()</span></code></a> - Also adds the lines to the plot.</td>
 </tr>
 </tbody>
 </table>
@@ -155,14 +155,14 @@ Please <a href="https://github.com/philip-brohan/Meteorographica/issues/new">rai
 <dt id="Meteorographica.pressure.plot_contour">
 <code class="descclassname">Meteorographica.pressure.</code><code class="descname">plot_contour</code><span class="sig-paren">(</span><em>ax</em>, <em>pe</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Meteorographica/pressure/plot.html#plot_contour"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Meteorographica.pressure.plot_contour" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plots a variable as a contour plot.</p>
-<p>This is the same as <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.contour.html#matplotlib.axes.Axes.contour" title="(in Matplotlib v2.2.3)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">matplotlib.axes.Axes.contour()</span></code></a>, except that it takes an <a class="reference external" href="https://scitools.org.uk/iris/docs/latest/iris/iris/cube.html#iris.cube.Cube" title="(in Iris v2.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">iris.cube.Cube</span></code></a> instead of an array of values, and its defaults are chosen for plots of mean-sea-level pressure.</p>
+<p>This is the same as <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.contour.html#matplotlib.axes.Axes.contour" title="(in Matplotlib v3.0.2)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">matplotlib.axes.Axes.contour()</span></code></a>, except that it takes an <a class="reference external" href="https://scitools.org.uk/iris/docs/latest/iris/iris/cube.html#iris.cube.Cube" title="(in Iris v2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">iris.cube.Cube</span></code></a> instead of an array of values, and its defaults are chosen for plots of mean-sea-level pressure.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>ax</strong> (<a class="reference external" href="https://scitools.org.uk/cartopy/docs/latest/matplotlib/geoaxes.html#cartopy.mpl.geoaxes.GeoAxes" title="(in cartopy v0.16.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cartopy.mpl.geoaxes.GeoAxes</span></code></a>) – Axes on which to draw.</li>
-<li><strong>pe</strong> (<a class="reference external" href="https://scitools.org.uk/iris/docs/latest/iris/iris/cube.html#iris.cube.Cube" title="(in Iris v2.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iris.cube.Cube</span></code></a>) – Variable to plot - must have dimensions ‘latitude’ and ‘longitude’.</li>
+<li><strong>ax</strong> (<a class="reference external" href="https://scitools.org.uk/cartopy/docs/latest/matplotlib/geoaxes.html#cartopy.mpl.geoaxes.GeoAxes" title="(in cartopy v0.17.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cartopy.mpl.geoaxes.GeoAxes</span></code></a>) – Axes on which to draw.</li>
+<li><strong>pe</strong> (<a class="reference external" href="https://scitools.org.uk/iris/docs/latest/iris/iris/cube.html#iris.cube.Cube" title="(in Iris v2.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iris.cube.Cube</span></code></a>) – Variable to plot - must have dimensions ‘latitude’ and ‘longitude’.</li>
 </ul>
 </td>
 </tr>
@@ -171,7 +171,7 @@ Please <a href="https://github.com/philip-brohan/Meteorographica/issues/new">rai
 <li><strong>label</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>) – Label contour lines? Defaults to False. If it’s ‘video’ use stablised label locations.</li>
 <li><strong>resolution</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>) – What lat:lon resolution (in degrees) to interpolate pe.data to before plotting. Defaults to None - use original resolution.</li>
 <li><strong>scale</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>) – This function is tuned for data in hPa. For data in Pa, set this to 0.01. Defaults to 1.</li>
-<li><strong>colors</strong> (see <a class="reference external" href="https://matplotlib.org/api/colors_api.html#module-matplotlib.colors" title="(in Matplotlib v2.2.3)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">matplotlib.colors</span></code></a>) – </li>
+<li><strong>colors</strong> (see <a class="reference external" href="https://matplotlib.org/api/colors_api.html#module-matplotlib.colors" title="(in Matplotlib v3.0.2)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">matplotlib.colors</span></code></a>) – </li>
 <li><strong>linewidths</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>) – Line width for contour lines. Defaults to 0.5.</li>
 <li><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>) – Colour alpha blend. Defaults to 1 (opaque).</li>
 <li><strong>fontsize</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>) – Font size for contour labels. Defaults to 12.</li>
@@ -179,7 +179,7 @@ Please <a href="https://github.com/philip-brohan/Meteorographica/issues/new">rai
 </ul>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">See <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.contour.html#matplotlib.axes.Axes.contour" title="(in Matplotlib v2.2.3)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">matplotlib.axes.Axes.contour()</span></code></a> - also adds the lines to the plot.</p>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">See <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.contour.html#matplotlib.axes.Axes.contour" title="(in Matplotlib v3.0.2)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">matplotlib.axes.Axes.contour()</span></code></a> - also adds the lines to the plot.</p>
 </td>
 </tr>
 </tbody>
@@ -199,8 +199,8 @@ Please <a href="https://github.com/philip-brohan/Meteorographica/issues/new">rai
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>ax</strong> (<a class="reference external" href="https://scitools.org.uk/cartopy/docs/latest/matplotlib/geoaxes.html#cartopy.mpl.geoaxes.GeoAxes" title="(in cartopy v0.16.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cartopy.mpl.geoaxes.GeoAxes</span></code></a>) – Axes on which to draw.</li>
-<li><strong>pe</strong> (<a class="reference external" href="https://scitools.org.uk/iris/docs/latest/iris/iris/cube.html#iris.cube.Cube" title="(in Iris v2.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iris.cube.Cube</span></code></a>) – Variable to plot.- must have dimensions &lt;ensemble_dimension&gt;, ‘latitude’ and ‘longitude’.</li>
+<li><strong>ax</strong> (<a class="reference external" href="https://scitools.org.uk/cartopy/docs/latest/matplotlib/geoaxes.html#cartopy.mpl.geoaxes.GeoAxes" title="(in cartopy v0.17.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cartopy.mpl.geoaxes.GeoAxes</span></code></a>) – Axes on which to draw.</li>
+<li><strong>pe</strong> (<a class="reference external" href="https://scitools.org.uk/iris/docs/latest/iris/iris/cube.html#iris.cube.Cube" title="(in Iris v2.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iris.cube.Cube</span></code></a>) – Variable to plot.- must have dimensions &lt;ensemble_dimension&gt;, ‘latitude’ and ‘longitude’.</li>
 </ul>
 </td>
 </tr>
@@ -208,10 +208,10 @@ Please <a href="https://github.com/philip-brohan/Meteorographica/issues/new">rai
 <tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
 <li><strong>ensemble_dimension</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>) – name of the ensemble dimension. Defaults to ‘member’.</li>
 <li><strong>resolution</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>) – What lat:lon resolution (in degrees) to interpolate pe.data to before plotting. Defaults to None - use original resolution.</li>
-<li><strong>colors</strong> (see <a class="reference external" href="https://matplotlib.org/api/colors_api.html#module-matplotlib.colors" title="(in Matplotlib v2.2.3)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">matplotlib.colors</span></code></a>) – </li>
+<li><strong>colors</strong> (see <a class="reference external" href="https://matplotlib.org/api/colors_api.html#module-matplotlib.colors" title="(in Matplotlib v3.0.2)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">matplotlib.colors</span></code></a>) – </li>
 <li><strong>linewidths</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>) – Line width for contour lines. Defaults to 0.2.</li>
 <li><strong>label</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>) – Label contour lines? Defaults to False.</li>
-<li><strong>cmap</strong> (<a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.colors.LinearSegmentedColormap.html#matplotlib.colors.LinearSegmentedColormap" title="(in Matplotlib v2.2.3)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">matplotlib.colors.LinearSegmentedColormap</span></code></a>) – Mapping of pe.data to plot colour. Defaults to blackblack semi-transparent.</li>
+<li><strong>cmap</strong> (<a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.colors.LinearSegmentedColormap.html#matplotlib.colors.LinearSegmentedColormap" title="(in Matplotlib v3.0.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">matplotlib.colors.LinearSegmentedColormap</span></code></a>) – Mapping of pe.data to plot colour. Defaults to blackblack semi-transparent.</li>
 <li><strong>threshold</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>) – Ranges shown are regions where the probability that a contour line passes through the region is greater than this. Defaults to 0.05 (5%).</li>
 <li><strong>vmax</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>) – Show as ‘most likely’, regions where the prob of a contour is greater than this Defaults to 0.4 (40%).</li>
 <li><strong>line_threshold</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>) – Only draw contours where the local standard deviation is less than this. Defaults to None - draw contours everywhere.</li>
@@ -222,7 +222,7 @@ Please <a href="https://github.com/philip-brohan/Meteorographica/issues/new">rai
 </ul>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">See <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.contour.html#matplotlib.axes.Axes.contour" title="(in Matplotlib v2.2.3)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">matplotlib.axes.Axes.contour()</span></code></a> - also adds the lines to the plot.</p>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">See <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.contour.html#matplotlib.axes.Axes.contour" title="(in Matplotlib v3.0.2)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">matplotlib.axes.Axes.contour()</span></code></a> - also adds the lines to the plot.</p>
 </td>
 </tr>
 </tbody>
@@ -242,15 +242,15 @@ Please <a href="https://github.com/philip-brohan/Meteorographica/issues/new">rai
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>ax</strong> (<a class="reference external" href="https://scitools.org.uk/cartopy/docs/latest/matplotlib/geoaxes.html#cartopy.mpl.geoaxes.GeoAxes" title="(in cartopy v0.16.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cartopy.mpl.geoaxes.GeoAxes</span></code></a>) – Axes on which to draw.</li>
-<li><strong>pe</strong> (<a class="reference external" href="https://scitools.org.uk/iris/docs/latest/iris/iris/cube.html#iris.cube.Cube" title="(in Iris v2.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iris.cube.Cube</span></code></a>) – Variable to plot.- must have dimensions &lt;ensemble_dimension&gt;, ‘latitude’ and ‘longitude’.</li>
+<li><strong>ax</strong> (<a class="reference external" href="https://scitools.org.uk/cartopy/docs/latest/matplotlib/geoaxes.html#cartopy.mpl.geoaxes.GeoAxes" title="(in cartopy v0.17.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cartopy.mpl.geoaxes.GeoAxes</span></code></a>) – Axes on which to draw.</li>
+<li><strong>pe</strong> (<a class="reference external" href="https://scitools.org.uk/iris/docs/latest/iris/iris/cube.html#iris.cube.Cube" title="(in Iris v2.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iris.cube.Cube</span></code></a>) – Variable to plot.- must have dimensions &lt;ensemble_dimension&gt;, ‘latitude’ and ‘longitude’.</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first last simple">
 <li><strong>ensemble_dimension</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>) – name of the ensemble dimension. Defaults to ‘member’.</li>
-<li><strong>colors</strong> (see <a class="reference external" href="https://matplotlib.org/api/colors_api.html#module-matplotlib.colors" title="(in Matplotlib v2.2.3)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">matplotlib.colors</span></code></a>) – </li>
+<li><strong>colors</strong> (see <a class="reference external" href="https://matplotlib.org/api/colors_api.html#module-matplotlib.colors" title="(in Matplotlib v3.0.2)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">matplotlib.colors</span></code></a>) – </li>
 <li><strong>linewidths</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>) – Line width for contour lines. Defaults to 0.2.</li>
 <li><strong>label</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>) – Label contour lines? Defaults to False.</li>
 </ul>
@@ -263,7 +263,7 @@ Please <a href="https://github.com/philip-brohan/Meteorographica/issues/new">rai
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">See <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.contour.html#matplotlib.axes.Axes.contour" title="(in Matplotlib v2.2.3)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">matplotlib.axes.Axes.contour()</span></code></a> - except it’s an array, one for each member. Also adds the lines to the plot.</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">See <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.contour.html#matplotlib.axes.Axes.contour" title="(in Matplotlib v3.0.2)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">matplotlib.axes.Axes.contour()</span></code></a> - except it’s an array, one for each member. Also adds the lines to the plot.</td>
 </tr>
 </tbody>
 </table>

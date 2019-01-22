@@ -4,12 +4,12 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-        <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Meteorographica.wind.plot &#8212; Meteorographica: python tools for making weather maps</title>
     <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
@@ -34,7 +34,7 @@
             <p class="logo"><a href="../../../index.html">
               <img class="logo" src="../../../_static/UK_spaghetti.png" alt="Logo"/>
             </a></p>
-<h3><a href="../../../index.html">Table Of Contents</a></h3>
+<h3><a href="../../../index.html">Table of Contents</a></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation</a></li>
 </ul>
@@ -87,7 +87,7 @@ Please <a href="https://github.com/philip-brohan/Meteorographica/issues/new">rai
 <span class="kn">import</span> <span class="nn">numpy</span>
 
 <span class="kn">import</span> <span class="nn">Meteorographica.utils</span> <span class="k">as</span> <span class="nn">utils</span>
-<span class="kn">from</span> <span class="nn">wind_vectors</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">.wind_vectors</span> <span class="k">import</span> <span class="o">*</span>
 
 <div class="viewcode-block" id="plot_quiver"><a class="viewcode-back" href="../../../wind.html#Meteorographica.wind.plot_quiver">[docs]</a><span class="k">def</span> <span class="nf">plot_quiver</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">ue</span><span class="p">,</span><span class="n">ve</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Plots a pair of variables as a 2d field of arrows.</span>
@@ -157,8 +157,8 @@ Please <a href="https://github.com/philip-brohan/Meteorographica/issues/new">rai
                             <span class="n">headwidth</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;headwidth&#39;</span><span class="p">),</span>
                             <span class="n">color</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;color&#39;</span><span class="p">),</span>
                             <span class="n">scale</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span>
-                            <span class="n">zorder</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;zorder&#39;</span><span class="p">))</span></div>
-    <span class="k">return</span> <span class="n">qv</span>
+                            <span class="n">zorder</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;zorder&#39;</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">qv</span></div>
 
 
 <span class="c1"># Plot wind</span>
@@ -185,8 +185,8 @@ Please <a href="https://github.com/philip-brohan/Meteorographica/issues/new">rai
     <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">)</span><span class="o">==</span><span class="s1">&#39;quiver&#39;</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">plot_quiver</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">ue</span><span class="p">,</span><span class="n">ve</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-    <span class="k">raise</span> <span class="n">StandardError</span><span class="p">(</span><span class="s1">&#39;Unsupported wind plot type </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span></div>
-                         <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">))</span>
+    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Unsupported wind plot type </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span>
+                         <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">))</span></div>
 </pre></div>
 
           </div>

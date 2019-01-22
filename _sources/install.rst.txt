@@ -1,7 +1,7 @@
 Installation
 ============
 
-Known to work on with Python 2.7 on modern Linux and OS X systems. Not tested on anything else.
+Known to work on with Python 3.6 on modern Linux and OS X systems. Not tested on anything else.
 
 Relies on `SciTools <http://scitools.org.uk/>`_. So first install `Iris <http://scitools.org.uk/iris/docs/latest/index.html>`_ and `Cartopy <http://scitools.org.uk/cartopy/docs/latest/index.html>`_
 

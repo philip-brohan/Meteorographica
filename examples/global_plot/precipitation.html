@@ -4,12 +4,12 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-        <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Meteorographica examples: Precipitation &#8212; Meteorographica: python tools for making weather maps</title>
     <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
@@ -42,7 +42,7 @@
             <p class="logo"><a href="../../index.html">
               <img class="logo" src="../../_static/UK_spaghetti.png" alt="Logo"/>
             </a></p>
-<h3><a href="../../index.html">Table Of Contents</a></h3>
+<h3><a href="../../index.html">Table of Contents</a></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../install.html">Installation</a></li>
 </ul>
@@ -161,7 +161,7 @@ Please <a href="https://github.com/philip-brohan/Meteorographica/issues/new">rai
 <span class="n">prate</span><span class="o">=</span><span class="n">prate</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">iris</span><span class="o">.</span><span class="n">Constraint</span><span class="p">(</span><span class="n">member</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
 
 <span class="c1"># Plot the precipitation map</span>
-<span class="n">mg</span><span class="o">.</span><span class="n">precipitation</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">prate</span><span class="p">)</span>
+<span class="n">mg</span><span class="o">.</span><span class="n">precipitation</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">prate</span><span class="p">,</span><span class="n">resolution</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>
 
 <span class="c1"># Add a label showing the date</span>
 <span class="n">label</span><span class="o">=</span><span class="s2">&quot;16th October 1987 at 06 GMT&quot;</span>

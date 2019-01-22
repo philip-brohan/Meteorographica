@@ -4,12 +4,12 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-        <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Meteorographica.precipitation.plot &#8212; Meteorographica: python tools for making weather maps</title>
     <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
@@ -34,7 +34,7 @@
             <p class="logo"><a href="../../../index.html">
               <img class="logo" src="../../../_static/UK_spaghetti.png" alt="Logo"/>
             </a></p>
-<h3><a href="../../../index.html">Table Of Contents</a></h3>
+<h3><a href="../../../index.html">Table of Contents</a></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation</a></li>
 </ul>
@@ -156,8 +156,8 @@ Please <a href="https://github.com/philip-brohan/Meteorographica/issues/new">rai
                             <span class="n">vmin</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;vmin&#39;</span><span class="p">),</span>
                             <span class="n">vmax</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;vmax&#39;</span><span class="p">),</span>
                             <span class="n">alpha</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;alpha&#39;</span><span class="p">),</span>
-                            <span class="n">zorder</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;zorder&#39;</span><span class="p">))</span></div>
-    <span class="k">return</span> <span class="n">prate_img</span>
+                            <span class="n">zorder</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;zorder&#39;</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">prate_img</span></div>
 
 
 
@@ -185,8 +185,8 @@ Please <a href="https://github.com/philip-brohan/Meteorographica/issues/new">rai
     <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">)</span><span class="o">==</span><span class="s1">&#39;cmesh&#39;</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">plot_cmesh</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">pe</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-    <span class="k">raise</span> <span class="n">StandardError</span><span class="p">(</span><span class="s1">&#39;Unsupported precipitation plot type </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span></div>
-                         <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">))</span>
+    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Unsupported precipitation plot type </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span>
+                         <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">))</span></div>
 
 
 
